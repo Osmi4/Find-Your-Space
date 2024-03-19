@@ -1,5 +1,4 @@
-package com.example.backend.dtos;
-
+package com.example.backend.dtos.Auth;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PasswordChange {
-    private String newPassword;
-    private String oldPassword;
+public class LoginDto {
+    private String Email;
+    private String Password;
 }

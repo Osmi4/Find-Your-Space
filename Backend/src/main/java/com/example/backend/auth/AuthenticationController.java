@@ -1,8 +1,8 @@
 package com.example.backend.auth;
 
-import com.example.backend.dtos.LoginDto;
-import com.example.backend.dtos.PasswordChange;
-import com.example.backend.dtos.RegisterDto;
+import com.example.backend.dtos.Auth.LoginDto;
+import com.example.backend.dtos.Auth.PasswordChange;
+import com.example.backend.dtos.Auth.RegisterDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

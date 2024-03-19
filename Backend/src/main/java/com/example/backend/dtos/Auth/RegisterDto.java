@@ -1,6 +1,6 @@
-package com.example.backend.dtos;
+package com.example.backend.dtos.Auth;
 
-import com.example.backend.entity.Role;
+import com.example.backend.Enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,4 +15,7 @@ public class RegisterDto {
     private String email;
     private String password;
     private Role role;
+    private String contactInfo;
+    private String firstName;
+    private String lastName;
 }

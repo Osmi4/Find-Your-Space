@@ -1,4 +1,4 @@
-package com.example.backend.entity;
+package com.example.backend.Enums;
 
 public enum Availibility {
     NOT_REALASED,

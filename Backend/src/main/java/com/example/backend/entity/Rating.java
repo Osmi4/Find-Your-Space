@@ -40,7 +40,7 @@ public class Rating {
     private Space space;
 
     @ManyToOne
-    @JoinColumn(name = "client", nullable = false)
+    @JoinColumn(name = "client_id", nullable = false)
     private User client;
 
 }

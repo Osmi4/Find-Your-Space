@@ -12,7 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static com.example.backend.entity.Role.ADMIN;
+import static com.example.backend.Enums.Role.ADMIN;
 
 @Configuration
 @EnableWebSecurity

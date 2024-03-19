@@ -1,5 +1,6 @@
 package com.example.backend.entity;
 
+import com.example.backend.Enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,13 +18,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "app_user" , uniqueConstraints = {@UniqueConstraint(columnNames = "email")})
+@Table(name = "app_user", uniqueConstraints = {@UniqueConstraint(columnNames = "email")})
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String userId;
 
-    @Column(name = "email" , nullable=false)
+    @Column(name = "email", nullable = false)
     private String email;
 
     @Column(name = "password", nullable = false)
@@ -39,6 +40,16 @@ public class User implements UserDetails {
     @Column(name = "contact_info", nullable = true)
     private String contactInfo;
 
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
+
+    @Column(name = "last_name", nullable = false)
+    private String lastName;
+
+    //it will be coded
+    @Column(name = "bank_account", nullable = true)
+    private String bankAccount;
+
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Booking> bookings = new ArrayList<>();
 
@@ -53,6 +64,21 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Space> spaces = new ArrayList<>();
+
+    @OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReportUser> reportedUsers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReportSpace> reportedSpaces = new ArrayList<>();
+
+    @OneToMany(mappedBy = "reported", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReportUser> reportedByUsers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Message> messageSent = new ArrayList<>();
+
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Message> messageReceived = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

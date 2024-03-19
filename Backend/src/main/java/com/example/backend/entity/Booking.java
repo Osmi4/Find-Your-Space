@@ -1,12 +1,11 @@
 package com.example.backend.entity;
 
+import com.example.backend.Enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
 
 @Data
 @Builder
@@ -45,4 +44,7 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "space" , nullable = false)
     private Space space;
+
+    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Payment payment;
 }
