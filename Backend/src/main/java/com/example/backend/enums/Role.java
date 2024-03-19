@@ -1,6 +1,5 @@
-package com.example.backend.Enums;
+package com.example.backend.enums;
 
-import com.example.backend.Enums.Permission;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

@@ -1,6 +1,6 @@
 package com.example.backend.entity;
 
-import com.example.backend.Enums.Availibility;
+import com.example.backend.enums.Availibility;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

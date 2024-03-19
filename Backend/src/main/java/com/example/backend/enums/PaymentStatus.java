@@ -1,4 +1,4 @@
-package com.example.backend.Enums;
+package com.example.backend.enums;
 
 public enum PaymentStatus {
     PENDING,

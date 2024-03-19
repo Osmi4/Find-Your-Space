@@ -1,7 +1,11 @@
 package com.example.backend.dtos.Space;
 
 import com.example.backend.dtos.User.UserResponse;
+import lombok.Builder;
+import lombok.Data;
 
+@Data
+@Builder
 public class SpaceFilter {
     private String spaceId;
     private String spaceName;

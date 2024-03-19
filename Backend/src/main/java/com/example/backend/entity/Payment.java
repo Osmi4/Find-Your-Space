@@ -1,6 +1,6 @@
 package com.example.backend.entity;
 
-import com.example.backend.Enums.PaymentStatus;
+import com.example.backend.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

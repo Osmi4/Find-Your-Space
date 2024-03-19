@@ -4,7 +4,7 @@ import com.example.backend.config.JwtService;
 import com.example.backend.dtos.Auth.LoginDto;
 import com.example.backend.dtos.Auth.PasswordChange;
 import com.example.backend.dtos.Auth.RegisterDto;
-import com.example.backend.Enums.Role;
+import com.example.backend.enums.Role;
 import com.example.backend.entity.User;
 import com.example.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
