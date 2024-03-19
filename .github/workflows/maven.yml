@@ -43,6 +43,7 @@ jobs:
     - run: mvn --batch-mode --update-snapshots verify
       working-directory: ./Backend
     - run: mkdir staging && cp target/*.jar staging
+      working-directory: ./Backend
     - uses: actions/upload-artifact@v3
       with:
         name: Package
