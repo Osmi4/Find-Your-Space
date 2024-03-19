@@ -19,4 +19,9 @@ public class SpaceServiceImpl implements SpaceService {
     public SpaceResponse editSpace(EditSpaceRequest editSpaceRequest) {
         return null;
     }
+
+    @Override
+    public SpaceResponse deleteSpace(String id) {
+        return null;
+    }
 }
