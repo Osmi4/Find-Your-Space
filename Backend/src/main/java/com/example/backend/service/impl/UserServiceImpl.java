@@ -1,5 +1,6 @@
 package com.example.backend.service.impl;
 
+import com.example.backend.dtos.User.UpdateUserRequest;
 import com.example.backend.dtos.User.UserFilter;
 import com.example.backend.dtos.User.UserResponse;
 import com.example.backend.service.UserService;
@@ -18,4 +19,11 @@ public class UserServiceImpl implements UserService {
     public List<UserResponse> getUsers(UserFilter userFilter) {
         return null;
     }
+
+    @Override
+    public UserResponse updateUser(UpdateUserRequest updateUserRequest) {
+        return null;
+    }
+
+
 }

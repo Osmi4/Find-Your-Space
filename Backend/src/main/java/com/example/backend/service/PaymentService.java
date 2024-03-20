@@ -8,11 +8,11 @@ import com.example.backend.dtos.Payment.UpdatePaymentRequest;
 import java.util.List;
 
 public interface PaymentService {
-PaymentResponse addPayment(AddPaymentRequest addPaymentRequest);
+    PaymentResponse addPayment(AddPaymentRequest addPaymentRequest);
 
-PaymentResponse getPayment(String id);
+    PaymentResponse getPayment(String id);
 
-PaymentResponse updatePayment(UpdatePaymentRequest updatePaymentRequest);
+    PaymentResponse updatePayment(UpdatePaymentRequest updatePaymentRequest);
 
-List<PaymentResponse> getPayments(PaymentFilter paymentFilter);
+    List<PaymentResponse> getPayments(PaymentFilter paymentFilter);
 }

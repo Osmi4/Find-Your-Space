@@ -2,9 +2,12 @@ package com.example.backend.service.impl;
 
 import com.example.backend.dtos.Space.AddSpaceRequest;
 import com.example.backend.dtos.Space.EditSpaceRequest;
+import com.example.backend.dtos.Space.SpaceFilter;
 import com.example.backend.dtos.Space.SpaceResponse;
 import com.example.backend.service.SpaceService;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class SpaceServiceImpl implements SpaceService {
@@ -22,6 +25,11 @@ public class SpaceServiceImpl implements SpaceService {
 
     @Override
     public SpaceResponse deleteSpace(String id) {
+        return null;
+    }
+
+    @Override
+    public List<SpaceResponse> filterSpace(SpaceFilter spaceFilter) {
         return null;
     }
 }

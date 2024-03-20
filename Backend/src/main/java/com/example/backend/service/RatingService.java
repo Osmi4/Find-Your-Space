@@ -9,7 +9,9 @@ import java.util.List;
 
 public interface RatingService {
     RatingResponse addRating(AddRatingRequest addRatingRequest);
+
     RatingResponse getRating(String id);
+
     RatingResponse updateRating(UpdatePaymentRequest updatePaymentRequest);
 
     List<RatingResponse> getRatings(RatingFilter ratingFilter);
