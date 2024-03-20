@@ -1,10 +1,14 @@
 package com.example.backend.dtos.Booking;
 
 import com.example.backend.dtos.User.UserResponse;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class BookingResponse {
     private String bookingId;
