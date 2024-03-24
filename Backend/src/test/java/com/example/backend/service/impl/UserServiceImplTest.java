@@ -21,7 +21,7 @@ public class UserServiceImplTest {
         expectedResponse.setUserId("123");
 
         // Test
-        UserResponse actualResponse = userService.getUser("123");
+        UserResponse actualResponse = userService.getUserByUserId("123");
 
         // Assertion
         assertNotNull(actualResponse);

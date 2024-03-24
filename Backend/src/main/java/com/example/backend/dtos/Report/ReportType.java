@@ -1,4 +1,4 @@
-package com.example.backend.enums;
+package com.example.backend.dtos.Report;
 
 public enum ReportType {
     USER,

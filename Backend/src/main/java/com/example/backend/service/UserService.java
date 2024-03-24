@@ -7,7 +7,7 @@ import com.example.backend.dtos.User.UserResponse;
 import java.util.List;
 
 public interface UserService {
-    UserResponse getUser(String id);
+    UserResponse getUserByUserId(String id);
     List<UserResponse> getUsers(UserFilter userFilter);
 
     UserResponse updateUser(UpdateUserRequest updateUserRequest);

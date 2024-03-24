@@ -48,7 +48,4 @@ public class Space {
     @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Rating> ratings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "reported", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ReportSpace> Reports = new ArrayList<>();
-
 }

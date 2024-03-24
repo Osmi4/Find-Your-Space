@@ -5,15 +5,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReportFilter {
-    private String reportId;
-    private String startDate;
-    private String endDate;
+    private Date startDate;
+    private Date endDate;
     private String content;
-    private String reportType;
+    private ReportType reportType;
+    private ReportStatus reportStatus;
+    private String reporterId;
     private String reportedId;
 }

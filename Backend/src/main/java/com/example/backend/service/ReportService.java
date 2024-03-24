@@ -7,12 +7,12 @@ import com.example.backend.dtos.Report.UpdateReportRequest;
 
 import java.util.List;
 
-public interface ReportSpaceService {
+public interface ReportService {
     ReportResponse addReport(AddReportRequest addReportRequest);
 
-    ReportResponse getReport(String id , String type);
+    ReportResponse getReportById(String id);
 
-    List<ReportResponse> filterReports(ReportFilter reportFilter);
+//    List<ReportResponse> getReportsByFilters(ReportFilter reportFilter);
 
     ReportResponse updateReport(UpdateReportRequest updateReportRequest);
 }

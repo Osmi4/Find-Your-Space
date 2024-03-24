@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UpdateReportRequest {
     private String reportId;
-    private String reportType;
     private String comment;
-    private String reportedId;
+    private ReportStatus reportStatus;
 }

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddReportRequest {
-    private String reportType;
-    private String content;
+    private ReportType reportType;
+    private String reportContent;
     private String reportedId;
 }

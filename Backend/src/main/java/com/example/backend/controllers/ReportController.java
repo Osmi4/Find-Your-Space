@@ -2,37 +2,31 @@ package com.example.backend.controllers;
 
 import com.example.backend.dtos.Report.AddReportRequest;
 import com.example.backend.dtos.Report.ReportResponse;
-import com.example.backend.dtos.Space.AddSpaceRequest;
-import com.example.backend.service.ReportSpaceService;
-import com.example.backend.service.ReportUserService;
-import com.example.backend.service.impl.ReportUserServiceImpl;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.backend.dtos.Report.UpdateReportRequest;
+import com.example.backend.service.ReportService;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/report")
 public class ReportController {
-    private final ReportUserService reportUserService;
-    private final ReportSpaceService reportSpaceService;
-    public ReportController(ReportUserService reportUserService, ReportSpaceService reportSpaceService) {
-        this.reportUserService = reportUserService;
-        this.reportSpaceService = reportSpaceService;
+    private final ReportService reportService;
+
+    public ReportController(ReportService reportService) {
+        this.reportService = reportService;
     }
 
     @PostMapping("/")
     public ReportResponse addReport(@RequestBody AddReportRequest addReportRequest){
-        switch (addReportRequest.getReportType()){
-            case "user":
-                return reportUserService.addReport(addReportRequest);
-            case "space":
-                return reportSpaceService.addReport(addReportRequest);
-            default:
-                return null;
-        }
+        return reportService.addReport(addReportRequest);
     }
 
+    @GetMapping("/{id}")
+    public ReportResponse getReportById(@PathVariable String id){
+        return reportService.getReportById(id);
+    }
 
-
+    @PutMapping("/")
+    public ReportResponse updateReport(@RequestBody UpdateReportRequest updateReportRequest){
+        return reportService.updateReport(updateReportRequest);
+    }
 }
