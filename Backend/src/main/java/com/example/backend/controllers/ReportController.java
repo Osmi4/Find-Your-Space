@@ -22,6 +22,8 @@ public class ReportController {
 
     @GetMapping("/{id}")
     public ReportResponse getReportById(@PathVariable String id){
+        System.out.println("sfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsd");
+
         return reportService.getReportById(id);
     }
 

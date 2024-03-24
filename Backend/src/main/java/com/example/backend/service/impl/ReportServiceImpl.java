@@ -26,6 +26,7 @@ public class ReportServiceImpl implements ReportService {
 
     private final UserServiceImpl userServiceImpl;
 
+
     public ReportServiceImpl(ReportRepository reportRepository, UserRepository userRepository, SpaceRepository spaceRepository, UserServiceImpl userServiceImpl) {
         this.reportRepository = reportRepository;
         this.userRepository = userRepository;
@@ -62,6 +63,7 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public ReportResponse updateReport(UpdateReportRequest updateReportRequest) {
         Report report = reportRepository.findById(updateReportRequest.getReportId()).orElseThrow(() -> new NoSuchElementException("Report not found"));
+        System.out.println(report.getReportId());
         report.setReportStatus(updateReportRequest.getReportStatus());
         reportRepository.save(report);
         return mapReportToReportResponse(report);
