@@ -5,6 +5,7 @@ import com.example.backend.dtos.User.UserFilter;
 import com.example.backend.dtos.User.UserResponse;
 import com.example.backend.entity.Report;
 import com.example.backend.entity.User;
+import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.UserService;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public class UserServiceImpl implements UserService {
     public void updateUser(String userId,UpdateUserRequest updateUserRequest) {
         int affectedRows= userRepository.patchUser(userId, updateUserRequest.getUserName(), updateUserRequest.getUserEmail(), updateUserRequest.getContactInfo(), updateUserRequest.getFirstName(), updateUserRequest.getLastName());
         if(affectedRows==0){
-            throw new NoSuchElementException("User not found");
+            throw new ResourceNotFoundException("User not found!", "userId", userId);
         }
     }
 
