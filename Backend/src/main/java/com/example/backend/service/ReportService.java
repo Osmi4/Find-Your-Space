@@ -12,7 +12,8 @@ public interface ReportService {
 
     ReportResponse getReportById(String id);
 
-//    List<ReportResponse> getReportsByFilters(ReportFilter reportFilter);
+    List<ReportResponse> getReportsByFilters(ReportFilter reportFilter);
 
     ReportResponse updateReport(UpdateReportRequest updateReportRequest);
+
 }
