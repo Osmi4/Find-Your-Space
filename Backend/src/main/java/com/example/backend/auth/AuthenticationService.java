@@ -30,6 +30,7 @@ public class AuthenticationService {
                 .lastName(registerDto.getLastName())
                 .email(registerDto.getEmail())
                 .password(passwordEncoder.encode(registerDto.getPassword()))
+                .contactInfo(registerDto.getContactInfo())
                 .role(Role.USER)
                 .build();
         userRepository.save(user);

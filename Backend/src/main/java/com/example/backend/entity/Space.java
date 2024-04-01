@@ -1,6 +1,7 @@
 package com.example.backend.entity;
 
 import com.example.backend.enums.Availibility;
+import com.example.backend.enums.SpaceType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -32,6 +34,18 @@ public class Space {
 
     @Column(name = "space_price", nullable = false)
     private double spacePrice;
+
+    @Column(name = "space_description", nullable = true)
+    private String spaceDescription;
+
+    @Column(name = "space_type", nullable = false)
+    private SpaceType spaceType;
+
+    @Column(name = "date_added", nullable = false)
+    private Date dateAdded;
+
+    @Column(name = "date_updated", nullable = false)
+    private Date dateUpdated;
 
     @Column(name = "availibility", nullable = false)
     @Enumerated(EnumType.STRING)

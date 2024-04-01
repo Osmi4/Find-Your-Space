@@ -13,5 +13,5 @@ public class AddMessage {
     private String messageContent;
     private String messageDestinationEmail;
     private String sender;
-    private String receiver;
+    private String receiverId;
 }

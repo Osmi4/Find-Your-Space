@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -22,14 +24,28 @@ public class Booking {
             name = "start_date_time",
             nullable = false
     )
-    private String startDateTime;
+    private Date startDateTime;
 
     @Column(
             name = "end_date_time",
             nullable = false
     )
-    private String endDateTime;
-
+    private Date endDateTime;
+    @Column(
+            name = "cost",
+            nullable = false
+    )
+    private double cost;
+    @Column(
+            name = "date_added",
+            nullable = false
+    )
+    private Date dateAdded;
+    @Column(
+            name = "date_updated",
+            nullable = false
+    )
+    private Date dateUpdated;
     @Column(
             name = "status",
             nullable = false

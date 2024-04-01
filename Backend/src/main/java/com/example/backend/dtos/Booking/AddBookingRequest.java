@@ -5,13 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddBookingRequest {
     private String spaceId;
-    private String startDate;
-    private String endDate;
-
+    private Date startDate;
+    private Date endDate;
 }

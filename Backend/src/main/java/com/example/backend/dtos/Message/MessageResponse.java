@@ -14,6 +14,6 @@ public class MessageResponse {
     private String messageContent;
     private String messageDateTime;
     private String messageDestinationEmail;
-    private String sender;
-    private String receiver;
+    private String senderId;
+    private String receiverId;
 }

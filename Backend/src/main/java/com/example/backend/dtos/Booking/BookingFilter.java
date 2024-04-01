@@ -1,17 +1,17 @@
 package com.example.backend.dtos.Booking;
 
+import com.example.backend.enums.Status;
 import lombok.Builder;
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 @Builder
 public class BookingFilter {
-    private String bookingId;
-    private String userId;
+    private Date startDate;
+    private Date endDate;
     private String spaceId;
-    private String paymentId;
-    private String startDate;
-    private String endDate;
-    private String owner;
-    private String status;
+    private String ownerId;
+    private Status status;
 }

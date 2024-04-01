@@ -16,5 +16,4 @@ public class UserResponse {
     private String contactInfo;
     private String firstName;
     private String lastName;
-
 }

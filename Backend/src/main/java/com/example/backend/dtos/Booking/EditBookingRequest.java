@@ -3,11 +3,12 @@ package com.example.backend.dtos.Booking;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 @Builder
 public class EditBookingRequest {
-    private String bookingId;
     private String spaceId;
-    private String startDate;
-    private String endDate;
+    private Date startDate;
+    private Date endDate;
 }
