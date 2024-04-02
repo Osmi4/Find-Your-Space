@@ -9,11 +9,13 @@ import com.example.backend.entity.Rating;
 import com.example.backend.entity.Report;
 import com.example.backend.entity.Space;
 import com.example.backend.entity.User;
+import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.repository.RatingRepository;
 import com.example.backend.repository.ReportRepository;
 import com.example.backend.repository.SpaceRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.RatingService;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class RatingServiceImpl implements RatingService {
@@ -61,13 +64,22 @@ public class RatingServiceImpl implements RatingService {
     public RatingResponse getRating(String id) {
         return ratingRepository.findById(id)
                 .map(this::mapRatingToRatingResponse)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Rating not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Rating not found", "ratingId", id));
     }
 
     @Override
-    public RatingResponse updateRating(UpdatePaymentRequest updatePaymentRequest) {
-        return null;
+    @Transactional
+    public void deleteRating(String id) {
+        Optional<Rating> rating = ratingRepository.findById(id);
+        if (rating.isEmpty()) {
+            throw new ResourceNotFoundException("Rating not found", "ratingId", id);
+        }
+        int deleted = ratingRepository.deleteByRatingId(id);
+        if (deleted == 0) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Rating not deleted");
+        }
     }
+
 
     @Override
     public List<RatingResponse> getRatings(RatingFilter ratingFilter) {

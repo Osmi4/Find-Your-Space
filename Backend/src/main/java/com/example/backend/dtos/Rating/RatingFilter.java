@@ -22,8 +22,8 @@ public class RatingFilter {
 //    private String startDate;
 //    @Nullable
 //    private Date endDate;
-    @Nullable
-    private double minScore;
-    @Nullable
-    private double maxScore;
+//    @Nullable
+//    private double minScore;
+//    @Nullable
+//    private double maxScore;
 }
