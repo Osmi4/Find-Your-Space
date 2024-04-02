@@ -52,7 +52,7 @@ public class Space {
     private Availibility availibility;
 
     //we will keep image on server and store the path in database
-    @Column(name = "space_image", nullable = false)
+    @Column(name = "space_image", nullable = true)
     private String spaceImage;
 
     @ManyToOne

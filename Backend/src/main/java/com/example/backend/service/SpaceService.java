@@ -11,8 +11,9 @@ import java.util.List;
 
 public interface SpaceService {
 
-    SpaceResponse addSpace( AddSpaceRequest addSpaceRequest);
-    SpaceResponse editSpace( EditSpaceRequest editSpaceRequest , String spaceId);
+    SpaceResponse addSpace(AddSpaceRequest addSpaceRequest);
+
+    SpaceResponse editSpace(EditSpaceRequest editSpaceRequest, String spaceId);
 
     SpaceResponse deleteSpace(String id);
 

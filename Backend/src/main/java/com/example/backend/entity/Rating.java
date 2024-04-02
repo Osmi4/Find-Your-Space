@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -33,14 +35,14 @@ public class Rating {
             name = "date_added",
             nullable = false
     )
-    private String dateAdded;
+    private Date dateAdded;
 
     @ManyToOne
     @JoinColumn(name = "space_id", nullable = false)
     private Space space;
 
     @ManyToOne
-    @JoinColumn(name = "client_id", nullable = false)
-    private User client;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
 }

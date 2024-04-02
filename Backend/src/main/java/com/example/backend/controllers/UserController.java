@@ -21,13 +21,13 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public UserResponse getUserById(@PathVariable String id){
-        return userService.getUserByUserId(id);
+    public ResponseEntity<UserResponse> getUserById(@PathVariable String id){
+        return ResponseEntity.ok(userService.getUserByUserId(id));
     }
 
     @GetMapping("/")
-    public List<UserResponse> getUsers( @RequestBody UserFilter userFilter) {
-        return userService.getUsersByFilters(userFilter);
+    public ResponseEntity<List<UserResponse>> getUsers( @RequestBody UserFilter userFilter) {
+        return ResponseEntity.ok(userService.getUsersByFilters(userFilter));
     }
 
     @PatchMapping("/{id}")
