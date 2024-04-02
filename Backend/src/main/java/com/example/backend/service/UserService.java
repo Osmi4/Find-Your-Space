@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface UserService {
     UserResponse getUserByUserId(String id);
-    List<UserResponse> getUsers(UserFilter userFilter);
+    List<UserResponse> getUsersByFilters(UserFilter userFilter);
 
-    UserResponse updateUser(UpdateUserRequest updateUserRequest);
+    void updateUser(String userId,UpdateUserRequest updateUserRequest);
 }

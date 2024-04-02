@@ -39,7 +39,7 @@ public class ReportServiceImpl implements ReportService {
         Report report = mapReportRequestToReport(addReportRequest);
         report.setReportStatus(ReportStatus.PENDING);
         report.setReportDateTime(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
-        Report savedReport=reportRepository.save(report);
+        Report savedReport = reportRepository.save(report);
         System.out.println(savedReport);
 
         return mapReportToReportResponse(savedReport);
@@ -49,6 +49,12 @@ public class ReportServiceImpl implements ReportService {
     public ReportResponse getReportById(String id) {
         Report report = reportRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Report not found"));
         return mapReportToReportResponse(report);
+    }
+
+    @Override
+    public List<ReportResponse> getReportsByFilters(ReportFilter reportFilter) {
+        List<Report> reports = reportRepository.findReportsByFilter(reportFilter.getReportType(), reportFilter.getReportStatus());
+        return reports.stream().map(this::mapReportToReportResponse).toList();
     }
 
 //    @Override

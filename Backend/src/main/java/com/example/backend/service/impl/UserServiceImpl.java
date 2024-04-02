@@ -5,6 +5,7 @@ import com.example.backend.dtos.User.UserFilter;
 import com.example.backend.dtos.User.UserResponse;
 import com.example.backend.entity.Report;
 import com.example.backend.entity.User;
+import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.UserService;
 import org.springframework.stereotype.Service;
@@ -27,13 +28,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponse> getUsers(UserFilter userFilter) {
-        return null;
+    public List<UserResponse> getUsersByFilters(UserFilter userFilter) {
+        List<User> users = userRepository.findUsersByFilter(userFilter.getUserName(), userFilter.getUserEmail(), userFilter.getContactInfo(), userFilter.getFirstName(), userFilter.getLastName());
+        return users.stream().map(this::mapUserToUserResponse).toList();
+
     }
 
     @Override
-    public UserResponse updateUser(UpdateUserRequest updateUserRequest) {
-        return null;
+    public void updateUser(String userId,UpdateUserRequest updateUserRequest) {
+        int affectedRows= userRepository.patchUser(userId, updateUserRequest.getUserName(), updateUserRequest.getUserEmail(), updateUserRequest.getContactInfo(), updateUserRequest.getFirstName(), updateUserRequest.getLastName());
+        if(affectedRows==0){
+            throw new ResourceNotFoundException("User not found!", "userId", userId);
+        }
     }
 
     public UserResponse mapUserToUserResponse(User user) {

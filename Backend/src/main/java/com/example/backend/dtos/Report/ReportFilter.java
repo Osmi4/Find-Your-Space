@@ -1,5 +1,6 @@
 package com.example.backend.dtos.Report;
 
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,11 +13,8 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReportFilter {
-    private Date startDate;
-    private Date endDate;
-    private String content;
+    @Nullable
     private ReportType reportType;
+    @Nullable
     private ReportStatus reportStatus;
-    private String reporterId;
-    private String reportedId;
 }

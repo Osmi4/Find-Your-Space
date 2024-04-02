@@ -57,30 +57,6 @@ public class RatingServiceImplTest {
     }
 
     @Test
-    void testUpdateRating() {
-        // Mock dependencies
-        RatingService ratingService = mock(RatingService.class);
-        UpdatePaymentRequest updatePaymentRequest = new UpdatePaymentRequest();
-        updatePaymentRequest.setPaymentId("123");
-        updatePaymentRequest.setAmount(150.0);
-        updatePaymentRequest.setDate("2024-03-25");
-        updatePaymentRequest.setPaymentStatus("Paid");
-        updatePaymentRequest.setSender("sender@example.com");
-        updatePaymentRequest.setReceiver("receiver@example.com");
-
-        RatingResponse expectedResponse = new RatingResponse();
-        expectedResponse.setRatingId(updatePaymentRequest.getPaymentId());
-        // Assuming other fields are also updated in real implementation
-
-        // Test
-        RatingResponse actualResponse = ratingService.updateRating(updatePaymentRequest);
-
-        // Assertion
-        assertNotNull(actualResponse);
-        assertEquals(expectedResponse.getRatingId(), actualResponse.getRatingId());
-    }
-
-    @Test
     void testGetRatings() {
         // Mock dependencies
         RatingService ratingService = mock(RatingService.class);
@@ -88,7 +64,7 @@ public class RatingServiceImplTest {
         List<RatingResponse> expectedResponse = new ArrayList<>();
 
         // Test
-        List<RatingResponse> actualResponse = ratingService.getRatings(ratingFilter);
+        List<RatingResponse> actualResponse = ratingService.getRatingsByFilters(ratingFilter);
 
         // Assertion
         assertNotNull(actualResponse);

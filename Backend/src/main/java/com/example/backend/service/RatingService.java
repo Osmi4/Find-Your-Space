@@ -12,7 +12,7 @@ public interface RatingService {
 
     RatingResponse getRating(String id);
 
-    RatingResponse updateRating(UpdatePaymentRequest updatePaymentRequest);
+    void deleteRating(String id);
 
-    List<RatingResponse> getRatings(RatingFilter ratingFilter);
+    List<RatingResponse> getRatingsByFilters(RatingFilter ratingFilter);
 }

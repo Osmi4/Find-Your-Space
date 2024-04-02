@@ -36,7 +36,7 @@ public class UserServiceImplTest {
         List<UserResponse> expectedResponse = new ArrayList<>();
 
         // Test
-        List<UserResponse> actualResponse = userService.getUsers(userFilter);
+        List<UserResponse> actualResponse = userService.getUsersByFilters(userFilter);
 
         // Assertion
         assertNotNull(actualResponse);

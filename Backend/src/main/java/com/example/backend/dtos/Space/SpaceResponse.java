@@ -1,10 +1,13 @@
 package com.example.backend.dtos.Space;
 
 import com.example.backend.dtos.User.UserResponse;
+import com.example.backend.enums.Availibility;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 @Data
 @Builder
@@ -18,5 +21,7 @@ public class SpaceResponse {
     private double spacePrice;
     private String spaceImage;
     private UserResponse owner;
-    private String availibility;
+    private Availibility availability;
+    private Date dateAdded;
+    private Date dateUpdated;
 }
