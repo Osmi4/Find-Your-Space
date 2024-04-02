@@ -1,25 +1,26 @@
-import WordCard from './WordCard';
-import LoginForm from './LoginForm';
-import {useState} from 'react';
+import {NextUIProvider} from "@nextui-org/react";
+import { useNavigate} from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
+import { Route,Routes } from 'react-router-dom';
+import Nav from "./Nav";
+import HomePage from "./pages/HomePage";
 
 function App() {
-  const [isRegister,setIsRegister]=useState(false);
-  const onRegister=()=>{
-    setIsRegister(true);
-  }
-  const onLogin=()=>{
-    setIsRegister(false);
-  }
+  const navigate = useNavigate();
 
   return (
-  <div class ="forms">
-    {!isRegister && 
-    <><LoginForm isLogin={true}/> 
-    <WordCard onClick={onRegister} isLogin={true}/></>}
-    {isRegister && 
-    <><WordCard onClick={onLogin} isLogin={false}/>
-    <LoginForm isLogin={false}/></>}
-  </div>
+    <NextUIProvider navigate={navigate}>
+      <Nav/>
+        <div>
+          <Routes>    
+            <Route path="/" element={<HomePage/>}/>    
+            <Route path="/login"  element={<LoginPage/>} />
+            <Route path="/signup"  element={<LoginPage/>} />
+          </Routes>
+        </div>
+        {/* put the footer */}
+        <></> 
+    </NextUIProvider>
   );
 }
 
