@@ -14,5 +14,5 @@ public interface RatingService {
 
     void deleteRating(String id);
 
-    List<RatingResponse> getRatings(RatingFilter ratingFilter);
+    List<RatingResponse> getRatingsByFilters(RatingFilter ratingFilter);
 }

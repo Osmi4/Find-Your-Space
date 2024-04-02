@@ -82,8 +82,11 @@ public class RatingServiceImpl implements RatingService {
 
 
     @Override
-    public List<RatingResponse> getRatings(RatingFilter ratingFilter) {
-        return null;
+    public List<RatingResponse> getRatingsByFilters(RatingFilter ratingFilter) {
+        return ratingRepository.findRatingsByFilter(ratingFilter.getSpaceId(), ratingFilter.getOwnerId())
+                .stream()
+                .map(this::mapRatingToRatingResponse)
+                .toList();
     }
 
     public Rating mapRatingRequestToRating(AddRatingRequest addRatingRequest) {
