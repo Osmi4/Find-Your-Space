@@ -57,15 +57,6 @@ public class ReportServiceImpl implements ReportService {
         return reports.stream().map(this::mapReportToReportResponse).toList();
     }
 
-//    @Override
-//    public List<ReportResponse> getReportsByFilters(ReportFilter reportFilter) {
-//        List<Report> reports = reportRepository.findByReportDateTimeBetweenAndReportContentContainingAndReportTypeAndReportStatusAndReporter_IdAndReportedUser_Id(
-//                reportFilter.getStartDate(), reportFilter.getEndDate(), reportFilter.getContent(), reportFilter.getReportType(),
-//                reportFilter.getReportStatus(), reportFilter.getReporterId(), reportFilter.getReportedId());
-//
-//        return reports.stream().map(this::mapReportToReportResponse).toList();
-//    }
-
     @Override
     public ReportResponse updateReport(UpdateReportRequest updateReportRequest) {
         Report report = reportRepository.findById(updateReportRequest.getReportId()).orElseThrow(() -> new NoSuchElementException("Report not found"));
