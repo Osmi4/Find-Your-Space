@@ -3,10 +3,7 @@ package com.example.backend.entity;
 import com.example.backend.enums.Availibility;
 import com.example.backend.enums.SpaceType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,9 +54,11 @@ public class Space {
 
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
+    @ToString.Exclude
     private User owner;
 
     @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private List<Rating> ratings = new ArrayList<>();
 
 }

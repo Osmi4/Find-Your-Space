@@ -1,10 +1,7 @@
 package com.example.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
@@ -39,10 +36,12 @@ public class Rating {
 
     @ManyToOne
     @JoinColumn(name = "space_id", nullable = false)
+    @ToString.Exclude
     private Space space;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @ToString.Exclude
     private User user;
 
 }

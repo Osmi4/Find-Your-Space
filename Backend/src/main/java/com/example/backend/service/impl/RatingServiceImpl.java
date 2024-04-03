@@ -94,7 +94,8 @@ public class RatingServiceImpl implements RatingService {
         rating.setScore(addRatingRequest.getScore());
         rating.setComment(addRatingRequest.getComment());
         rating.setDateAdded(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
-        Space space = spaceRepository.findBySpaceId(addRatingRequest.getSpaceId());
+        Optional<Space> spaceOpt = spaceRepository.findBySpaceId(addRatingRequest.getSpaceId());
+        Space space = spaceOpt.orElse(null);
         rating.setSpace(space);
         rating.setUser((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return rating;

@@ -8,16 +8,20 @@ import com.example.backend.entity.Booking;
 import com.example.backend.entity.Space;
 import com.example.backend.entity.User;
 import com.example.backend.enums.Status;
+import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.mapper.ObjectMapper;
 import com.example.backend.repository.BookingRepository;
 import com.example.backend.repository.SpaceRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.BookingService;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -37,9 +41,14 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponse addBooking(AddBookingRequest addBookingRequest) {
         List<Booking> currentBookings = bookingRepository.findBySpace_SpaceId(addBookingRequest.getSpaceId());
-        if (checkAvailability(currentBookings, addBookingRequest.getEndDate(), addBookingRequest.getStartDate()))
-            return null;
-        Space space = spaceRepository.findBySpaceId(addBookingRequest.getSpaceId());
+        if (checkAvailability(currentBookings, addBookingRequest.getEndDate(), addBookingRequest.getStartDate())){
+            throw new RuntimeException("Space is not available at this time");
+        }
+        Optional<Space> spaceOpt = spaceRepository.findBySpaceId(addBookingRequest.getSpaceId());
+        Space space = spaceOpt.orElse(null);
+        if(space == null) {
+            throw new ResourceNotFoundException("Space not found", "space", addBookingRequest.getSpaceId());
+        }
         double price = space.getSpacePrice()* (addBookingRequest.getEndDate().getTime() - addBookingRequest.getStartDate().getTime()) / 1000 / 60 / 60;
         User client = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User Owner = space.getOwner();
@@ -59,7 +68,11 @@ public class BookingServiceImpl implements BookingService {
         }
         if (checkAvailability(currentBookings, editBookingRequest.getEndDate(), editBookingRequest.getStartDate()))
             return null;
-        Space space = spaceRepository.findBySpaceId(editBookingRequest.getSpaceId());
+        Optional<Space> spaceOpt = spaceRepository.findBySpaceId(editBookingRequest.getSpaceId());
+        Space space = spaceOpt.orElse(null);
+        if(space == null) {
+            throw new ResourceNotFoundException("Space not found", "space", editBookingRequest.getSpaceId());
+        }
         double price = space.getSpacePrice()* (editBookingRequest.getEndDate().getTime() - editBookingRequest.getStartDate().getTime()) / 1000 / 60 / 60;
         bookingToUpdate.setStartDateTime(editBookingRequest.getStartDate());
         bookingToUpdate.setEndDateTime(editBookingRequest.getEndDate());
@@ -82,7 +95,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingResponse deleteBooking(String id) {
         Booking bookingToDelete = bookingRepository.findByBookingId(id).stream().findFirst().orElse(null);
         if(bookingToDelete == null || !bookingToDelete.getStatus().equals(Status.INQUIRY) || !bookingToDelete.getClient().getUserId().equals(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId())) {
-            return null;
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "booking is not found or not owned by user or not in inquiry status");
         }
         bookingRepository.delete(bookingToDelete);
         return ObjectMapper.mapBookingToBookingResponse(bookingToDelete);
@@ -92,7 +105,7 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingResponse> getMyBookings() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(user == null){
-            throw new RuntimeException("User not found");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "user not log in");
         }
         else{
             List<Booking> bookings = bookingRepository.findByClient_UserId(user.getUserId());
@@ -104,7 +117,7 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingResponse> getSearchMyBookings(BookingFilter filter) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(user == null){
-            return null;
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "user not log in");
         }
         List<BookingResponse> bookings = bookingRepository.findByStartDateTimeLessThanEqualAndClient_UserIdAndEndDateTimeGreaterThanEqual(
                 filter.getStartDate(), user.getUserId(), filter.getEndDate()).stream().map(ObjectMapper::mapBookingToBookingResponse).toList();
@@ -125,11 +138,12 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingResponse> getBookingForSpace(String spaceId, BookingFilter filter) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(user == null) {
-            return null;
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "user not log in");
         }
-        Space space = spaceRepository.findBySpaceId(spaceId);
+        Optional<Space> spaceOpt = spaceRepository.findBySpaceId(spaceId);
+        Space space = spaceOpt.orElse(null);
         if(space == null || !space.getOwner().getUserId().equals(user.getUserId())) {
-            return null;
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "space not found or not owned by user");
         }
         List<BookingResponse> bookings = bookingRepository.findBySpace_SpaceIdAndStartDateTimeLessThanEqualAndEndDateTimeGreaterThanEqual(
                 spaceId, filter.getStartDate(), filter.getEndDate()).stream().map(ObjectMapper::mapBookingToBookingResponse).toList();

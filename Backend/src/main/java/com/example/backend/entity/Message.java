@@ -1,10 +1,7 @@
 package com.example.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
@@ -37,9 +34,11 @@ public class Message {
 
     @ManyToOne
     @JoinColumn(name = "sender_id", nullable = false)
+    @ToString.Exclude
     private User sender;
 
     @ManyToOne
     @JoinColumn(name = "receiver_id", nullable = false)
+    @ToString.Exclude
     private User receiver;
 }

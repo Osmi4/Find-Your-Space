@@ -2,10 +2,7 @@ package com.example.backend.entity;
 
 import com.example.backend.enums.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -51,24 +48,31 @@ public class User implements UserDetails {
     private String bankAccount;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
+    @ToString.Exclude
     private List<Booking> bookings = new ArrayList<>();
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
+    @ToString.Exclude
     private List<Payment> myPayments = new ArrayList<>();
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
+    @ToString.Exclude
     private List<Payment> receivedPayments = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
+    @ToString.Exclude
     private List<Rating> ratings = new ArrayList<>();
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
+    @ToString.Exclude
     private List<Space> spaces = new ArrayList<>();
 
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
+    @ToString.Exclude
     private List<Message> messageSent = new ArrayList<>();
 
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
+    @ToString.Exclude
     private List<Message> messageReceived = new ArrayList<>();
 
     @Override

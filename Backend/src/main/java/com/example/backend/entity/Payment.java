@@ -2,10 +2,7 @@ package com.example.backend.entity;
 
 import com.example.backend.enums.PaymentStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
@@ -39,13 +36,16 @@ public class Payment {
 
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
+    @ToString.Exclude
     private User client;
 
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
+    @ToString.Exclude
     private User owner;
 
     @OneToOne
     @JoinColumn(name = "booking_id" , nullable = true)
+    @ToString.Exclude
     private Booking booking;
 }

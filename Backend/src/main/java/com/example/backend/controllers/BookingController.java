@@ -4,6 +4,7 @@ import com.example.backend.dtos.Booking.AddBookingRequest;
 import com.example.backend.dtos.Booking.BookingFilter;
 import com.example.backend.dtos.Booking.BookingResponse;
 import com.example.backend.dtos.Booking.EditBookingRequest;
+import com.example.backend.exception.ErrorCreator;
 import com.example.backend.service.BookingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -33,6 +33,7 @@ public class ObjectMapper {
                 .status(booking.getStatus())
                 .client(mapUserToUserResponse(booking.getClient()))
                 .owner(mapUserToUserResponse(booking.getSpace().getOwner()))
+                .cost(booking.getCost())
                 .build();
     }
     public static UserResponse mapUserToUserResponse(User user) {

@@ -2,10 +2,7 @@ package com.example.backend.entity;
 
 import com.example.backend.enums.Status;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
@@ -55,12 +52,15 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "client" , nullable = false)
+    @ToString.Exclude
     private User client;
 
     @ManyToOne
     @JoinColumn(name = "space" , nullable = false)
+    @ToString.Exclude
     private Space space;
 
     @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Payment payment;
 }

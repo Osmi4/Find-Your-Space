@@ -8,14 +8,17 @@ import com.example.backend.entity.Booking;
 import com.example.backend.entity.Space;
 import com.example.backend.entity.User;
 import com.example.backend.enums.Availibility;
+import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.mapper.ObjectMapper;
 import com.example.backend.repository.BookingRepository;
 import com.example.backend.repository.SpaceRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.SpaceService;
 import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
@@ -37,7 +40,7 @@ public class SpaceServiceImpl implements SpaceService {
     public SpaceResponse addSpace(AddSpaceRequest addSpaceRequest) {
         Space space = ObjectMapper.mapAddSpaceRequestToSpace(addSpaceRequest);
         if(space == null){
-            throw new RuntimeException("Problem with adding space");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Space not correctly converted");
         }
         spaceRepository.save(space);
         return ObjectMapper.mapSpaceToSpaceResponse(space);
@@ -45,9 +48,10 @@ public class SpaceServiceImpl implements SpaceService {
 
     @Override
     public SpaceResponse editSpace(EditSpaceRequest editSpaceRequest , String spaceId) {
-        Space space = spaceRepository.findBySpaceId(spaceId);
+        Optional<Space> spaceOpt = spaceRepository.findBySpaceId(spaceId);
+        Space space = spaceOpt.orElse(null);
         if (space == null) {
-            throw new RuntimeException("Space not found");
+            throw new ResourceNotFoundException("Space not found", "space", spaceId);
         }
         if (editSpaceRequest.getSpaceName() != null){
             space.setSpaceName(editSpaceRequest.getSpaceName());
@@ -70,7 +74,7 @@ public class SpaceServiceImpl implements SpaceService {
                 space.setOwner(Owner.get());
             }
             else{
-                throw new RuntimeException("Owner not found");
+                throw new ResourceNotFoundException("Owner not found", "owner", editSpaceRequest.getOwnerId());
             }
         }
         spaceRepository.save(space);
@@ -80,13 +84,14 @@ public class SpaceServiceImpl implements SpaceService {
     @Override
     @Transactional
     public SpaceResponse deleteSpace(String id) {
-        Space space = spaceRepository.findBySpaceId(id);
-        if (space == null) {
-            throw new RuntimeException("Space not found");
+        Optional<Space> spaceOpt = spaceRepository.findBySpaceId(id);
+        Space space = spaceOpt.orElse(null);
+        if (space==null) {
+            throw new ResourceNotFoundException("Space not found", "space", id);
         }
         long deleted = spaceRepository.deleteBySpaceId(id);
         if (deleted == 0) {
-            throw new RuntimeException("Problem with deleting space");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "space not deleted");
         }
         return ObjectMapper.mapSpaceToSpaceResponse(space);
     }
@@ -126,17 +131,19 @@ public class SpaceServiceImpl implements SpaceService {
 
     @Override
     public SpaceResponse getSpace(String id) {
-        Space space = spaceRepository.findBySpaceId(id);
+        Optional<Space> spaceOpt = spaceRepository.findBySpaceId(id);
+        Space space = spaceOpt.orElse(null);
         if (space == null) {
-            throw new RuntimeException("Space not found");
+            throw new ResourceNotFoundException("Space not found", "space", id);
         }
         return ObjectMapper.mapSpaceToSpaceResponse(space);
     }
     @Override
     public SpaceResponse changeAvailability(String spaceId, Availibility availability) {
-        Space space = spaceRepository.findBySpaceId(spaceId);
+        Optional<Space> spaceOpt = spaceRepository.findBySpaceId(spaceId);
+        Space space = spaceOpt.orElse(null);
         if (space == null) {
-            throw new RuntimeException("Space not found");
+            throw new ResourceNotFoundException("Space not found", "space", spaceId);
         }
         space.setAvailibility(availability);
         spaceRepository.save(space);
@@ -147,7 +154,7 @@ public class SpaceServiceImpl implements SpaceService {
     public List<SpaceResponse> getMySpaces() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(user == null){
-            throw new RuntimeException("User not found");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "user not log in");
         }
         return spaceRepository.findByOwner_UserId(user.getUserId()).stream().map(ObjectMapper::mapSpaceToSpaceResponse).toList();
     }

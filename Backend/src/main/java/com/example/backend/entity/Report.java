@@ -3,10 +3,7 @@ package com.example.backend.entity;
 import com.example.backend.dtos.Report.ReportStatus;
 import com.example.backend.dtos.Report.ReportType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 import java.util.Optional;
@@ -37,14 +34,17 @@ public class Report {
 
     @ManyToOne
     @JoinColumn(name = "reporter_id", nullable = false)
+    @ToString.Exclude
     private User reporter;
 
     @ManyToOne
     @JoinColumn(name = "reported_user_id", nullable = true)
+    @ToString.Exclude
     private User reportedUser;
 
     @ManyToOne
     @JoinColumn(name = "reported_space_id", nullable = true)
+    @ToString.Exclude
     private Space reportedSpace;
 
 }

@@ -18,12 +18,7 @@ public class MessageController {
 
     @GetMapping("/my-messages")
     public ResponseEntity<List<MessageResponse>> getMyMessages() {
-        try{
-            return ResponseEntity.ok(messageService.getMyMessages());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-
-        }
+        return ResponseEntity.ok(messageService.getMyMessages());
     }
     @GetMapping("/{messageId}")
     public ResponseEntity<MessageResponse> getMessage(@PathVariable String messageId) {
@@ -35,27 +30,15 @@ public class MessageController {
     }
     @PutMapping("/{messageId}")
     public ResponseEntity<MessageResponse> deleteMessage(@PathVariable String messageId) {
-        try {
-            return ResponseEntity.ok(messageService.deleteMessage(messageId));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(messageService.deleteMessage(messageId));
     }
 
     @PostMapping()
     public ResponseEntity<MessageResponse> addMessage(@RequestBody AddMessage message) {
-        try {
-            return ResponseEntity.ok(messageService.addMessage(message));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(messageService.addMessage(message));
     }
     @GetMapping("/{userId}")
     public ResponseEntity<List<MessageResponse>> getMessagesByUserId(@PathVariable String userId) {
-        try {
-            return ResponseEntity.ok(messageService.getMessagesByUserId(userId));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(messageService.getMessagesByUserId(userId));
     }
 }

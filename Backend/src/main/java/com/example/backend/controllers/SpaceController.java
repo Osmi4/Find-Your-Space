@@ -23,64 +23,40 @@ public class SpaceController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addSpace(@Valid @RequestBody AddSpaceRequest addSpaceRequest) {
-        try {
+    public ResponseEntity<SpaceResponse> addSpace(@Valid @RequestBody AddSpaceRequest addSpaceRequest) {
             SpaceResponse spaceResponse = spaceService.addSpace(addSpaceRequest);
             return ResponseEntity.ok(spaceResponse);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ErrorCreator.createError(e.getMessage()));
-        }
     }
     @PutMapping("/{spaceId}")
-    public ResponseEntity<?> editSpace(@PathVariable String spaceId , @RequestBody EditSpaceRequest editSpaceRequest){
-        try{
-            return ResponseEntity.ok(spaceService.editSpace(editSpaceRequest , spaceId));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ErrorCreator.createError(e.getMessage()));
-        }
+    public ResponseEntity<SpaceResponse> editSpace(@PathVariable String spaceId , @RequestBody EditSpaceRequest editSpaceRequest){
+        return ResponseEntity.ok(spaceService.editSpace(editSpaceRequest , spaceId));
     }
     @GetMapping("/all")
-    public ResponseEntity<?> getAllSpaces(){
+    public ResponseEntity<List<SpaceResponse>> getAllSpaces(){
         return ResponseEntity.ok(spaceService.getAllSpaces());
     }
     @GetMapping("/my_spaces")
-    public ResponseEntity<?> getMySpaces(){
-        try{
-            return ResponseEntity.ok(spaceService.getMySpaces());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ErrorCreator.createError(e.getMessage()));
-        }
+    public ResponseEntity<List<SpaceResponse>> getMySpaces(){
+        return ResponseEntity.ok(spaceService.getMySpaces());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteSpace(@PathVariable String id){
-        try {
-            return ResponseEntity.ok(spaceService.deleteSpace(id));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ErrorCreator.createError(e.getMessage()));
-        }
+    public ResponseEntity<SpaceResponse> deleteSpace(@PathVariable String id){
+        return ResponseEntity.ok(spaceService.deleteSpace(id));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getSpace(@PathVariable String id){
-        try {
-            return ResponseEntity.ok(spaceService.getSpace(id));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ErrorCreator.createError(e.getMessage()));
-        }
+    public ResponseEntity<SpaceResponse> getSpace(@PathVariable String id){
+        return ResponseEntity.ok(spaceService.getSpace(id));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> searchSpaces(@RequestBody SpaceFilter filter){
+    public ResponseEntity<List<SpaceResponse>> searchSpaces(@RequestBody SpaceFilter filter){
         return ResponseEntity.ok(spaceService.searchSpaces(filter));
     }
     @PutMapping("/{spaceId}/change_availability")
-    public ResponseEntity<?> changeAvailability(@PathVariable String spaceId, @RequestBody Availibility availability){
-        try {
-            return ResponseEntity.ok(spaceService.changeAvailability(spaceId , availability));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ErrorCreator.createError(e.getMessage()));
-        }
+    public ResponseEntity<SpaceResponse> changeAvailability(@PathVariable String spaceId, @RequestBody Availibility availability){
+        return ResponseEntity.ok(spaceService.changeAvailability(spaceId , availability));
     }
 
 }
