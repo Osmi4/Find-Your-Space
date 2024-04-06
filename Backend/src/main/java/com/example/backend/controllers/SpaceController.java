@@ -1,4 +1,4 @@
-package com.example.backend.dtos.Space;
+package com.example.backend.controllers;
 
 import com.example.backend.dtos.Space.AddSpaceRequest;
 import com.example.backend.dtos.Space.EditSpaceRequest;
