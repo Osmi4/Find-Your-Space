@@ -1,4 +1,4 @@
-package com.example.backend.controllers;
+package com.example.backend.dtos.Space;
 
 import com.example.backend.dtos.Space.AddSpaceRequest;
 import com.example.backend.dtos.Space.EditSpaceRequest;
@@ -35,6 +35,7 @@ public class SpaceController {
     public ResponseEntity<List<SpaceResponse>> getAllSpaces(){
         return ResponseEntity.ok(spaceService.getAllSpaces());
     }
+    //ma wiecej informacji bo to jest tylko dla ownera dla admina wszytskie tutaj
     @GetMapping("/my_spaces")
     public ResponseEntity<List<SpaceResponse>> getMySpaces(){
         return ResponseEntity.ok(spaceService.getMySpaces());

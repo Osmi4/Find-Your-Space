@@ -15,4 +15,6 @@ public class AddBookingRequest {
     private String spaceId;
     private Date startDate;
     private Date endDate;
+    //opis co chcem dodac na space
+    //w userze dodac zeby wziac jego contact info
 }

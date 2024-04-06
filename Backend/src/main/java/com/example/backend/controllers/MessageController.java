@@ -16,6 +16,7 @@ public class MessageController {
         this.messageService = messageService;
     }
 
+    //per user i space
     @GetMapping("/my-messages")
     public ResponseEntity<List<MessageResponse>> getMyMessages() {
         return ResponseEntity.ok(messageService.getMyMessages());

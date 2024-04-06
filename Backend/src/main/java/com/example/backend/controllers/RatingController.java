@@ -16,11 +16,12 @@ import java.util.List;
 @RequestMapping("/api/rating")
 public class RatingController {
     private final RatingService ratingService;
-
+    //uwzglednic ich sortowanie po score
     public RatingController(RatingService ratingService) {
         this.ratingService = ratingService;
     }
 
+    //limit ratingow per space
     @PostMapping("/")
     public ResponseEntity<RatingResponse> addRating(@Valid @RequestBody AddRatingRequest addRatingRequest) {
         return ResponseEntity.ok(ratingService.addRating(addRatingRequest));
@@ -41,6 +42,6 @@ public class RatingController {
         ratingService.deleteRating(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
-
+    //dodac zebny do space Response byl dodany serdni rating
 
 }

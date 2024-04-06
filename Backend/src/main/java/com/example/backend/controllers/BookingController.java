@@ -19,15 +19,18 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
+    //scal te dwie mteody zeby filter byl opcjonalny
     @GetMapping("/my-Bookings")
+    //dodac filter opcjonalnie
     public ResponseEntity<List<BookingResponse>> getMyBookings() {
         return ResponseEntity.ok(bookingService.getMyBookings());
     }
+    //wywalic searche z patha jezeli sie da
     @GetMapping("/search/my-Bookings")
     public ResponseEntity<List<BookingResponse>> searchMyBookings(@RequestBody BookingFilter filter){
         return ResponseEntity.ok(bookingService.getSearchMyBookings(filter));
     }
-
+    ///sorting + pomyslec gdzie to
     @GetMapping("/search/to-my-space/{SpaceId}")
     public ResponseEntity<List<BookingResponse>> searchToMySpace(@PathVariable String SpaceId,@RequestBody BookingFilter filter){
         return ResponseEntity.ok(bookingService.getBookingForSpace(SpaceId , filter));
@@ -49,6 +52,7 @@ public class BookingController {
     public ResponseEntity<BookingResponse> deleteBooking(@PathVariable String id){
         return ResponseEntity.ok(bookingService.deleteBooking(id));
     }
+    
 
 
 }

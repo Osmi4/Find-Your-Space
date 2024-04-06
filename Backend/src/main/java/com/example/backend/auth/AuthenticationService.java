@@ -55,6 +55,7 @@ public class AuthenticationService {
     }
 
     public boolean changePassword(PasswordChange passwordChange) {
+        // ACL to powteirdzenia czy on moze to zrobic + sparwdzenie czy old=old
         String oldPassword = passwordChange.getOldPassword();
         String newPassword = passwordChange.getNewPassword();
         Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();

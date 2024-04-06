@@ -104,6 +104,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingResponse> getMyBookings() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        //do sprawdzenia
         if(user == null){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "user not log in");
         }

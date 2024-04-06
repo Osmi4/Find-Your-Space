@@ -34,7 +34,7 @@ public class ReportController {
     public ResponseEntity<ReportResponse> getReportById(@PathVariable String id){
         return ResponseEntity.ok(reportService.getReportById(id));
     }
-
+    //edycja biznesowych wartosci zmiana statusu zgloszenia
     @PutMapping("/")
     public ResponseEntity<ReportResponse> updateReport(@RequestBody UpdateReportRequest updateReportRequest){
         return ResponseEntity.ok(reportService.updateReport(updateReportRequest));

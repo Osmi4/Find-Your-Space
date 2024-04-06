@@ -19,7 +19,7 @@ import static com.example.backend.enums.Role.ADMIN;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfiguration {
-
+    //dodac ACL(Wojtas)
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthFilter;
 

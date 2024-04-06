@@ -15,6 +15,7 @@ import java.util.Date;
 @Builder
 public class BookingResponse {
     private String bookingId;
+    ///Space Response
     private String spaceId;
     private Date startDate;
     private Date endDate;

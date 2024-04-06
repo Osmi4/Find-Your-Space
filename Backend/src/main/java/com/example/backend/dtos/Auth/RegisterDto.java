@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegisterDto {
+    //wywalic useraname i valid
     private String userName;
     private String email;
     private String password;
-   // private Role role;
     private String contactInfo;
     private String firstName;
     private String lastName;

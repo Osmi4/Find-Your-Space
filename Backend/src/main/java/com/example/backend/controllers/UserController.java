@@ -35,4 +35,5 @@ public class UserController {
         userService.updateUser(id, user);
         return new ResponseEntity("User updated successfully!", HttpStatus.OK);
     }
+    //change user details
 }

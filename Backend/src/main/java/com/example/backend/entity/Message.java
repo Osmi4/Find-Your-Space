@@ -10,6 +10,7 @@ import lombok.*;
 @Entity
 @Table(name = "message", uniqueConstraints = {@UniqueConstraint(columnNames = "message_id")})
 public class Message {
+    //dodac space
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String messageId;

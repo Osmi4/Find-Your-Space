@@ -11,7 +11,7 @@ import java.util.Date;
 public class BookingFilter {
     private Date startDate;
     private Date endDate;
-    private String spaceId;
-    private String ownerId;
+    private String spaceId; ///opcjonalnie pozniej po liscie
+    private String ownerId; //opcjonalie po liscie
     private Status status;
 }
