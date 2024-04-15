@@ -3,6 +3,8 @@ package com.example.backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,7 +27,7 @@ public class Message {
             name = "message_date_time",
             nullable = false
     )
-    private String messageDateTime;
+    private Date messageDateTime;
 
     @Column(
             name = "message_destination_email",

@@ -29,21 +29,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserResponse> getUsersByFilters(UserFilter userFilter) {
-        List<User> users = userRepository.findUsersByFilter(userFilter.getUserName(), userFilter.getUserEmail(), userFilter.getContactInfo(), userFilter.getFirstName(), userFilter.getLastName());
+        List<User> users = userRepository.findUsersByFilter(userFilter.getUserEmail(), userFilter.getContactInfo(), userFilter.getFirstName(), userFilter.getLastName());
         return users.stream().map(this::mapUserToUserResponse).toList();
 
     }
 
     @Override
     public void updateUser(String userId,UpdateUserRequest updateUserRequest) {
-        int affectedRows= userRepository.patchUser(userId, updateUserRequest.getUserName(), updateUserRequest.getUserEmail(), updateUserRequest.getContactInfo(), updateUserRequest.getFirstName(), updateUserRequest.getLastName());
+        int affectedRows= userRepository.patchUser(userId, updateUserRequest.getUserEmail(), updateUserRequest.getContactInfo(), updateUserRequest.getFirstName(), updateUserRequest.getLastName());
         if(affectedRows==0){
             throw new ResourceNotFoundException("User not found!", "userId", userId);
         }
     }
 
     public UserResponse mapUserToUserResponse(User user) {
-        return new UserResponse(user.getUserId(), user.getUsername(), user.getEmail(), user.getContactInfo(),user.getFirstName(),user.getLastName());
+        return new UserResponse(user.getUserId(), user.getEmail(), user.getContactInfo(),user.getFirstName(),user.getLastName());
     }
 
 

@@ -16,11 +16,13 @@ import com.example.backend.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 public class ObjectMapper {
@@ -30,6 +32,8 @@ public class ObjectMapper {
                 .spaceId(booking.getSpace().getSpaceId())
                 .startDate(booking.getStartDateTime())
                 .endDate(booking.getEndDateTime())
+                .dateAdded(booking.getDateAdded())
+                .dateUpdated(booking.getDateUpdated())
                 .status(booking.getStatus())
                 .client(mapUserToUserResponse(booking.getClient()))
                 .owner(mapUserToUserResponse(booking.getSpace().getOwner()))
@@ -40,7 +44,6 @@ public class ObjectMapper {
         return UserResponse.builder()
                 .userId(user.getUserId())
                 .userEmail(user.getEmail())
-                .userName(user.getUsername())
                 .contactInfo(user.getContactInfo())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
@@ -53,6 +56,9 @@ public class ObjectMapper {
                 .endDateTime(addBookingRequest.getEndDate())
                 .cost(price)
                 .status(Status.INQUIRY)
+                .description(addBookingRequest.getDescription())
+                .dateAdded(new Date())
+                .dateUpdated(new Date())
                 .client(client)
                 .space(space)
                 .payment(null)
@@ -65,7 +71,7 @@ public class ObjectMapper {
                 .spaceLocation(addSpaceRequest.getSpaceLocation())
                 .spaceSize(addSpaceRequest.getSpaceSize())
                 .spacePrice(addSpaceRequest.getSpacePrice())
-                .availibility(Availibility.NOT_REALASED)
+                .availibility(Availibility.NOT_RELEASED)
                 .spaceImage(addSpaceRequest.getSpaceImage())
                 .spaceDescription(addSpaceRequest.getSpaceDescription())
                 .spaceType(addSpaceRequest.getSpaceType())
@@ -104,10 +110,18 @@ public class ObjectMapper {
     public static Message mapAddMessageToMessage(AddMessage message, User sender, User receiver) {
         return Message.builder()
                 .messageContent(message.getMessageContent())
-                .messageDateTime(LocalDateTime.now().toString())
+                .messageDateTime(new Date())
                 .messageDestinationEmail(message.getMessageDestinationEmail())
                 .sender(sender)
                 .receiver(receiver)
                 .build();
+    }
+
+    public static List<Pair<Date, Date>> mapBookingsToBookedDates(List<Booking> bookings) {
+        List<Pair<Date, Date>> bookedDates = new ArrayList<>();
+        for (Booking booking : bookings) {
+            bookedDates.add(new Pair<>(booking.getStartDateTime(), booking.getEndDateTime()));
+        }
+        return bookedDates;
     }
 }

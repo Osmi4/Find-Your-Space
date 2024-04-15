@@ -27,6 +27,7 @@ public class AddSpaceRequest {
     @Min(value = 0, message = "Space price must be non-negative.")
     private double spacePrice;
 
+    //tu sie cos doda mondrego
     private String spaceImage;
 
     private String spaceDescription;

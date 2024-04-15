@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -12,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class MessageResponse {
     private String messageId;
     private String messageContent;
-    private String messageDateTime;
+    private Date messageDateTime;
     private String messageDestinationEmail;
     private String senderId;
     private String receiverId;

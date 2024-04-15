@@ -61,4 +61,8 @@ public class Space {
     @ToString.Exclude
     private List<Rating> ratings = new ArrayList<>();
 
+    @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<Booking> bookings = new ArrayList<>();
+
 }

@@ -15,4 +15,6 @@ public interface MessageService {
     List<MessageResponse> getMyMessages();
 
     List<MessageResponse> getMessagesByUserId(String userId);
+
+    MessageResponse updateMessage(String messageId, String message);
 }

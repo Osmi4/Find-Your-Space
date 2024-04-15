@@ -9,11 +9,13 @@ import com.example.backend.mapper.ObjectMapper;
 import com.example.backend.repository.MessageRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.MessageService;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,13 +51,14 @@ public class MessageServiceImpl implements MessageService {
         }
         return ObjectMapper.mapMessageToMessageResponse(message.get());
     }
-
+    @Override
+    @Transactional
     public MessageResponse deleteMessage(String id) {
         Optional<Message> message = messageRepository.findByMessageId(id);
         if(message.isEmpty()) {
             throw new ResourceNotFoundException("Message not found", "space", id);
         }
-        long deleted = messageRepository.deleteByMessageId(id);
+        int deleted = messageRepository.deleteByMessageId(id);
         if(deleted == 0) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "message not deleted");
         }
@@ -77,4 +80,18 @@ public class MessageServiceImpl implements MessageService {
         List<Message> messages = messageRepository.findByReceiver_UserIdOrderByMessageDateTimeAsc(userId);
         return messages.stream().map(ObjectMapper::mapMessageToMessageResponse).toList();
     }
+
+    @Override
+    public MessageResponse updateMessage(String messageId, String message) {
+        Optional<Message> messageOptional = messageRepository.findByMessageId(messageId);
+        if(messageOptional.isEmpty()) {
+            throw new ResourceNotFoundException("Message not found", "space", messageId);
+        }
+        Message messageToUpdate = messageOptional.get();
+        messageToUpdate.setMessageContent(message);
+        messageToUpdate.setMessageDateTime(new Date());
+        Message updatedMessage = messageRepository.save(messageToUpdate);
+        return ObjectMapper.mapMessageToMessageResponse(updatedMessage);
+    }
+
 }

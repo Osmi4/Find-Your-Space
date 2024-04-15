@@ -1,17 +1,13 @@
 package com.example.backend.controllers;
 
-import com.example.backend.dtos.Space.AddSpaceRequest;
-import com.example.backend.dtos.Space.EditSpaceRequest;
-import com.example.backend.dtos.Space.SpaceFilter;
-import com.example.backend.dtos.Space.SpaceResponse;
+import com.example.backend.dtos.Space.*;
 import com.example.backend.enums.Availibility;
-import com.example.backend.exception.ErrorCreator;
 import com.example.backend.service.SpaceService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.processing.Generated;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -27,18 +23,21 @@ public class SpaceController {
             SpaceResponse spaceResponse = spaceService.addSpace(addSpaceRequest);
             return ResponseEntity.ok(spaceResponse);
     }
+
     @PutMapping("/{spaceId}")
-    public ResponseEntity<SpaceResponse> editSpace(@PathVariable String spaceId , @RequestBody EditSpaceRequest editSpaceRequest){
+    public ResponseEntity<SpaceResponse> editSpace(@PathVariable String spaceId , @Valid @RequestBody EditSpaceRequest editSpaceRequest){
         return ResponseEntity.ok(spaceService.editSpace(editSpaceRequest , spaceId));
     }
     @GetMapping("/all")
-    public ResponseEntity<List<SpaceResponse>> getAllSpaces(){
+    public ResponseEntity<List<SpaceResponse>> getAllSpaces()
+    {
         return ResponseEntity.ok(spaceService.getAllSpaces());
     }
     //ma wiecej informacji bo to jest tylko dla ownera dla admina wszytskie tutaj
-    @GetMapping("/my_spaces")
-    public ResponseEntity<List<SpaceResponse>> getMySpaces(){
-        return ResponseEntity.ok(spaceService.getMySpaces());
+
+    @GetMapping("/my-spaces")
+    public ResponseEntity<List<SpaceResponse>> getMySpaces(@Valid @RequestBody SpaceFilter filter){
+        return ResponseEntity.ok(spaceService.getMySpaces(filter));
     }
 
     @DeleteMapping("/{id}")
@@ -52,12 +51,20 @@ public class SpaceController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<SpaceResponse>> searchSpaces(@RequestBody SpaceFilter filter){
+    public ResponseEntity<List<SpaceResponse>> searchSpaces(@Valid @RequestBody SpaceFilter filter){
         return ResponseEntity.ok(spaceService.searchSpaces(filter));
     }
     @PutMapping("/{spaceId}/change_availability")
     public ResponseEntity<SpaceResponse> changeAvailability(@PathVariable String spaceId, @RequestBody Availibility availability){
         return ResponseEntity.ok(spaceService.changeAvailability(spaceId , availability));
+    }
+    @GetMapping("{spaceId}/check-availability")
+    public ResponseEntity<Boolean> checkAvailability(@PathVariable String spaceId, @RequestParam(required = false) Date startDate, @RequestParam(required = false) Date endDate){
+        return ResponseEntity.ok(spaceService.checkAvailabilityForBooking(spaceId , startDate , endDate));
+    }
+    @GetMapping("/{spaceId}/booked-dates")
+    public ResponseEntity<SpaceBookedDates> getBookedDates(@PathVariable String spaceId){
+        return ResponseEntity.ok(spaceService.getBookedDates(spaceId));
     }
 
 }

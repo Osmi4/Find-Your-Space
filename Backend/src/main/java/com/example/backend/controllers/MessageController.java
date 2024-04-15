@@ -16,7 +16,6 @@ public class MessageController {
         this.messageService = messageService;
     }
 
-    //per user i space
     @GetMapping("/my-messages")
     public ResponseEntity<List<MessageResponse>> getMyMessages() {
         return ResponseEntity.ok(messageService.getMyMessages());
@@ -29,11 +28,10 @@ public class MessageController {
             return ResponseEntity.badRequest().build();
         }
     }
-    @PutMapping("/{messageId}")
+    @DeleteMapping("/{messageId}")
     public ResponseEntity<MessageResponse> deleteMessage(@PathVariable String messageId) {
         return ResponseEntity.ok(messageService.deleteMessage(messageId));
     }
-
     @PostMapping()
     public ResponseEntity<MessageResponse> addMessage(@RequestBody AddMessage message) {
         return ResponseEntity.ok(messageService.addMessage(message));
@@ -41,5 +39,9 @@ public class MessageController {
     @GetMapping("/{userId}")
     public ResponseEntity<List<MessageResponse>> getMessagesByUserId(@PathVariable String userId) {
         return ResponseEntity.ok(messageService.getMessagesByUserId(userId));
+    }
+    @PutMapping("/{messageId}")
+    public ResponseEntity<MessageResponse> updateMessage(@PathVariable String messageId, @RequestBody String message) {
+        return ResponseEntity.ok(messageService.updateMessage(messageId, message));
     }
 }

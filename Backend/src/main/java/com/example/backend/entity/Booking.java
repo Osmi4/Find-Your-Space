@@ -50,13 +50,19 @@ public class Booking {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column(
+            name = "description",
+            nullable = true
+    )
+    private String description;
+
     @ManyToOne
-    @JoinColumn(name = "client" , nullable = false)
+    @JoinColumn(name = "client_id" , nullable = false)
     @ToString.Exclude
     private User client;
 
     @ManyToOne
-    @JoinColumn(name = "space" , nullable = false)
+    @JoinColumn(name = "space_id" , nullable = false)
     @ToString.Exclude
     private Space space;
 

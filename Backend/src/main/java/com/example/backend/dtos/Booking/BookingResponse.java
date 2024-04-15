@@ -23,4 +23,6 @@ public class BookingResponse {
     private UserResponse client;
     private UserResponse owner;
     private double cost;
+    private Date dateAdded;
+    private Date dateUpdated;
 }

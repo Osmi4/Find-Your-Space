@@ -4,6 +4,7 @@ public enum Status {
     INQUIRY,
     ACCEPTED,
     COMPLETED,
-    CANCELLED
+    CANCELLED,
+    REJECTED
 
 }
