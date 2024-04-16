@@ -44,7 +44,7 @@ public class SpaceServiceImpl implements SpaceService {
         if(result == null){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Space not saved");
         }
-        SpaceResponse spaceResponse = ObjectMapper.mapSpaceToSpaceResponse(space);
+        SpaceResponse spaceResponse = ObjectMapper.mapSpaceToSpaceResponse(result);
         if(spaceResponse == null){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Space not correctly converted");
         }
