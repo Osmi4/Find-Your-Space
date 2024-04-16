@@ -203,14 +203,19 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    private List<Booking> doFilter(BookingFilter bookingFilter , Optional<User> userOpt , Optional<Space> spaceOpt) {
+    List<Booking> doFilter(BookingFilter bookingFilter, Optional<User> userOpt, Optional<Space> spaceOpt) {
         String clientId;
         if(userOpt.isPresent()){
             User user = userOpt.get();
             clientId = user.getUserId();
         }
         else{
-            clientId = bookingFilter.getClientId();
+            if(bookingFilter.getClientId()!=null){
+                clientId = bookingFilter.getClientId();
+            }
+            else{
+                clientId = null;
+            }
         }
         if(spaceOpt.isPresent()){
             Space space = spaceOpt.get();
@@ -223,4 +228,5 @@ public class BookingServiceImpl implements BookingService {
         }
         return bookings;
     }
+
 }
