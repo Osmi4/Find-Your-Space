@@ -4,7 +4,9 @@ import LoginPage from './pages/LoginPage';
 import { Route,Routes } from 'react-router-dom';
 import Nav from "./Nav";
 import HomePage from "./pages/HomePage";
-
+import FindSpacePage from "./pages/FindSpacePage";
+import SpacePage from "./pages/SpacePage";
+import ReviewsPage from "./pages/ReviewsPage";
 function App() {
   const navigate = useNavigate();
 
@@ -16,6 +18,9 @@ function App() {
             <Route path="/" element={<HomePage/>}/>    
             <Route path="/login"  element={<LoginPage/>} />
             <Route path="/signup"  element={<LoginPage/>} />
+            <Route path="/find"  element={<FindSpacePage/>} />
+            <Route path="space/:id"  element={<SpacePage/>} />
+            <Route path="space/:id/reviews" element={<ReviewsPage/>} />
           </Routes>
         </div>
         {/* put the footer */}
