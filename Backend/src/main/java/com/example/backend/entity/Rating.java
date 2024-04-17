@@ -10,7 +10,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "rating" , uniqueConstraints = {@UniqueConstraint(columnNames = "email")})
+@Table(name = "rating" , uniqueConstraints = {@UniqueConstraint(columnNames = "ratingId")})
 public class Rating {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
