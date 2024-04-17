@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Stripe Payment</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        /* Your CSS code here */
+        .payment-form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .card-element {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .btn-submit {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-submit:hover {
+            background-color: #0056b3;
+        }
+
+        .form-error {
+            color: #dc3545;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<form action="/api/payment/charge" method="post" id="payment-form" class="payment-form">
+    <div class="form-group">
+        <label for="amount" class="form-label">Amount (in cents):</label>
+        <input type="number" id="amount" name="amount" class="form-input" value="1000">
+    </div>
+    <div class="form-group">
+        <label for="card-element" class="form-label">
+            Credit or debit card
+        </label>
+        <div id="card-element" class="card-element">
+            <!-- A Stripe Element will be inserted here. -->
+        </div>
+
+        <!-- Used to display form errors. -->
+        <div id="card-errors" class="form-error" role="alert"></div>
+    </div>
+    <button type="submit" class="btn-submit">Submit Payment</button>
+</form>
+
+<script>
+        // Set your publishable key
+        var stripe = Stripe('pk_test_51P6JyDK9FeT1ROkk2JzoEa4G4qBbXmUtagpyHkfd66m1HOMzjIU1SG9SXK8x1vw5jYMjf28MNH1G6moOZWBH14kq00SZOdkcRL');
+
+        // Create an instance of Elements
+        var elements = stripe.elements();
+
+        // Create an instance of the card Element
+        var card = elements.create('card');
+
+        // Add an instance of the card Element into the `card-element` div
+        card.mount('#card-element');
+
+        // Handle real-time validation errors from the card Element
+        card.addEventListener('change', function (event) {
+            var displayError = document.getElementById('card-errors');
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+
+        // Handle form submission
+        var form = document.getElementById('payment-form');
+
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            stripe.createToken(card).then(function (result) {
+                if (result.error) {
+                    // Inform the user if there was an error
+                    var errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = result.error.message;
+
+                } else {
+                    // Send the token to your server
+                    console.log(result);
+                    stripeTokenHandler(result.token);
+                }
+            });
+        });
+
+        // Submit the token to your server
+
+function stripeTokenHandler(token) {
+    var form = document.getElementById('payment-form');
+    var amountInput = document.getElementById('amount');
+    var amount = amountInput.value;
+    var data = {
+        token: token.id,
+        amount: amount // Include the amount in the data sent to your server
+    };
+
+    fetch('/api/payment/charge', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    }).then(response => {
+        if (response.ok) {
+            // Payment was successful, show a success message
+            window.alert('Payment successful!'); // Display a popup with success info
+        } else {
+            // Payment failed, show an error message
+            window.alert('Payment failed. Please try again.'); // Display a popup with error info
+        }
+    }).catch(error => {
+        // Handle error
+    });
+}
+
+    </script>
+</body>
+
+
+</html>
