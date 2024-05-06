@@ -5,6 +5,8 @@ import com.example.backend.dtos.Booking.BookingFilter;
 import com.example.backend.dtos.Booking.BookingResponse;
 import com.example.backend.dtos.Booking.EditBookingRequest;
 import com.example.backend.enums.Status;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,13 +20,13 @@ public interface BookingService {
 
     BookingResponse deleteBooking(String id);
 
-    List<BookingResponse> getMyBookings();
+    Page<BookingResponse> getMyBookings(Pageable pageable);
 
-    List<BookingResponse> getSearchMyBookings(Optional<BookingFilter> filter);
+    Page<BookingResponse> getSearchMyBookings(Optional<BookingFilter> filter , Pageable pageable);
 
-    List<BookingResponse> getBookingForSpace(String spaceId, Optional<BookingFilter> filter);
+    Page<BookingResponse> getBookingForSpace(String spaceId, Optional<BookingFilter> filter , Pageable pageable);
 
-    List<BookingResponse> getSearchAllBookings(Optional<BookingFilter> filter);
+    Page<BookingResponse> getSearchAllBookings(Optional<BookingFilter> filter, Pageable pageable);
 
     BookingResponse updateBookingStatus(Status status, String id);
 }

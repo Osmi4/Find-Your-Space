@@ -3,6 +3,8 @@ package com.example.backend.repository;
 import com.example.backend.dtos.Report.ReportStatus;
 import com.example.backend.dtos.Report.ReportType;
 import com.example.backend.entity.Report;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,8 +21,9 @@ public interface ReportRepository extends JpaRepository<Report, String> {
             "(:reportType IS NULL OR r.reportType = :reportType) AND " +
             "(:reportStatus IS NULL OR r.reportStatus = :reportStatus) "
     )
-    List<Report> findReportsByFilter(
+    Page<Report> findReportsByFilter(
             @Param("reportType") ReportType reportType,
-            @Param("reportStatus") ReportStatus reportStatus
+            @Param("reportStatus") ReportStatus reportStatus,
+            Pageable pageable
     );
 }

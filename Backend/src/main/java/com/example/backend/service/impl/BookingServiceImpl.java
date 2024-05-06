@@ -16,6 +16,8 @@ import com.example.backend.repository.UserRepository;
 import com.example.backend.service.BookingService;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -116,33 +118,36 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingResponse> getMyBookings() {
+    public Page<BookingResponse> getMyBookings(Pageable pageable) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         //do sprawdzenia
         if(user == null){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "user not log in");
         }
         else{
-            List<Booking> bookings = bookingRepository.findByClient_UserId(user.getUserId());
-            return bookings.stream().map(ObjectMapper::mapBookingToBookingResponse).toList();
+            //List<Booking> bookings = bookingRepository.findByClient_UserId(user.getUserId());
+            Page<Booking> bookings = bookingRepository.findByClient_UserId(user.getUserId(), pageable);
+            //return bookings.stream().map(ObjectMapper::mapBookingToBookingResponse).toList();
+            return bookings.map(ObjectMapper::mapBookingToBookingResponse);
         }
     }
 
     @Override
-    public List<BookingResponse> getSearchMyBookings(Optional<BookingFilter> filterOpt) {
+    public Page<BookingResponse> getSearchMyBookings(Optional<BookingFilter> filterOpt , Pageable pageable) {
         if(filterOpt.isEmpty()) {
-            return getMyBookings();
+            return getMyBookings(pageable);
         }
         else{
             BookingFilter filter = filterOpt.get();
             User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            List<Booking> bookings = doFilter(filter , Optional.of(user) , Optional.empty());
-            return bookings.stream().map(ObjectMapper::mapBookingToBookingResponse).toList();
+            Page<Booking> bookings = doFilter(filter , Optional.of(user) , Optional.empty() , pageable);
+            //return bookings.stream().map(ObjectMapper::mapBookingToBookingResponse).toList();
+            return bookings.map(ObjectMapper::mapBookingToBookingResponse);
         }
     }
 
     @Override
-    public List<BookingResponse> getBookingForSpace(String spaceId, Optional<BookingFilter> filter) {
+    public Page<BookingResponse> getBookingForSpace(String spaceId, Optional<BookingFilter> filter , Pageable pageable) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(user == null) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "user not log in");
@@ -153,24 +158,27 @@ public class BookingServiceImpl implements BookingService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "space not found or not owned by user");
         }
         if(filter.isEmpty()){
-            List<Booking> bookings = bookingRepository.findBySpace_SpaceId(spaceId);
-            return bookings.stream().map(ObjectMapper::mapBookingToBookingResponse).toList();
+            //List<Booking> bookings = bookingRepository.findBySpace_SpaceId(spaceId);
+            //return bookings.stream().map(ObjectMapper::mapBookingToBookingResponse).toList();
+            return bookingRepository.findBySpace_SpaceId(spaceId, pageable).map(ObjectMapper::mapBookingToBookingResponse);
         }
         else{
-            List<Booking> bookings = doFilter(filter.get() , Optional.empty() , Optional.of(space));
-            return bookings.stream().map(ObjectMapper::mapBookingToBookingResponse).toList();
+            //List<Booking> bookings = doFilter(filter.get() , Optional.empty() , Optional.of(space));
+            //return bookings.stream().map(ObjectMapper::mapBookingToBookingResponse).toList();
+            return doFilter(filter.get() , Optional.empty() , Optional.of(space) , pageable).map(ObjectMapper::mapBookingToBookingResponse);
         }
     }
 
     @Override
-    public List<BookingResponse> getSearchAllBookings(Optional<BookingFilter> filter) {
+    public Page<BookingResponse> getSearchAllBookings(Optional<BookingFilter> filter , Pageable pageable) {
         if(filter.isEmpty()) {
-            List<Booking> bookings = bookingRepository.findAll();
-            return bookings.stream().map(ObjectMapper::mapBookingToBookingResponse).toList();
+            Page<Booking> bookings = bookingRepository.findAll(pageable);
+            return bookings.map(ObjectMapper::mapBookingToBookingResponse);
         }
         else{
-            List<Booking> bookings = doFilter(filter.get() , Optional.empty() , Optional.empty());
-            return bookings.stream().map(ObjectMapper::mapBookingToBookingResponse).toList();
+            Page<Booking> bookings = doFilter(filter.get() , Optional.empty() , Optional.empty() , pageable);
+            //return bookings.stream().map(ObjectMapper::mapBookingToBookingResponse).toList();
+            return bookings.map(ObjectMapper::mapBookingToBookingResponse);
         }
     }
 
@@ -203,7 +211,7 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    List<Booking> doFilter(BookingFilter bookingFilter, Optional<User> userOpt, Optional<Space> spaceOpt) {
+    Page<Booking> doFilter(BookingFilter bookingFilter, Optional<User> userOpt, Optional<Space> spaceOpt , Pageable pageable) {
         String clientId;
         if(userOpt.isPresent()){
             User user = userOpt.get();
@@ -222,11 +230,7 @@ public class BookingServiceImpl implements BookingService {
             bookingFilter.setOwnerId(space.getOwner().getUserId());
             bookingFilter.setSpaceId(space.getSpaceId());
         }
-        List<Booking> bookings = bookingRepository.filterQuery(bookingFilter.getStartDate(), bookingFilter.getEndDate(), clientId, bookingFilter.getOwnerId(), bookingFilter.getSpaceId());
-        if(bookingFilter.getStatus() != null) {
-            bookings = bookings.stream().filter(booking -> booking.getStatus().equals(bookingFilter.getStatus())).toList();
-        }
-        return bookings;
+        return bookingRepository.filterQuery(bookingFilter.getStartDate(), bookingFilter.getEndDate(), clientId, bookingFilter.getOwnerId(), bookingFilter.getSpaceId() , bookingFilter.getStatus() , pageable);
     }
 
 }

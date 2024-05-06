@@ -8,6 +8,8 @@ import com.example.backend.entity.User;
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,9 +30,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponse> getUsersByFilters(UserFilter userFilter) {
-        List<User> users = userRepository.findUsersByFilter(userFilter.getUserEmail(), userFilter.getContactInfo(), userFilter.getFirstName(), userFilter.getLastName());
-        return users.stream().map(this::mapUserToUserResponse).toList();
+    public Page<UserResponse> getUsersByFilters(UserFilter userFilter, Pageable pageable) {
+//        List<User> users = userRepository.findUsersByFilter(userFilter.getUserEmail(), userFilter.getContactInfo(), userFilter.getFirstName(), userFilter.getLastName());
+//        return users.stream().map(this::mapUserToUserResponse).toList();
+        return userRepository.findUsersByFilter(userFilter.getUserEmail(), userFilter.getContactInfo(), userFilter.getFirstName(), userFilter.getLastName(), pageable).map(this::mapUserToUserResponse);
 
     }
 

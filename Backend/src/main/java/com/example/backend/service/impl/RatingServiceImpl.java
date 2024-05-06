@@ -16,6 +16,8 @@ import com.example.backend.repository.SpaceRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.RatingService;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -82,12 +84,16 @@ public class RatingServiceImpl implements RatingService {
 
 
     @Override
-    public List<RatingResponse> getRatingsByFilters(RatingFilter ratingFilter) {
-        return ratingRepository.findRatingsByFilter(ratingFilter.getSpaceId(), ratingFilter.getOwnerId())
-                .stream()
-                .map(this::mapRatingToRatingResponse)
-                .toList();
+    public Page<RatingResponse> getRatingsByFilters(RatingFilter ratingFilter, Pageable pageable) {
+        return ratingRepository.findRatingsByFilter(ratingFilter.getSpaceId(), ratingFilter.getOwnerId(), pageable)
+                .map(this::mapRatingToRatingResponse);
     }
+//        return ratingRepository.findRatingsByFilter(ratingFilter.getSpaceId(), ratingFilter.getOwnerId())
+//                .stream()
+//                .map(this::mapRatingToRatingResponse)
+//                .toList();
+
+
 
     public Rating mapRatingRequestToRating(AddRatingRequest addRatingRequest) {
         Rating rating = new Rating();

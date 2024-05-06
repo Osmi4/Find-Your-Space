@@ -4,6 +4,8 @@ import com.example.backend.dtos.Report.AddReportRequest;
 import com.example.backend.dtos.Report.ReportFilter;
 import com.example.backend.dtos.Report.ReportResponse;
 import com.example.backend.dtos.Report.UpdateReportRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -12,7 +14,7 @@ public interface ReportService {
 
     ReportResponse getReportById(String id);
 
-    List<ReportResponse> getReportsByFilters(ReportFilter reportFilter);
+    Page<ReportResponse> getReportsByFilters(ReportFilter reportFilter, Pageable pageable);
 
     ReportResponse updateReport(UpdateReportRequest updateReportRequest);
 

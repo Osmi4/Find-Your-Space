@@ -6,6 +6,9 @@ import com.example.backend.dtos.Report.ReportResponse;
 import com.example.backend.dtos.Report.UpdateReportRequest;
 import com.example.backend.service.ReportService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,9 +29,10 @@ public class ReportController {
         return new ResponseEntity(reportService.addReport(addReportRequest), HttpStatus.CREATED);
     }
     @GetMapping("/")
-    public ResponseEntity<List<ReportResponse>> getReports(@RequestBody ReportFilter reportFilter){
-        System.out.println("reportFilter");
-        return ResponseEntity.ok(reportService.getReportsByFilters(reportFilter));
+    public ResponseEntity<Page<ReportResponse>> getReports(@RequestBody ReportFilter reportFilter, @RequestParam(defaultValue = "0") int page,
+                                                           @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(reportService.getReportsByFilters(reportFilter, pageable));
     }
     @GetMapping("/{id}")
     public ResponseEntity<ReportResponse> getReportById(@PathVariable String id){

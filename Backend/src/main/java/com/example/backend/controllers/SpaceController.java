@@ -4,6 +4,9 @@ import com.example.backend.dtos.Space.*;
 import com.example.backend.enums.Availibility;
 import com.example.backend.service.SpaceService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,15 +32,19 @@ public class SpaceController {
         return ResponseEntity.ok(spaceService.editSpace(editSpaceRequest , spaceId));
     }
     @GetMapping("/all")
-    public ResponseEntity<List<SpaceResponse>> getAllSpaces()
+    public ResponseEntity<Page<SpaceResponse>> getAllSpaces(@RequestParam(defaultValue = "0") int page,
+                                                            @RequestParam(defaultValue = "10") int size)
     {
-        return ResponseEntity.ok(spaceService.getAllSpaces());
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(spaceService.getAllSpaces(pageable));
     }
     //ma wiecej informacji bo to jest tylko dla ownera dla admina wszytskie tutaj
 
     @GetMapping("/my-spaces")
-    public ResponseEntity<List<SpaceResponse>> getMySpaces(@Valid @RequestBody SpaceFilter filter){
-        return ResponseEntity.ok(spaceService.getMySpaces(filter));
+    public ResponseEntity<Page<SpaceResponse>> getMySpaces(@Valid @RequestBody SpaceFilter filter, @RequestParam(defaultValue = "0") int page,
+                                                           @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(spaceService.getMySpaces(filter , pageable));
     }
 
     @DeleteMapping("/{id}")
@@ -51,8 +58,10 @@ public class SpaceController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<SpaceResponse>> searchSpaces(@Valid @RequestBody SpaceFilter filter){
-        return ResponseEntity.ok(spaceService.searchSpaces(filter));
+    public ResponseEntity<Page<SpaceResponse>> searchSpaces(@Valid @RequestBody SpaceFilter filter, @RequestParam(defaultValue = "0") int page,
+                                                            @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(spaceService.searchSpaces(filter, pageable));
     }
     @PutMapping("/{spaceId}/change_availability")
     public ResponseEntity<SpaceResponse> changeAvailability(@PathVariable String spaceId, @RequestBody Availibility availability){

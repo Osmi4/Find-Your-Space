@@ -10,6 +10,8 @@ import com.example.backend.repository.MessageRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.MessageService;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -66,19 +68,21 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<MessageResponse> getMyMessages() {
+    public Page<MessageResponse> getMyMessages(Pageable pageable) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(user == null) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "user not log in");
         }
-        List<Message> messages = messageRepository.findByReceiver_UserId(user.getUserId());
-        return messages.stream().map(ObjectMapper::mapMessageToMessageResponse).toList();
+        //List<Message> messages = messageRepository.findByReceiver_UserId(user.getUserId());
+        //return messages.stream().map(ObjectMapper::mapMessageToMessageResponse).toList();
+        return messageRepository.findByReceiver_UserId(user.getUserId(), pageable).map(ObjectMapper::mapMessageToMessageResponse);
     }
 
     @Override
-    public List<MessageResponse> getMessagesByUserId(String userId) {
-        List<Message> messages = messageRepository.findByReceiver_UserIdOrderByMessageDateTimeAsc(userId);
-        return messages.stream().map(ObjectMapper::mapMessageToMessageResponse).toList();
+    public Page<MessageResponse> getMessagesByUserId(String userId, Pageable pageable) {
+        Page<Message> messages = messageRepository.findByReceiver_UserIdOrderByMessageDateTimeAsc(userId , pageable);
+        //return messages.stream().map(ObjectMapper::mapMessageToMessageResponse).toList();
+        return messageRepository.findByReceiver_UserIdOrderByMessageDateTimeAsc(userId, pageable).map(ObjectMapper::mapMessageToMessageResponse);
     }
 
     @Override

@@ -8,6 +8,8 @@ import com.example.backend.repository.ReportRepository;
 import com.example.backend.repository.SpaceRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.ReportService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -52,9 +54,10 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public List<ReportResponse> getReportsByFilters(ReportFilter reportFilter) {
-        List<Report> reports = reportRepository.findReportsByFilter(reportFilter.getReportType(), reportFilter.getReportStatus());
-        return reports.stream().map(this::mapReportToReportResponse).toList();
+    public Page<ReportResponse> getReportsByFilters(ReportFilter reportFilter, Pageable pageable) {
+//        List<Report> reports = reportRepository.findReportsByFilter(reportFilter.getReportType(), reportFilter.getReportStatus());
+//        return reports.stream().map(this::mapReportToReportResponse).toList();
+        return reportRepository.findReportsByFilter(reportFilter.getReportType(), reportFilter.getReportStatus(), pageable).map(this::mapReportToReportResponse);
     }
 
     @Override

@@ -3,6 +3,9 @@ package com.example.backend.controllers;
 import com.example.backend.dtos.Message.AddMessage;
 import com.example.backend.dtos.Message.MessageResponse;
 import com.example.backend.service.MessageService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +20,10 @@ public class MessageController {
     }
 
     @GetMapping("/my-messages")
-    public ResponseEntity<List<MessageResponse>> getMyMessages() {
-        return ResponseEntity.ok(messageService.getMyMessages());
+    public ResponseEntity<Page<MessageResponse>> getMyMessages(@RequestParam(defaultValue = "0") int page,
+                                                               @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(messageService.getMyMessages(pageable));
     }
     @GetMapping("/{messageId}")
     public ResponseEntity<MessageResponse> getMessage(@PathVariable String messageId) {
@@ -37,8 +42,10 @@ public class MessageController {
         return ResponseEntity.ok(messageService.addMessage(message));
     }
     @GetMapping("/{userId}")
-    public ResponseEntity<List<MessageResponse>> getMessagesByUserId(@PathVariable String userId) {
-        return ResponseEntity.ok(messageService.getMessagesByUserId(userId));
+    public ResponseEntity<Page<MessageResponse>> getMessagesByUserId(@PathVariable String userId, @RequestParam(defaultValue = "0") int page,
+                                                                     @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(messageService.getMessagesByUserId(userId , pageable));
     }
     @PutMapping("/{messageId}")
     public ResponseEntity<MessageResponse> updateMessage(@PathVariable String messageId, @RequestBody String message) {

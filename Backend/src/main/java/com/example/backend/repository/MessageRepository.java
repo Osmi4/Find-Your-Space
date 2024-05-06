@@ -1,6 +1,8 @@
 package com.example.backend.repository;
 
 import com.example.backend.entity.Message;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,7 +13,8 @@ import java.util.Optional;
 
 public interface MessageRepository extends JpaRepository<Message, String> {
 
-    List<Message> findByReceiver_UserId(String userId);
+    //List<Message> findByReceiver_UserId(String userId);
+
 
     Optional<Message> findByMessageId(String messageId);
 
@@ -21,7 +24,14 @@ public interface MessageRepository extends JpaRepository<Message, String> {
     int deleteByMessageId(String messageId);
 
 
-    List<Message> findByReceiver_UserIdOrderByMessageDateTimeAsc(String userId);
+    //List<Message> findByReceiver_UserIdOrderByMessageDateTimeAsc(String userId);
+
+
+    @Query("select m from Message m where m.receiver.userId = ?1")
+    Page<Message> findByReceiver_UserId(String userId, Pageable pageable);
+
+    @Query("select m from Message m where m.receiver.userId = ?1 order by m.messageDateTime")
+    Page<Message> findByReceiver_UserIdOrderByMessageDateTimeAsc(String userId, Pageable pageable);
 
 
 }

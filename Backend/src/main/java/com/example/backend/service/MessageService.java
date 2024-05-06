@@ -2,6 +2,8 @@ package com.example.backend.service;
 
 import com.example.backend.dtos.Message.AddMessage;
 import com.example.backend.dtos.Message.MessageResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -12,9 +14,9 @@ public interface MessageService {
 
     MessageResponse deleteMessage(String id);
 
-    List<MessageResponse> getMyMessages();
+    Page<MessageResponse> getMyMessages(Pageable pageable);
 
-    List<MessageResponse> getMessagesByUserId(String userId);
+    Page<MessageResponse> getMessagesByUserId(String userId, Pageable pageable);
 
     MessageResponse updateMessage(String messageId, String message);
 }

@@ -6,6 +6,9 @@ import com.example.backend.dtos.Rating.RatingResponse;
 import com.example.backend.service.RatingService;
 import jakarta.validation.Valid;
 import org.apache.coyote.Response;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +31,10 @@ public class RatingController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<RatingResponse>>getRatingsByFilter(@RequestBody RatingFilter ratingFilter){
-        return ResponseEntity.ok(ratingService.getRatingsByFilters(ratingFilter));
+    public ResponseEntity<Page<RatingResponse>>getRatingsByFilter(@RequestBody RatingFilter ratingFilter, @RequestParam(defaultValue = "0") int page,
+                                                                  @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(ratingService.getRatingsByFilters(ratingFilter, pageable));
     }
 
     @GetMapping("/{id}")

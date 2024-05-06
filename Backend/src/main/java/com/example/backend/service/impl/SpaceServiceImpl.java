@@ -13,6 +13,8 @@ import com.example.backend.repository.SpaceRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.SpaceService;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -103,8 +105,8 @@ public class SpaceServiceImpl implements SpaceService {
         return ObjectMapper.mapSpaceToSpaceResponse(space);
     }
     @Override
-    public List<SpaceResponse> searchSpaces(SpaceFilter filter) {
-        return doFilter(filter , Optional.empty()).stream().map(ObjectMapper::mapSpaceToSpaceResponse).toList();
+    public Page<SpaceResponse> searchSpaces(SpaceFilter filter , Pageable pageable) {
+        return doFilter(filter , Optional.empty() , pageable).map(ObjectMapper::mapSpaceToSpaceResponse);
     }
     private boolean checkSpaceAvailability(Space space, Date startDate, Date endDate) {
         List<Booking> bookings = bookingRepository.findBySpace_SpaceId(space.getSpaceId());
@@ -137,14 +139,16 @@ public class SpaceServiceImpl implements SpaceService {
         return ObjectMapper.mapSpaceToSpaceResponse(space);
     }
     @Override
-    public List<SpaceResponse> getMySpaces(SpaceFilter filter) {
+    public Page<SpaceResponse> getMySpaces(SpaceFilter filter, Pageable pageable) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return doFilter(filter , Optional.ofNullable(user.getUserId())).stream().map(ObjectMapper::mapSpaceToSpaceResponse).toList();
+        //return doFilter(filter , Optional.ofNullable(user.getUserId()) , pageable).stream().map(ObjectMapper::mapSpaceToSpaceResponse).toList();
+        return doFilter(filter , Optional.ofNullable(user.getUserId()) , pageable).map(ObjectMapper::mapSpaceToSpaceResponse);
     }
 
     @Override
-    public List<SpaceResponse> getAllSpaces() {
-        return spaceRepository.findAll().stream().map(ObjectMapper::mapSpaceToSpaceResponse).toList();
+    public Page<SpaceResponse> getAllSpaces(Pageable pageable) {
+        //return spaceRepository.findAll().stream().map(ObjectMapper::mapSpaceToSpaceResponse).toList();
+        return spaceRepository.findAll(pageable).map(ObjectMapper::mapSpaceToSpaceResponse);
     }
 
     @Override
@@ -168,24 +172,19 @@ public class SpaceServiceImpl implements SpaceService {
         }
         return checkSpaceAvailability(space, startDate, endDate);
     }
-    private List<Space> doFilter(SpaceFilter filter, Optional<String> userId) {
-        List<Space> spaces = spaceRepository.findSpacesByPriceRangeAndSizeLimitForOwner(filter.getSpacePriceUpperBound(), filter.getSpacePriceLowerBound() ,
-                filter.getSpacePriceUpperBound(), filter.getSpaceSizeLowerBound(), userId.orElse(null));
-        if (filter.getSpaceName() != null) {
-            spaces.removeIf(space -> !space.getSpaceName().contains(filter.getSpaceName()));
-        }
-        if(filter.getSpaceLocation()!=null){
-            spaces.removeIf(space -> !space.getSpaceLocation().contains(filter.getSpaceLocation()));
-        }
-        if(filter.getSpaceType()!=null){
-            spaces.removeIf(space -> !space.getSpaceType().equals(filter.getSpaceType()));
-        }
-        if(filter.getAvailability()!=null){
-            spaces.removeIf(space -> !space.getAvailibility().equals(filter.getAvailability()));
-        }
-        if(filter.getStartDate()!=null && filter.getEndDate()!=null){
-            spaces.removeIf(space -> !checkSpaceAvailability(space, filter.getStartDate(), filter.getEndDate()));
-        }
+    private Page<Space> doFilter(SpaceFilter filter, Optional<String> userId , Pageable pageable) {
+        Page<Space> spaces = spaceRepository.findSpacesByFilters(
+                filter.getSpacePriceUpperBound(), filter.getSpacePriceLowerBound(),
+                filter.getSpaceSizeUpperBound(), filter.getSpaceSizeLowerBound(),
+                userId.orElse(null),
+                filter.getSpaceName(),
+                filter.getSpaceLocation(),
+                filter.getSpaceType(),
+                filter.getAvailability(),
+                pageable);
+            if(filter.getStartDate()!=null && filter.getEndDate()!=null){
+                spaces = (Page<Space>) spaces.filter(space -> checkSpaceAvailability(space, filter.getStartDate(), filter.getEndDate()));
+            }
         return spaces;
     }
 }

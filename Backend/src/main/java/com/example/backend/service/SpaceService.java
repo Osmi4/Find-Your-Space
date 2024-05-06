@@ -4,6 +4,8 @@ import com.example.backend.dtos.Space.*;
 import com.example.backend.entity.Space;
 import com.example.backend.enums.Availibility;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Date;
 import java.util.List;
@@ -16,15 +18,15 @@ public interface SpaceService {
 
     SpaceResponse deleteSpace(String id);
 
-    List<SpaceResponse> searchSpaces(SpaceFilter filter);
+    Page<SpaceResponse> searchSpaces(SpaceFilter filter , Pageable pageable);
 
     SpaceResponse getSpace(String id);
 
     SpaceResponse changeAvailability(String spaceId, Availibility availability);
 
-    List<SpaceResponse> getMySpaces(SpaceFilter filter);
+    Page<SpaceResponse> getMySpaces(SpaceFilter filter, Pageable pageable);
 
-    List<SpaceResponse> getAllSpaces();
+    Page<SpaceResponse> getAllSpaces(Pageable pageable);
 
     Boolean checkAvailabilityForBooking(String spaceId , Date startDate , Date endDate);
 

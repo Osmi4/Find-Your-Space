@@ -3,6 +3,8 @@ package com.example.backend.repository;
 import com.example.backend.entity.User;
 import jakarta.annotation.Nullable;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -24,11 +26,12 @@ public interface UserRepository extends JpaRepository<User, String> {
             "(:firstName IS NULL OR u.firstName = :firstName) AND " +
             "(:lastName IS NULL OR u.lastName = :lastName)"
     )
-    List<User> findUsersByFilter(
+    Page<User> findUsersByFilter(
             @Param("userEmail") @Nullable String userEmail,
             @Param("contactInfo") @Nullable String contactInfo,
             @Param("firstName") @Nullable String firstName,
-            @Param("lastName") @Nullable String lastName
+            @Param("lastName") @Nullable String lastName,
+            Pageable pageable
     );
 
     @Modifying

@@ -4,9 +4,13 @@ import com.example.backend.dtos.Booking.AddBookingRequest;
 import com.example.backend.dtos.Booking.BookingFilter;
 import com.example.backend.dtos.Booking.BookingResponse;
 import com.example.backend.dtos.Booking.EditBookingRequest;
+import com.example.backend.entity.Booking;
 import com.example.backend.enums.Status;
 import com.example.backend.service.BookingService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,16 +25,23 @@ public class BookingController {
         this.bookingService = bookingService;
     }
     @GetMapping("/all")
-    public ResponseEntity<List<BookingResponse>> searchAllBookings(@Valid @RequestBody Optional<BookingFilter> filter){
-        return ResponseEntity.ok(bookingService.getSearchAllBookings(filter));
+    public ResponseEntity<Page<BookingResponse>> searchAllBookings(@Valid @RequestBody Optional<BookingFilter> filter, @RequestParam(defaultValue = "0") int page,
+                                                                   @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page, size);
+
+        return ResponseEntity.ok(bookingService.getSearchAllBookings(filter , pageable));
     }
     @GetMapping("/my-Bookings")
-    public ResponseEntity<List<BookingResponse>> searchMyBookings(@Valid @RequestBody Optional<BookingFilter> filter){
-        return ResponseEntity.ok(bookingService.getSearchMyBookings(filter));
+    public ResponseEntity<Page<BookingResponse>> searchMyBookings(@Valid @RequestBody Optional<BookingFilter> filter, @RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(bookingService.getSearchMyBookings(filter , pageable));
     }
     @GetMapping("/spaces-owner/{SpaceId}")
-    public ResponseEntity<List<BookingResponse>> searchToMySpace(@PathVariable String SpaceId,@Valid @RequestBody Optional<BookingFilter> filter){
-        return ResponseEntity.ok(bookingService.getBookingForSpace(SpaceId , filter));
+    public ResponseEntity<Page<BookingResponse>> searchToMySpace(@PathVariable String SpaceId,@Valid @RequestBody Optional<BookingFilter> filter , @RequestParam(defaultValue = "0") int page,
+    @RequestParam(defaultValue = "10") int size ){
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(bookingService.getBookingForSpace(SpaceId , filter, pageable));
     }
     @GetMapping("/{id}")
     public ResponseEntity<BookingResponse> getBooking(@PathVariable String id){
