@@ -1,75 +1,107 @@
-//package com.example.backend.service.impl;
-//
-//import com.example.backend.dtos.Report.AddReportRequest;
-//import com.example.backend.dtos.Report.ReportResponse;
-//import com.example.backend.dtos.Report.ReportStatus;
-//import com.example.backend.entity.Report;
-//import com.example.backend.repository.ReportRepository;
-//import com.example.backend.service.ReportService;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.mockito.MockitoAnnotations;
-//
-//import java.util.NoSuchElementException;
-//import java.util.Optional;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//import static org.mockito.ArgumentMatchers.any;
-//import static org.mockito.Mockito.when;
-//
-//public class ReportServiceImplTest {
-//    @Mock
-//    private ReportRepository reportRepository;
-//
-//    @InjectMocks
-//    private ReportService reportService;
-//
-//    @BeforeEach
-//    void setUp() {
-//        MockitoAnnotations.openMocks(this);
-//    }
-//
-//    @Test
-//    void addReport_NullRequest_ExceptionThrown() {
-//        assertThrows(IllegalArgumentException.class, () -> {
-//            reportService.addReport(null);
-//        });
-//    }
-//
-//    @Test
-//    void addReport_ValidRequest_ReportAddedToDatabase() {
-//        AddReportRequest request = new AddReportRequest(/* populate request with data */);
-//        Report savedReport = new Report(/* populate saved report with data */);
-//        when(reportRepository.save(any())).thenReturn(savedReport);
-//
-//        ReportResponse response = reportService.addReport(request);
-//
-//        assertNotNull(response);
-//        assertEquals(savedReport.getReportId(), response.getReportId());
-//        assertEquals(ReportStatus.PENDING, savedReport.getReportStatus());
-//    }
-//
-//    @Test
-//    void getReportById_ValidId_ReportReturned() {
-//        String id = "valid-id";
-//        Report report = new Report(/* populate report with data */);
-//        when(reportRepository.findById(id)).thenReturn(Optional.of(report));
-//
-//        ReportResponse response = reportService.getReportById(id);
-//
-//        assertNotNull(response);
-//        assertEquals(report.getReportId(), response.getReportId());
-//    }
-//
-//    @Test
-//    void getReportById_InvalidId_ExceptionThrown() {
-//        String id = "invalid-id";
-//        when(reportRepository.findById(id)).thenReturn(Optional.empty());
-//
-//        assertThrows(NoSuchElementException.class, () -> {
-//            reportService.getReportById(id);
-//        });
-//    }
-//}
+package com.example.backend.service.impl;
+
+import com.example.backend.auth.AuthenticationResponse;
+import com.example.backend.auth.AuthenticationService;
+import com.example.backend.dtos.Auth.RegisterDto;
+import com.example.backend.dtos.Report.*;
+import com.example.backend.dtos.Space.AddSpaceRequest;
+import com.example.backend.dtos.Space.EditSpaceRequest;
+import com.example.backend.entity.User;
+import com.example.backend.enums.SpaceType;
+import com.example.backend.repository.UserRepository;
+import com.example.backend.service.ReportService;
+import com.example.backend.service.SpaceService;
+import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.ActiveProfiles;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@SpringBootTest
+@ActiveProfiles("test")
+@Transactional
+public class ReportServiceImplTest {
+    @Autowired
+    private SpaceService spaceService;
+    @Autowired
+    private AuthenticationService authenticationService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ReportService reportService;
+
+    private RegisterDto registerDto;
+    private RegisterDto registerDto2;
+
+    @BeforeEach
+    public void setUp() {
+        registerDto = new RegisterDto();
+        registerDto.setEmail("test@ggmail.com");
+        registerDto.setFirstName("John");
+        registerDto.setLastName("Doe");
+        registerDto.setPassword("password");
+        AuthenticationResponse authenticationResponse = authenticationService.register(registerDto);
+        User user = userRepository.findByEmail(registerDto.getEmail()).orElse(null);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        registerDto2 = new RegisterDto();
+        registerDto2.setEmail("test2@ggmail.com");
+        registerDto2.setFirstName("John");
+        registerDto2.setLastName("Doe");
+        registerDto2.setPassword("password");
+        AuthenticationResponse authenticationResponse2 = authenticationService.register(registerDto2);
+    }
+    @Test
+    void addReport_Success(){
+        User user = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
+        AddReportRequest addReportRequest = AddReportRequest.builder()
+                .reportType(ReportType.USER)
+                .reportContent("This is a spam")
+                .reportedId(user.getUserId())
+                .build();
+        ReportResponse reportResponse = reportService.addReport(addReportRequest);
+        assertNotNull(reportResponse);
+        assertEquals(ReportType.USER, reportResponse.getReportType());
+        assertEquals("This is a spam", reportResponse.getReportContent());
+        assertEquals(user.getUserId(), reportResponse.getReportedUser().get().getUserId());
+    }
+
+    @Test
+    void getReportById_Success(){
+        User user = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
+        AddReportRequest addReportRequest = AddReportRequest.builder()
+                .reportType(ReportType.USER)
+                .reportContent("This is a spam")
+                .reportedId(user.getUserId())
+                .build();
+        ReportResponse reportResponse = reportService.addReport(addReportRequest);
+        ReportResponse reportResponse1 = reportService.getReportById(reportResponse.getReportId());
+        assertNotNull(reportResponse1);
+        assertEquals(reportResponse.getReportId(), reportResponse1.getReportId());
+    }
+
+    @Test
+    void updateReport_Success(){
+        User user = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
+        AddReportRequest addReportRequest = AddReportRequest.builder()
+                .reportType(ReportType.USER)
+                .reportContent("This is a spam")
+                .reportedId(user.getUserId())
+                .build();
+        ReportResponse reportResponse = reportService.addReport(addReportRequest);
+        UpdateReportRequest updateReportRequest = UpdateReportRequest.builder()
+                .reportId(reportResponse.getReportId())
+                .reportStatus(ReportStatus.SOLVED)
+                .build();
+        ReportResponse reportResponse1 = reportService.updateReport(updateReportRequest);
+        assertNotNull(reportResponse1);
+        assertEquals(ReportStatus.SOLVED, reportResponse1.getReportStatus());
+    }
+}

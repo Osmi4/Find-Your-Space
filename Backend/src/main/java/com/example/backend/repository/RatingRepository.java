@@ -20,15 +20,12 @@ public interface RatingRepository extends JpaRepository<Rating, String> {
     @Query(value = "DELETE FROM Rating WHERE rating_id = :ratingId", nativeQuery = true)
     int deleteByRatingId(String ratingId);
 
-    @Query("select r from Rating r where r.space.spaceId = ?1 and r.space.owner.userId = ?2")
-    Page<Rating> findRatingsByFilter(@Nullable String spaceId, @Nullable String userId, Pageable pageable);
-//    @Query("SELECT r FROM Rating r WHERE " +
-//            "(:spaceId IS NULL OR r.space.spaceId = :spaceId) AND " +
-//            "(:ownerId IS NULL OR r.user.userId = :ownerId)"
-//    )
-//    Page<Rating> findRatingsByFilter(
-//            @Param("spaceId") @Nullable String spaceId,
-//            @Param("ownerId")  @Nullable String ownerId
-//    );
+    @Query("SELECT r FROM Rating r WHERE " +
+            "(:spaceId IS NULL OR r.space.spaceId = :spaceId) AND " +
+            "(:userId IS NULL OR r.user.userId = :userId)")
+    Page<Rating> findRatingsByFilter(
+            @Param("spaceId") @Nullable String spaceId,
+            @Param("userId") @Nullable String userId,
+            Pageable pageable);
 
 }

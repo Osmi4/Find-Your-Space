@@ -55,8 +55,6 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public Page<ReportResponse> getReportsByFilters(ReportFilter reportFilter, Pageable pageable) {
-//        List<Report> reports = reportRepository.findReportsByFilter(reportFilter.getReportType(), reportFilter.getReportStatus());
-//        return reports.stream().map(this::mapReportToReportResponse).toList();
         return reportRepository.findReportsByFilter(reportFilter.getReportType(), reportFilter.getReportStatus(), pageable).map(this::mapReportToReportResponse);
     }
 

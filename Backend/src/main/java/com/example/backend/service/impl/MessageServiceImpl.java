@@ -39,7 +39,7 @@ public class MessageServiceImpl implements MessageService {
         }
         Optional<User> receiver = userRepository.findByUserId(message.getReceiverId());
         if(receiver.isEmpty()) {
-            throw new ResourceNotFoundException("Receiver not found", "space", message.getReceiverId());
+            throw new ResourceNotFoundException("Receiver not found", "user", message.getReceiverId());
         }
         Message addedMessage = messageRepository.save(ObjectMapper.mapAddMessageToMessage(message, sender , receiver.get()));
         return ObjectMapper.mapMessageToMessageResponse(addedMessage);
@@ -73,15 +73,12 @@ public class MessageServiceImpl implements MessageService {
         if(user == null) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "user not log in");
         }
-        //List<Message> messages = messageRepository.findByReceiver_UserId(user.getUserId());
-        //return messages.stream().map(ObjectMapper::mapMessageToMessageResponse).toList();
         return messageRepository.findByReceiver_UserId(user.getUserId(), pageable).map(ObjectMapper::mapMessageToMessageResponse);
     }
 
     @Override
     public Page<MessageResponse> getMessagesByUserId(String userId, Pageable pageable) {
         Page<Message> messages = messageRepository.findByReceiver_UserIdOrderByMessageDateTimeAsc(userId , pageable);
-        //return messages.stream().map(ObjectMapper::mapMessageToMessageResponse).toList();
         return messageRepository.findByReceiver_UserIdOrderByMessageDateTimeAsc(userId, pageable).map(ObjectMapper::mapMessageToMessageResponse);
     }
 

@@ -1,227 +1,409 @@
-//package com.example.backend.service.impl;
-//
-//import com.example.backend.dtos.Booking.AddBookingRequest;
-//import com.example.backend.dtos.Booking.BookingFilter;
-//import com.example.backend.dtos.Booking.EditBookingRequest;
-//import com.example.backend.entity.Space;
-//import com.example.backend.entity.User;
-//import com.example.backend.enums.Role;
-//import com.example.backend.enums.SpaceType;
-//import com.example.backend.enums.Status;
-//import com.example.backend.repository.SpaceRepository;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.extension.ExtendWith;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.mockito.Mockito;
-//import org.mockito.junit.jupiter.MockitoExtension;
-//import static org.mockito.Mockito.*;
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//import com.example.backend.repository.BookingRepository;
-//import com.example.backend.service.impl.BookingServiceImpl;
-//import com.example.backend.entity.Booking;
-//import com.example.backend.dtos.Booking.BookingResponse;
-//import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-//import org.springframework.security.core.Authentication;
-//import org.springframework.security.core.context.SecurityContext;
-//import org.springframework.security.core.context.SecurityContextHolder;
-//
-//import java.util.ArrayList;
-//import java.util.Date;
-//import java.util.List;
-//import java.util.Optional;
-//
-//@ExtendWith(MockitoExtension.class)
-//public class BookingServiceImplTest {
-//
-//    @Mock
-//    private BookingRepository bookingRepository;
-//    @Mock
-//    private SpaceRepository spaceRepository;
-//
-//
-//    @InjectMocks
-//    private BookingServiceImpl bookingService;
-//
-//    private Booking booking;
-//    private User user;
-//    private User userC;
-//    private Space space;
-//    private Space space2;
-//    private Booking booking2;
-//    private List<Booking> bookings;
-//
-//    @BeforeEach
-//    public void setUp() {
-//        user = User.builder()
-//                .userId("1")
-//                .role(Role.USER)
-//                .password("password")
-//                .email("test@gmail.com")
-//                .firstName("John")
-//                .lastName("Doe").build();
-//        userC = User.builder()
-//                .userId("2")
-//                .role(Role.USER)
-//                .password("password")
-//                .email("testc@gmail.com")
-//                .firstName("John")
-//                .lastName("Doe").build();
-//        space = Space.builder()
-//                .spaceId("1")
-//                .spaceName("Test Space")
-//                .spaceLocation("Test Location")
-//                .spaceSize(100)
-//                .spacePrice(1500)
-//                .spaceImage("image.jpg")
-//                .spaceDescription("Test Description")
-//                .spaceType(SpaceType.OFFICE)
-//                .dateAdded(new Date())
-//                .dateUpdated(new Date())
-//                .owner(user)
-//                .build();
-//        space2 = Space.builder()
-//                .spaceId("2")
-//                .spaceName("Test Space")
-//                .spaceLocation("Test Location")
-//                .spaceSize(100)
-//                .spacePrice(1500)
-//                .spaceImage("image.jpg")
-//                .spaceDescription("Test Description")
-//                .spaceType(SpaceType.OFFICE)
-//                .dateAdded(new Date())
-//                .dateUpdated(new Date())
-//                .owner(userC)
-//                .build();
-//        booking = Booking.builder()
-//                .bookingId("1")
-//                .startDateTime(new Date())
-//                .endDateTime(new Date())
-//                .cost(100.00)
-//                .dateAdded(new Date())
-//                .dateUpdated(new Date())
-//                .status(Status.INQUIRY)
-//                .client(userC)
-//                .space(space)
-//                .build();
-//        booking2 = Booking.builder()
-//                .bookingId("2")
-//                .startDateTime(new Date())
-//                .endDateTime(new Date())
-//                .cost(100.00)
-//                .dateAdded(new Date())
-//                .dateUpdated(new Date())
-//                .status(Status.INQUIRY)
-//                .client(user)
-//                .space(space)
-//                .build();
-//        bookings = new ArrayList<>(List.of(booking, booking2));
-//    }
-//    @BeforeEach
-//    public void setUpSecurityContext() {
-//        User mockUser = User.builder()
-//                .userId("1")
-//                .role(Role.USER)
-//                .password("password")
-//                .email("test@gmail.com")
-//                .firstName("John")
-//                .lastName("Doe").build();
-//        Authentication auth = new UsernamePasswordAuthenticationToken(mockUser, null);
-//        SecurityContext securityContext = mock(SecurityContext.class);
-//        when(securityContext.getAuthentication()).thenReturn(auth);
-//        Mockito.lenient().when(securityContext.getAuthentication()).thenReturn(auth);
-//        SecurityContextHolder.setContext(securityContext);
-//    }
-//
-//    @Test
-//    public void testGetBooking_Found() {
-//        when(bookingRepository.findByBookingId("1")).thenReturn(Optional.of(booking));
-//        BookingResponse result = bookingService.getBooking("1");
-//        assertNotNull(result);
-//        assertEquals("1", result.getBookingId());
-//        assertEquals(booking.getCost(), result.getCost());
-//        verify(bookingRepository).findByBookingId("1");
-//    }
-//    @Test
-//    public void testAddBooking_SpaceNotAvailable() {
-//        AddBookingRequest request = new AddBookingRequest();
-//        request.setSpaceId("space1");
-//        request.setStartDate(new Date(System.currentTimeMillis() + 100000));
-//        request.setEndDate(new Date(System.currentTimeMillis() + 200000));
-//        when(bookingRepository.findBySpace_SpaceId("space1")).thenReturn(List.of(booking));
-//        assertThrows(RuntimeException.class, () -> bookingService.addBooking(request));
-//    }
-//    @Test
-//    public void testAddBooking_Success() {
-//        AddBookingRequest request = new AddBookingRequest();
-//        request.setSpaceId("2");
-//        request.setStartDate(new Date(System.currentTimeMillis() + 100000));
-//        request.setEndDate(new Date(System.currentTimeMillis() + 200000));
-//        when(spaceRepository.findBySpaceId("2")).thenReturn(Optional.of(space2));
-//        when(bookingRepository.findBySpace_SpaceId("2")).thenReturn(List.of());
-//        when(bookingRepository.save(any())).thenReturn(booking);
-//
-//        BookingResponse result = bookingService.addBooking(request);
-//
-//        assertNotNull(result);
-//        verify(bookingRepository).save(any());
-//    }
-//    @Test
-//    public void testUpdateBooking_Success() {
-//        EditBookingRequest request = EditBookingRequest.builder()
-//                .startDate(new Date(new Date().getTime() + 7200000))
-//                .endDate(new Date(new Date().getTime() + 10800000))
-//                .build();
-//        when(bookingRepository.findByBookingId("2")).thenReturn(Optional.of(booking2));
-//        when(bookingRepository.findByBookingId("2")).thenReturn(Optional.of(booking2));
-//        when(bookingRepository.findBySpace_SpaceId("1")).thenReturn(new ArrayList<>(List.of(booking2)));
-//        when(bookingRepository.save(any())).thenReturn(booking2);
-//        BookingResponse response = bookingService.updateBooking(request, "2");
-//        assertNotNull(response);
-//    }
-//    @Test
-//    public void testDeleteBooking_Success() {
-//        when(bookingRepository.findByBookingId("2")).thenReturn(Optional.of(booking2) , Optional.empty());
-//        when(bookingRepository.deleteByBookingId("2")).thenReturn(1);
-//        BookingResponse response = bookingService.deleteBooking("2");
-//        assertNotNull(response);
-//        verify(bookingRepository).deleteByBookingId("2");
-//    }
-//    @Test
-//    public void testGetMyBookings_Success() {
-//        when(bookingRepository.findByClient_UserId(user.getUserId())).thenReturn(bookings);
-//        List<BookingResponse> results = bookingService.getMyBookings();
-//        assertNotNull(results);
-//        assertEquals(2, results.size());
-//    }
-//    @Test
-//    public void testGetSearchMyBookings_WithFilter() {
-//        BookingFilter filter = BookingFilter.builder()
-//                .startDate(new Date())
-//                .endDate(new Date())
-//                .status(Status.INQUIRY)
-//                .build();
-//        when(bookingRepository.filterQuery(new Date(), new Date(), "1", null, null)).thenReturn(bookings);
-//        List<BookingResponse> results = bookingService.getSearchMyBookings(Optional.of(filter));
-//
-//        assertNotNull(results);
-//        assertFalse(results.isEmpty());
-//        assertEquals(2, results.size());
-//    }
-//    @Test
-//    public void testUpdateBookingStatus_SuccessFromInquiryToAccepted() {
-//        when(bookingRepository.findByBookingId("1")).thenReturn(Optional.of(booking));
-//        when(bookingRepository.save(any(Booking.class))).thenAnswer(invocation -> invocation.getArgument(0));
-//
-//        BookingResponse result = bookingService.updateBookingStatus(Status.ACCEPTED, "1");
-//
-//        assertNotNull(result);
-//        assertEquals(Status.ACCEPTED, result.getStatus());
-//        verify(bookingRepository).save(booking);
-//    }
-//
-//
-//
-//}
+package com.example.backend.service.impl;
+
+import com.example.backend.auth.AuthenticationResponse;
+import com.example.backend.auth.AuthenticationService;
+import com.example.backend.dtos.Auth.RegisterDto;
+import com.example.backend.dtos.Booking.AddBookingRequest;
+import com.example.backend.dtos.Booking.BookingFilter;
+import com.example.backend.dtos.Booking.BookingResponse;
+import com.example.backend.dtos.Booking.EditBookingRequest;
+import com.example.backend.dtos.Space.AddSpaceRequest;
+import com.example.backend.dtos.Space.SpaceResponse;
+import com.example.backend.entity.Space;
+import com.example.backend.entity.User;
+import com.example.backend.enums.SpaceType;
+import com.example.backend.enums.Status;
+import com.example.backend.mapper.ObjectMapper;
+import com.example.backend.repository.SpaceRepository;
+import com.example.backend.repository.UserRepository;
+import com.example.backend.service.BookingService;
+import com.example.backend.service.SpaceService;
+import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.ActiveProfiles;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@SpringBootTest
+@ActiveProfiles("test")
+@Transactional
+public class BookingServiceImplTest {
+    @Autowired
+    BookingService bookingService;
+    @Autowired
+    private AuthenticationService authenticationService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private SpaceService spaceService;
+    @Autowired
+    private SpaceRepository spaceRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
+    private AddBookingRequest addBookingRequest;
+    private RegisterDto registerDto;
+    private AddSpaceRequest addSpaceRequest;
+    @BeforeEach
+    public void setUp() {
+        registerDto = new RegisterDto();
+        registerDto.setEmail("test@ggmail.com");
+        registerDto.setFirstName("John");
+        registerDto.setLastName("Doe");
+        registerDto.setPassword("password");
+        AuthenticationResponse authenticationResponse = authenticationService.register(registerDto);
+        User user = userRepository.findByEmail(registerDto.getEmail()).orElse(null);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        addSpaceRequest = new AddSpaceRequest();
+        addSpaceRequest.setSpaceName("Space1");
+        addSpaceRequest.setSpaceLocation("Location1");
+        addSpaceRequest.setSpaceSize(100);
+        addSpaceRequest.setSpacePrice(1000);
+        addSpaceRequest.setSpaceImage("Image1");
+        addSpaceRequest.setSpaceDescription("Space1 description");
+        addSpaceRequest.setSpaceType(SpaceType.OFFICE);
+
+        addBookingRequest = new AddBookingRequest();
+
+    }
+    @Test
+    void addBooking_Success(){
+        SpaceResponse spaceAdded = spaceService.addSpace(addSpaceRequest);
+
+        //new user that will book the space
+        RegisterDto registerDto2 = new RegisterDto();
+        registerDto2.setEmail("test2@ggmail.com");
+        registerDto2.setFirstName("John");
+        registerDto2.setLastName("Doe");
+        registerDto2.setPassword("password");
+        AuthenticationResponse authenticationResponse = authenticationService.register(registerDto2);
+        User user = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        // Setting up dates
+        Calendar calendar = Calendar.getInstance();
+        Date startDate = calendar.getTime(); // Gets the current date and time
+        calendar.add(Calendar.DAY_OF_MONTH, 1); // Adds one day to the current date
+        Date endDate = calendar.getTime(); // End date is one day after the start date
+
+        addBookingRequest.setSpaceId(spaceAdded.getSpaceId());
+        addBookingRequest.setStartDate(startDate);
+        addBookingRequest.setEndDate(endDate);
+        addBookingRequest.setDescription("Description");
+        BookingResponse bookingResponse = bookingService.addBooking(addBookingRequest);
+
+        assertNotNull(bookingResponse);
+        assertEquals(addBookingRequest.getSpaceId(), bookingResponse.getSpaceId());
+        assertEquals(registerDto2.getEmail(), bookingResponse.getClient().getUserEmail());
+        assertEquals(registerDto.getEmail(), bookingResponse.getOwner().getUserEmail());
+    }
+
+    @Test
+    void getBooking_Success() {
+        SpaceResponse spaceAdded = spaceService.addSpace(addSpaceRequest);
+
+        //add booking
+        RegisterDto registerDto2 = new RegisterDto();
+        registerDto2.setEmail("test2@ggmail.com");
+        registerDto2.setFirstName("John");
+        registerDto2.setLastName("Doe");
+        registerDto2.setPassword("password");
+        AuthenticationResponse authenticationResponse = authenticationService.register(registerDto2);
+        User user = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        // Setting up dates
+        Calendar calendar = Calendar.getInstance();
+        Date startDate = calendar.getTime(); // Gets the current date and time
+        calendar.add(Calendar.DAY_OF_MONTH, 1); // Adds one day to the current date
+        Date endDate = calendar.getTime(); // End date is one day after the start date
+
+        addBookingRequest.setSpaceId(spaceAdded.getSpaceId());
+        addBookingRequest.setStartDate(startDate);
+        addBookingRequest.setEndDate(endDate);
+        addBookingRequest.setDescription("Description");
+        BookingResponse bookingResponse = bookingService.addBooking(addBookingRequest);
+
+        BookingResponse bookingResponse2 = bookingService.getBooking(bookingResponse.getBookingId());
+        assertNotNull(bookingResponse2);
+        assertEquals(bookingResponse.getBookingId(), bookingResponse2.getBookingId());
+        assertEquals(bookingResponse.getSpaceId(), bookingResponse2.getSpaceId());
+        assertEquals(bookingResponse.getClient().getUserEmail(), bookingResponse2.getClient().getUserEmail());
+        assertEquals(bookingResponse.getOwner().getUserEmail(), bookingResponse2.getOwner().getUserEmail());
+    }
+
+    @Test
+    void updateBooking_Success() {
+        SpaceResponse spaceAdded = spaceService.addSpace(addSpaceRequest);
+        //add booking
+        RegisterDto registerDto2 = new RegisterDto();
+        registerDto2.setEmail("test2@ggmail.com");
+        registerDto2.setFirstName("John");
+        registerDto2.setLastName("Doe");
+        registerDto2.setPassword("password");
+        AuthenticationResponse authenticationResponse = authenticationService.register(registerDto2);
+        User user = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        // Setting up dates
+        Calendar calendar = Calendar.getInstance();
+        Date startDate = calendar.getTime(); // Gets the current date and time
+        calendar.add(Calendar.DAY_OF_MONTH, 1); // Adds one day to the current date
+        Date endDate = calendar.getTime(); // End date is one day after the start date
+
+        addBookingRequest.setSpaceId(spaceAdded.getSpaceId());
+        addBookingRequest.setStartDate(startDate);
+        addBookingRequest.setEndDate(endDate);
+        addBookingRequest.setDescription("Description");
+        BookingResponse bookingResponse = bookingService.addBooking(addBookingRequest);
+
+        calendar.add(Calendar.DAY_OF_MONTH, 1); // Adds one day to the current date
+        endDate = calendar.getTime();
+        EditBookingRequest editBookingRequest = EditBookingRequest.builder()
+                .startDate(startDate)
+                .endDate(endDate)
+                .build();
+
+        BookingResponse bookingResponse2 = bookingService.updateBooking(editBookingRequest, bookingResponse.getBookingId());
+        assertNotNull(bookingResponse2);
+        assertEquals(bookingResponse.getBookingId(), bookingResponse2.getBookingId());
+        assertEquals(bookingResponse.getSpaceId(), bookingResponse2.getSpaceId());
+        assertEquals(bookingResponse.getClient().getUserEmail(), bookingResponse2.getClient().getUserEmail());
+        assertEquals(bookingResponse.getOwner().getUserEmail(), bookingResponse2.getOwner().getUserEmail());
+    }
+
+    @Test
+    void deleteBooking_Success() {
+        SpaceResponse spaceAdded = spaceService.addSpace(addSpaceRequest);
+        //add booking
+        RegisterDto registerDto2 = new RegisterDto();
+        registerDto2.setEmail("test2@ggmail.com");
+        registerDto2.setFirstName("John");
+        registerDto2.setLastName("Doe");
+        registerDto2.setPassword("password");
+        AuthenticationResponse authenticationResponse = authenticationService.register(registerDto2);
+        User user = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        // Setting up dates
+        Calendar calendar = Calendar.getInstance();
+        Date startDate = calendar.getTime(); // Gets the current date and time
+        calendar.add(Calendar.DAY_OF_MONTH, 1); // Adds one day to the current date
+        Date endDate = calendar.getTime(); // End date is one day after the start date
+
+        addBookingRequest.setSpaceId(spaceAdded.getSpaceId());
+        addBookingRequest.setStartDate(startDate);
+        addBookingRequest.setEndDate(endDate);
+        addBookingRequest.setDescription("Description");
+        BookingResponse bookingResponse = bookingService.addBooking(addBookingRequest);
+
+        BookingResponse bookingResponse2 = bookingService.deleteBooking(bookingResponse.getBookingId());
+        assertNotNull(bookingResponse2);
+        assertEquals(bookingResponse.getBookingId(), bookingResponse2.getBookingId());
+    }
+
+    @Test
+    void getMyBookings_Success() {
+        SpaceResponse spaceAdded = spaceService.addSpace(addSpaceRequest);
+        RegisterDto registerDto2 = new RegisterDto();
+        registerDto2.setEmail("test2@ggmail.com");
+        registerDto2.setFirstName("John");
+        registerDto2.setLastName("Doe");
+        registerDto2.setPassword("password");
+        AuthenticationResponse authenticationResponse = authenticationService.register(registerDto2);
+        User user = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        // Setting up dates
+        Calendar calendar = Calendar.getInstance();
+        Date startDate = calendar.getTime(); // Gets the current date and time
+        calendar.add(Calendar.DAY_OF_MONTH, 1); // Adds one day to the current date
+        Date endDate = calendar.getTime(); // End date is one day after the start date
+
+        addBookingRequest.setSpaceId(spaceAdded.getSpaceId());
+        addBookingRequest.setStartDate(startDate);
+        addBookingRequest.setEndDate(endDate);
+        addBookingRequest.setDescription("Description");
+        BookingResponse bookingResponse = bookingService.addBooking(addBookingRequest);
+
+        User user2 = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
+        authToken = new UsernamePasswordAuthenticationToken(user2, null, user2.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<BookingResponse> results = bookingService.getMyBookings(pageable);
+        assertNotNull(results);
+        assertEquals(1, results.getTotalElements());
+    }
+
+    @Test
+    void getSearchMyBookings_Success() {
+        SpaceResponse spaceAdded = spaceService.addSpace(addSpaceRequest);
+        RegisterDto registerDto2 = new RegisterDto();
+        registerDto2.setEmail("test2@ggmail.com");
+        registerDto2.setFirstName("John");
+        registerDto2.setLastName("Doe");
+        registerDto2.setPassword("password");
+        AuthenticationResponse authenticationResponse = authenticationService.register(registerDto2);
+        User user = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        // Setting up dates
+        Calendar calendar = Calendar.getInstance();
+        Date startDate = calendar.getTime(); // Gets the current date and time
+        calendar.add(Calendar.DAY_OF_MONTH, 1); // Adds one day to the current date
+        Date endDate = calendar.getTime(); // End date is one day after the start date
+
+        addBookingRequest.setSpaceId(spaceAdded.getSpaceId());
+        addBookingRequest.setStartDate(startDate);
+        addBookingRequest.setEndDate(endDate);
+        addBookingRequest.setDescription("Description");
+        BookingResponse bookingResponse = bookingService.addBooking(addBookingRequest);
+
+        User user2 = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
+        authToken = new UsernamePasswordAuthenticationToken(user2, null, user2.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        BookingFilter bookingFilter = BookingFilter.builder()
+                .startDate(startDate)
+                .endDate(endDate)
+                .build();
+
+        Page<BookingResponse> results = bookingService.getSearchMyBookings(Optional.ofNullable(bookingFilter), pageable);
+        assertNotNull(results);
+        assertEquals(1, results.getTotalElements());
+    }
+
+    @Test
+    void getBookingForSpace_Success() {
+        SpaceResponse spaceAdded = spaceService.addSpace(addSpaceRequest);
+        RegisterDto registerDto2 = new RegisterDto();
+        registerDto2.setEmail("test2@ggmail.com");
+        registerDto2.setFirstName("John");
+        registerDto2.setLastName("Doe");
+        registerDto2.setPassword("password");
+        AuthenticationResponse authenticationResponse = authenticationService.register(registerDto2);
+        User user = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        // Setting up dates
+        Calendar calendar = Calendar.getInstance();
+        Date startDate = calendar.getTime(); // Gets the current date and time
+        calendar.add(Calendar.DAY_OF_MONTH, 1); // Adds one day to the current date
+        Date endDate = calendar.getTime(); // End date is one day after the start date
+
+        addBookingRequest.setSpaceId(spaceAdded.getSpaceId());
+        addBookingRequest.setStartDate(startDate);
+        addBookingRequest.setEndDate(endDate);
+        addBookingRequest.setDescription("Description");
+        BookingResponse bookingResponse = bookingService.addBooking(addBookingRequest);
+
+        User user2 = userRepository.findByEmail(registerDto.getEmail()).orElse(null);
+        authToken = new UsernamePasswordAuthenticationToken(user2, null, user2.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        Pageable pageable = PageRequest.of(0, 10);
+        BookingFilter bookingFilter = BookingFilter.builder()
+                .startDate(startDate)
+                .endDate(endDate)
+                .build();
+
+        Page<BookingResponse> results = bookingService.getBookingForSpace(spaceAdded.getSpaceId(), Optional.ofNullable(bookingFilter),pageable);
+
+        assertNotNull(results);
+        assertEquals(1, results.getTotalElements());
+    }
+
+    @Test
+    void getSearchAllBookings_Success() {
+        SpaceResponse spaceAdded = spaceService.addSpace(addSpaceRequest);
+        RegisterDto registerDto2 = new RegisterDto();
+        registerDto2.setEmail("test2@ggmail.com");
+        registerDto2.setFirstName("John");
+        registerDto2.setLastName("Doe");
+        registerDto2.setPassword("password");
+        AuthenticationResponse authenticationResponse = authenticationService.register(registerDto2);
+        User user = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        // Setting up dates
+        Calendar calendar = Calendar.getInstance();
+        Date startDate = calendar.getTime(); // Gets the current date and time
+        calendar.add(Calendar.DAY_OF_MONTH, 1); // Adds one day to the current date
+        Date endDate = calendar.getTime(); // End date is one day after the start date
+
+        addBookingRequest.setSpaceId(spaceAdded.getSpaceId());
+        addBookingRequest.setStartDate(startDate);
+        addBookingRequest.setEndDate(endDate);
+        addBookingRequest.setDescription("Description");
+        BookingResponse bookingResponse = bookingService.addBooking(addBookingRequest);
+
+        Pageable pageable = PageRequest.of(0, 10);
+        BookingFilter bookingFilter = BookingFilter.builder()
+                .startDate(startDate)
+                .endDate(endDate)
+                .build();
+
+        Page<BookingResponse> results = bookingService.getSearchAllBookings(Optional.ofNullable(bookingFilter), pageable);
+        assertNotNull(results);
+        assertEquals(1, results.getTotalElements());
+    }
+    @Test
+    void UpdateBookingStatus_Success() {
+        SpaceResponse spaceAdded = spaceService.addSpace(addSpaceRequest);
+        RegisterDto registerDto2 = new RegisterDto();
+        registerDto2.setEmail("test2@ggmail.com");
+        registerDto2.setFirstName("John");
+        registerDto2.setLastName("Doe");
+        registerDto2.setPassword("password");
+        AuthenticationResponse authenticationResponse = authenticationService.register(registerDto2);
+        User user = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        // Setting up dates
+        Calendar calendar = Calendar.getInstance();
+        Date startDate = calendar.getTime(); // Gets the current date and time
+        calendar.add(Calendar.DAY_OF_MONTH, 1); // Adds one day to the current date
+        Date endDate = calendar.getTime(); // End date is one day after the start date
+
+        addBookingRequest.setSpaceId(spaceAdded.getSpaceId());
+        addBookingRequest.setStartDate(startDate);
+        addBookingRequest.setEndDate(endDate);
+        addBookingRequest.setDescription("Description");
+        BookingResponse bookingResponse = bookingService.addBooking(addBookingRequest);
+
+        User user2 = userRepository.findByEmail(registerDto.getEmail()).orElse(null);
+        authToken = new UsernamePasswordAuthenticationToken(user2, null, user2.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        BookingResponse bookingResponse2 = bookingService.updateBookingStatus(Status.CANCELLED, bookingResponse.getBookingId());
+        assertNotNull(bookingResponse2);
+        assertEquals(bookingResponse.getBookingId(), bookingResponse2.getBookingId());
+        assertEquals(Status.CANCELLED, bookingResponse2.getStatus());
+    }
+}

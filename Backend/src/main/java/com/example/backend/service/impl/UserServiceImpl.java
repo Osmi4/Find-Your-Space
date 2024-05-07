@@ -31,8 +31,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<UserResponse> getUsersByFilters(UserFilter userFilter, Pageable pageable) {
-//        List<User> users = userRepository.findUsersByFilter(userFilter.getUserEmail(), userFilter.getContactInfo(), userFilter.getFirstName(), userFilter.getLastName());
-//        return users.stream().map(this::mapUserToUserResponse).toList();
         return userRepository.findUsersByFilter(userFilter.getUserEmail(), userFilter.getContactInfo(), userFilter.getFirstName(), userFilter.getLastName(), pageable).map(this::mapUserToUserResponse);
 
     }

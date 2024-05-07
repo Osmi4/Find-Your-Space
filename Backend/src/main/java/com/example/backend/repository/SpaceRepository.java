@@ -16,14 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SpaceRepository extends JpaRepository<Space, String> {
-
-
-
     Page<Space> findByOwner_UserId(String userId, Pageable pageable);
-
-    //long deleteBySpaceId(String spaceId);
-
-
 
     Optional<Space> findBySpaceId(String spaceId);
 
@@ -51,5 +44,9 @@ public interface SpaceRepository extends JpaRepository<Space, String> {
     @Modifying
     @Query("delete from Space s where s.spaceId = ?1")
     int deleteBySpaceId(String spaceId);
+
+    @Query("select s from Space s inner join s.bookings bookings where bookings.bookingId = ?1")
+    Optional<Space> findByBookings_BookingId(String bookingId);
+
 
 }

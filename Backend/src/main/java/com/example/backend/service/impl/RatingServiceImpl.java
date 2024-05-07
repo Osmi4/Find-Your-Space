@@ -88,12 +88,6 @@ public class RatingServiceImpl implements RatingService {
         return ratingRepository.findRatingsByFilter(ratingFilter.getSpaceId(), ratingFilter.getOwnerId(), pageable)
                 .map(this::mapRatingToRatingResponse);
     }
-//        return ratingRepository.findRatingsByFilter(ratingFilter.getSpaceId(), ratingFilter.getOwnerId())
-//                .stream()
-//                .map(this::mapRatingToRatingResponse)
-//                .toList();
-
-
 
     public Rating mapRatingRequestToRating(AddRatingRequest addRatingRequest) {
         Rating rating = new Rating();

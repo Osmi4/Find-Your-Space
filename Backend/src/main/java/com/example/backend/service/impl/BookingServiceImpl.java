@@ -184,6 +184,12 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponse updateBookingStatus(Status status, String id) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Space space = spaceRepository.findByBookings_BookingId(id).orElse(null);
+        assert space != null;
+        if(!user.getUserId().equals(space.getOwner().getUserId())){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "user not authorized to change status");
+        }
         Booking bookingToUpdate = bookingRepository.findByBookingId(id).stream().findFirst().orElse(null);
         if(bookingToUpdate == null) {
             throw new ResourceNotFoundException("Booking not found", "booking", id);

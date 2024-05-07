@@ -12,6 +12,5 @@ import lombok.NoArgsConstructor;
 public class AddMessage {
     private String messageContent;
     private String messageDestinationEmail;
-    private String sender;
     private String receiverId;
 }
