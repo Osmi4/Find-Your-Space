@@ -13,6 +13,7 @@ import com.example.backend.entity.Space;
 import com.example.backend.entity.User;
 import com.example.backend.enums.SpaceType;
 import com.example.backend.enums.Status;
+import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.mapper.ObjectMapper;
 import com.example.backend.repository.SpaceRepository;
 import com.example.backend.repository.UserRepository;
@@ -34,8 +35,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -113,6 +113,7 @@ public class BookingServiceImplTest {
         assertEquals(registerDto.getEmail(), bookingResponse.getOwner().getUserEmail());
     }
 
+
     @Test
     void getBooking_Success() {
         SpaceResponse spaceAdded = spaceService.addSpace(addSpaceRequest);
@@ -147,6 +148,23 @@ public class BookingServiceImplTest {
         assertEquals(bookingResponse.getClient().getUserEmail(), bookingResponse2.getClient().getUserEmail());
         assertEquals(bookingResponse.getOwner().getUserEmail(), bookingResponse2.getOwner().getUserEmail());
     }
+
+    @Test
+    void addBooking_InvalidTimeRange() {
+        SpaceResponse spaceAdded = spaceService.addSpace(addSpaceRequest);
+        addBookingRequest.setSpaceId(spaceAdded.getSpaceId());
+        Date startDate = new Date(System.currentTimeMillis() + 86400000); // Tomorrow
+        Date endDate = new Date(); // Today, before startDate
+        addBookingRequest.setStartDate(startDate);
+        addBookingRequest.setEndDate(endDate);
+
+        // Expect an IllegalArgumentException or similar
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            bookingService.addBooking(addBookingRequest);
+        });
+        //assertTrue(exception.getMessage().contains("End date must be after start date"));
+    }
+    
 
     @Test
     void updateBooking_Success() {

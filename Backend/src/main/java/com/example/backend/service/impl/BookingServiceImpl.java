@@ -61,12 +61,14 @@ public class BookingServiceImpl implements BookingService {
         double price = space.getSpacePrice()* (addBookingRequest.getEndDate().getTime() - addBookingRequest.getStartDate().getTime()) / 1000 / 60 / 60;
         User client = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User Owner = space.getOwner();
-        if(Owner.getUserId().equals(client.getUserId())){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Owner can't book his own space");
+        if (Owner.getUserId().equals(client.getUserId())) {
+            throw new IllegalArgumentException("Owner can't book their own space");
         }
         Booking addedBooking = bookingRepository.save(ObjectMapper.mapAddBookingRequestToBooking(addBookingRequest , price , client , space));
         return ObjectMapper.mapBookingToBookingResponse(addedBooking);
     }
+
+
 
     @Override
     public BookingResponse updateBooking(EditBookingRequest editBookingRequest, String bookingId) {
@@ -87,6 +89,8 @@ public class BookingServiceImpl implements BookingService {
         Booking updatedBooking = bookingRepository.save(bookingToUpdate);
         return ObjectMapper.mapBookingToBookingResponse(updatedBooking);
     }
+
+
 
     private static boolean checkAvailability(List<Booking> currentBookings, Date editBookingRequest, Date editBookingRequest1) {
         for (Booking booking : currentBookings) {

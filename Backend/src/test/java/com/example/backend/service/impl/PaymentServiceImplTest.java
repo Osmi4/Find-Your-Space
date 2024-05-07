@@ -33,7 +33,7 @@ public class PaymentServiceImplTest {
         expectedResponse.setPaymentStatus(addPaymentRequest.getPaymentStatus());
 
         when(paymentService.addPayment(addPaymentRequest)).thenReturn(expectedResponse);
-        
+
         PaymentResponse actualResponse = paymentService.addPayment(addPaymentRequest);
 
         // Assertion
