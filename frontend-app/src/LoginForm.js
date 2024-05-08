@@ -1,4 +1,16 @@
+import { useNavigate } from "react-router-dom";
+
+export const credentials = {username:"",password:""};
+
 const LoginForm=({isLogin})=>{
+
+  const navigate = useNavigate();
+  const signupHandler=()=>{
+    navigate('/signup/full');
+    credentials.username = document.querySelector("input[type='text']").value;
+    credentials.password = document.querySelector("input[type='password']").value;
+  }
+  
   return (
   <div class="wrapper">
   <form action="">
@@ -25,7 +37,7 @@ const LoginForm=({isLogin})=>{
   </div>}
 
   {isLogin && <button type="submit" class="btn">Login</button>}
-  {!isLogin && <button type="submit" class="btninv">Register</button>}
+  {!isLogin && <button type="submit" class="btninv" onClick={signupHandler}>Register</button>}
   </form>
   </div>
     )

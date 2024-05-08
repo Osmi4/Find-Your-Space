@@ -46,7 +46,7 @@ const spaces = [
           id: 5,
           image: GdanskMetro,
           title: "Gdansk-Metro Ad",
-          price: "$220/week",
+          price: "$880/month",
           category: "Transit Advertising",
           country: "Poland",
           city: "Gdansk"
@@ -55,11 +55,20 @@ const spaces = [
           id: 6,
           image: LodzFabryczna,
           title: "Lodz Fabryczna",
-          price: "$10000/year",
+          price: "$800/month",
           category: "Transit Advertising",
           country: "Poland",
           city: "Lodz"
-        }
+        },
+        {
+          id: 7,
+          image: WarsawMarszalkowska,
+          title: "Warsaw-Wola",
+          price: "$200/month",
+          category: "Print Media Spaces",
+          country: "Poland",
+          city: "Warsaw"
+        },
       ];
 
 export default spaces
