@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
@@ -24,4 +25,7 @@ public class SpaceResponse {
     private Availibility availability;
     private Date dateAdded;
     private Date dateUpdated;
+    public Serializable getId() {
+        return this.spaceId;
+    }
 }

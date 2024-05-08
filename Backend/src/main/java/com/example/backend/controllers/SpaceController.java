@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Date;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class SpaceController {
     }
 
     @PutMapping("/{spaceId}")
-    public ResponseEntity<SpaceResponse> editSpace(@PathVariable String spaceId , @Valid @RequestBody EditSpaceRequest editSpaceRequest){
+    public ResponseEntity<SpaceResponse> editSpace(@PathVariable String spaceId , @Valid @RequestBody EditSpaceRequest editSpaceRequest) throws AccessDeniedException {
         return ResponseEntity.ok(spaceService.editSpace(editSpaceRequest , spaceId));
     }
     @GetMapping("/all")
@@ -48,12 +49,12 @@ public class SpaceController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<SpaceResponse> deleteSpace(@PathVariable String id){
+    public ResponseEntity<SpaceResponse> deleteSpace(@PathVariable String id) throws AccessDeniedException {
         return ResponseEntity.ok(spaceService.deleteSpace(id));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SpaceResponse> getSpace(@PathVariable String id){
+    public ResponseEntity<SpaceResponse> getSpace(@PathVariable String id) throws AccessDeniedException {
         return ResponseEntity.ok(spaceService.getSpace(id));
     }
 
@@ -64,11 +65,11 @@ public class SpaceController {
         return ResponseEntity.ok(spaceService.searchSpaces(filter, pageable));
     }
     @PutMapping("/{spaceId}/change_availability")
-    public ResponseEntity<SpaceResponse> changeAvailability(@PathVariable String spaceId, @RequestBody Availibility availability){
+    public ResponseEntity<SpaceResponse> changeAvailability(@PathVariable String spaceId, @RequestBody Availibility availability) throws AccessDeniedException {
         return ResponseEntity.ok(spaceService.changeAvailability(spaceId , availability));
     }
     @GetMapping("{spaceId}/check-availability")
-    public ResponseEntity<Boolean> checkAvailability(@PathVariable String spaceId, @RequestParam(required = false) Date startDate, @RequestParam(required = false) Date endDate){
+    public ResponseEntity<Boolean> checkAvailability(@PathVariable String spaceId, @RequestParam(required = false) Date startDate, @RequestParam(required = false) Date endDate) throws AccessDeniedException {
         return ResponseEntity.ok(spaceService.checkAvailabilityForBooking(spaceId , startDate , endDate));
     }
     @GetMapping("/{spaceId}/booked-dates")

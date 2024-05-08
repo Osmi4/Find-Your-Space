@@ -31,6 +31,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.nio.file.AccessDeniedException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -96,7 +98,7 @@ public class SpaceServiceImplTest {
         assertEquals("Image1", result.getSpaceImage());
     }
     @Test
-    public void editSpace_shouldUpdateSpace_whenUserIsOwner() {
+    public void editSpace_shouldUpdateSpace_whenUserIsOwner() throws AccessDeniedException {
         SpaceResponse spaceResponse = spaceService.addSpace(addSpaceRequest);
         assertNotNull(spaceResponse);
         SpaceResponse result = spaceService.editSpace(editSpaceRequest, spaceResponse.getSpaceId());
@@ -107,7 +109,7 @@ public class SpaceServiceImplTest {
         assertEquals(2000, result.getSpacePrice());
     }
     @Test
-    public void deleteSpace_shouldDeleteSpace_whenUserIsOwner() {
+    public void deleteSpace_shouldDeleteSpace_whenUserIsOwner() throws AccessDeniedException {
         SpaceResponse spaceResponse = spaceService.addSpace(addSpaceRequest);
         assertNotNull(spaceResponse);
         SpaceResponse deletedSpace=spaceService.deleteSpace(spaceResponse.getSpaceId());
@@ -145,7 +147,7 @@ public class SpaceServiceImplTest {
     }
 
     @Test
-    public void getSpace_shouldReturnSpace_whenSpaceExists() {
+    public void getSpace_shouldReturnSpace_whenSpaceExists() throws AccessDeniedException {
         SpaceResponse spaceResponse = spaceService.addSpace(addSpaceRequest);
         assertNotNull(spaceResponse);
         SpaceResponse result = spaceService.getSpace(spaceResponse.getSpaceId());
@@ -157,7 +159,7 @@ public class SpaceServiceImplTest {
         assertEquals("Image1", result.getSpaceImage());
     }
     @Test
-    public void changeAvailability_shouldChangeAvailability_whenSpaceExists() {
+    public void changeAvailability_shouldChangeAvailability_whenSpaceExists() throws AccessDeniedException {
         SpaceResponse spaceResponse = spaceService.addSpace(addSpaceRequest);
         assertNotNull(spaceResponse);
         SpaceResponse result = spaceService.changeAvailability(spaceResponse.getSpaceId(), Availibility.AVAILABLE);

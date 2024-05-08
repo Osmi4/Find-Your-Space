@@ -11,7 +11,6 @@ import java.util.List;
 
 public interface RatingService {
     RatingResponse addRating(AddRatingRequest addRatingRequest);
-
     RatingResponse getRating(String id);
 
     void deleteRating(String id);

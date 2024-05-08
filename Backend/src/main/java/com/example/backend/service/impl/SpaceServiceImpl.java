@@ -2,24 +2,36 @@ package com.example.backend.service.impl;
 
 import com.example.backend.dtos.Space.*;
 import com.example.backend.entity.Booking;
+import com.example.backend.entity.Permission;
 import com.example.backend.entity.Space;
 import com.example.backend.entity.User;
 import com.example.backend.enums.Availibility;
+import com.example.backend.enums.PermissionType;
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.exception.UnauthorizedException;
 import com.example.backend.mapper.ObjectMapper;
 import com.example.backend.repository.BookingRepository;
 import com.example.backend.repository.SpaceRepository;
 import com.example.backend.repository.UserRepository;
+import com.example.backend.service.PermissionService;
 import com.example.backend.service.SpaceService;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.acls.domain.BasePermission;
+import org.springframework.security.acls.domain.ObjectIdentityImpl;
+import org.springframework.security.acls.domain.PrincipalSid;
+import org.springframework.security.acls.model.MutableAcl;
+import org.springframework.security.acls.model.MutableAclService;
+import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +41,8 @@ public class SpaceServiceImpl implements SpaceService {
     private final SpaceRepository spaceRepository;
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
+    @Autowired
+    private PermissionService permissionService;
 
     public SpaceServiceImpl(SpaceRepository spaceRepository, UserRepository userRepository, BookingRepository bookingRepository) {
         this.spaceRepository = spaceRepository;
@@ -50,11 +64,18 @@ public class SpaceServiceImpl implements SpaceService {
         if(spaceResponse == null){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Space not correctly converted");
         }
+
+        permissionService.createPermission(result.getOwner().getEmail(), Space.class.getSimpleName(), result.getSpaceId(), PermissionType.WRITE);
+        permissionService.createPermission(result.getOwner().getEmail(), Space.class.getSimpleName(), result.getSpaceId(), PermissionType.READ);
+        permissionService.createPermission(result.getOwner().getEmail(), Space.class.getSimpleName(), result.getSpaceId(), PermissionType.DELETE);
+        permissionService.createPermission(result.getOwner().getEmail(), Space.class.getSimpleName(), result.getSpaceId(), PermissionType.UPDATE);
+
         return spaceResponse;
     }
 
     @Override
-    public SpaceResponse editSpace(EditSpaceRequest editSpaceRequest , String spaceId) {
+    public SpaceResponse editSpace(EditSpaceRequest editSpaceRequest , String spaceId) throws AccessDeniedException {
+        permissionService.checkPermission(SecurityContextHolder.getContext().getAuthentication().getName(), Space.class.getSimpleName(), spaceId, PermissionType.UPDATE);
         Optional<Space> spaceOpt = spaceRepository.findBySpaceId(spaceId);
         Space space = spaceOpt.orElse(null);
         if (space == null) {
@@ -89,7 +110,9 @@ public class SpaceServiceImpl implements SpaceService {
 
     @Override
     @Transactional
-    public SpaceResponse deleteSpace(String id) {
+    public SpaceResponse deleteSpace(String id) throws AccessDeniedException {
+        permissionService.checkPermission(SecurityContextHolder.getContext().getAuthentication().getName(), Space.class.getSimpleName(), id, PermissionType.DELETE);
+
         Optional<Space> spaceOpt = spaceRepository.findBySpaceId(id);
         Space space = spaceOpt.orElse(null);
         if (space==null) {
@@ -108,7 +131,9 @@ public class SpaceServiceImpl implements SpaceService {
     public Page<SpaceResponse> searchSpaces(SpaceFilter filter , Pageable pageable) {
         return doFilter(filter , Optional.empty() , pageable).map(ObjectMapper::mapSpaceToSpaceResponse);
     }
-    private boolean checkSpaceAvailability(Space space, Date startDate, Date endDate) {
+    private boolean checkSpaceAvailability(Space space, Date startDate, Date endDate) throws AccessDeniedException {
+        permissionService.checkPermission(SecurityContextHolder.getContext().getAuthentication().getName(), Space.class.getSimpleName(), space.getSpaceId(), PermissionType.READ);
+
         List<Booking> bookings = bookingRepository.findBySpace_SpaceId(space.getSpaceId());
         for (Booking booking : bookings) {
             if (booking.getStartDateTime().before(startDate) && booking.getEndDateTime().after(endDate)) {
@@ -117,9 +142,10 @@ public class SpaceServiceImpl implements SpaceService {
         }
         return true;
     }
-
     @Override
-    public SpaceResponse getSpace(String id) {
+    public SpaceResponse getSpace(String id) throws AccessDeniedException {
+        permissionService.checkPermission(SecurityContextHolder.getContext().getAuthentication().getName(), Space.class.getSimpleName(), id, PermissionType.READ);
+
         Optional<Space> spaceOpt = spaceRepository.findBySpaceId(id);
         Space space = spaceOpt.orElse(null);
         if (space == null) {
@@ -128,7 +154,9 @@ public class SpaceServiceImpl implements SpaceService {
         return ObjectMapper.mapSpaceToSpaceResponse(space);
     }
     @Override
-    public SpaceResponse changeAvailability(String spaceId, Availibility availability) {
+    public SpaceResponse changeAvailability(String spaceId, Availibility availability) throws AccessDeniedException {
+        permissionService.checkPermission(SecurityContextHolder.getContext().getAuthentication().getName(), Space.class.getSimpleName(), spaceId, PermissionType.UPDATE);
+
         Optional<Space> spaceOpt = spaceRepository.findBySpaceId(spaceId);
         Space space = spaceOpt.orElse(null);
         if (space == null) {
@@ -164,7 +192,7 @@ public class SpaceServiceImpl implements SpaceService {
         return spaceBookedDates;
     }
 
-    public Boolean checkAvailabilityForBooking(String spaceId , Date startDate , Date endDate) {
+    public Boolean checkAvailabilityForBooking(String spaceId , Date startDate , Date endDate) throws AccessDeniedException {
         Optional<Space> spaceOpt = spaceRepository.findBySpaceId(spaceId);
         Space space = spaceOpt.orElse(null);
         if (space == null) {
@@ -183,7 +211,13 @@ public class SpaceServiceImpl implements SpaceService {
                 filter.getAvailability(),
                 pageable);
             if(filter.getStartDate()!=null && filter.getEndDate()!=null){
-                spaces = (Page<Space>) spaces.filter(space -> checkSpaceAvailability(space, filter.getStartDate(), filter.getEndDate()));
+                spaces = (Page<Space>) spaces.filter(space -> {
+                    try {
+                        return checkSpaceAvailability(space, filter.getStartDate(), filter.getEndDate());
+                    } catch (AccessDeniedException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
             }
         return spaces;
     }

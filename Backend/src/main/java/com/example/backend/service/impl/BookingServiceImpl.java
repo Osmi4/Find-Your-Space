@@ -19,6 +19,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -36,7 +37,6 @@ public class BookingServiceImpl implements BookingService {
         this.bookingRepository = bookingRepository;
         this.spaceRepository = spaceRepository;
     }
-
     @Override
     public BookingResponse getBooking(String id) {
         Optional<Booking> bookingOpt = bookingRepository.findByBookingId(id);
