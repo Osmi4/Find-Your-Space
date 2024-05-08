@@ -12,7 +12,7 @@ const SpacePage = () => {
     return (
         <div className="flex mt-[100px] gap-[100px]">
             <div key={item.id} className="ml-[250px]">
-                <img src={item.image} width={680} alt={item.title} />
+                <img src={item.image} width={680} alt={item.title} className="rounded-xl"/>
             </div>
             <div className="mt-[20px]">
                 <h1 className="text-5xl font-semibold mb-[10px]">{item.title}</h1>
@@ -34,7 +34,7 @@ const SpacePage = () => {
                 </div>
                 <div className="flex gap-[10px]">
                     <Link className="bg-black text-white px-[70px] py-[12px] text-sm hover:bg-gray-700 rounded-2xl" to='reviews'>Reviews</Link>
-                    <Link className="bg-sky-700 text-white px-[40px] py-[12px] text-sm hover:bg-sky-500 rounded-2xl">Rent Now</Link>
+                    <Link className="bg-sky-700 text-white px-[40px] py-[12px] text-sm hover:bg-sky-500 rounded-2xl" to={`checkout/${numberOfDays}`}>Rent Now</Link>
                 </div>
                 
             </div>

@@ -92,8 +92,8 @@ const FindSpacePage = () => {
             
             <div className="flex w-full mt-[50px] gap-y-[20px] gap-x-[15px] flex-wrap">
                 {filteredItems.map(item => (
-                    <div key={item.id} onClick={()=>openSpacePage(item.id)}>
-                        <img src={item.image} width={300} alt={item.title} />
+                    <div key={item.id} onClick={()=>openSpacePage(item.id)} >
+                        <img src={item.image} width={300} alt={item.title} className="rounded-lg hover:scale-105 ease-out duration-200"/>
                         <h1 className="font-bold text-sm mt-[10px] mb-[3px] hover:underline hover:cursor-pointer">{item.title}</h1>
                         <h2 className="text-xs">{item.price}</h2>
                     </div>

@@ -23,7 +23,7 @@ const Nav=()=>{
       } else {
         setFilteredSpaces([]);
       }
-    }, [searchInput, filteredSpaces]);
+    }, [searchInput]);
 
     return (    
     <Navbar isBordered className='border-black justify-between' maxWidth="full">
@@ -69,12 +69,20 @@ const Nav=()=>{
           value = {searchInput}
         />
         {searchInput && 
-        (<table className='absolute bg-gray-100 rounded-lg mt-[10px]'>
-          <tr className='flex flex-col px-[20px] py-[10px]'>
-            {filteredSpaces.map((space) => <Link to={`/space/${space.id}`} onClick={pageChanged}>{space.title}</Link>)}
-          </tr>
-        </table>)
-        }
+        (<ul
+          className="absolute bg-gray-100 rounded-lg mt-[10px] flex flex-col px-[20px] py-[10px]"
+          data-testid="search-results"
+        >
+          {filteredSpaces.map((space) => (
+            <li key={space.id}>
+              <Link to={`/space/${space.id}`} onClick={pageChanged}>
+                {space.title}
+              </Link>
+            </li>
+          ))}
+        </ul>)}
+        
+
         </NavbarItem>
         
       </NavbarContent>

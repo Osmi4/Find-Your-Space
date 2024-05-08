@@ -7,6 +7,8 @@ import HomePage from "./pages/HomePage";
 import FindSpacePage from "./pages/FindSpacePage";
 import SpacePage from "./pages/SpacePage";
 import ReviewsPage from "./pages/ReviewsPage";
+import CheckoutPage from "./pages/CheckoutPage";
+import RegisterPage from "./pages/RegisterPage";
 function App() {
   const navigate = useNavigate();
 
@@ -18,9 +20,11 @@ function App() {
             <Route path="/" element={<HomePage/>}/>    
             <Route path="/login"  element={<LoginPage/>} />
             <Route path="/signup"  element={<LoginPage/>} />
+            <Route path="/signup/full" element={<RegisterPage/>} />
             <Route path="/find"  element={<FindSpacePage/>} />
             <Route path="space/:id"  element={<SpacePage/>} />
             <Route path="space/:id/reviews" element={<ReviewsPage/>} />
+            <Route path="space/:id/checkout/:days" element={<CheckoutPage/>} />
           </Routes>
         </div>
         {/* put the footer */}
