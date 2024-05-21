@@ -16,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/space")
+@CrossOrigin(origins = "http://localhost:3000")
 public class SpaceController {
     private final SpaceService spaceService;
     public SpaceController(SpaceService spaceService) {
