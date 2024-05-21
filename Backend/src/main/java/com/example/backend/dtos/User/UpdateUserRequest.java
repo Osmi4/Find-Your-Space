@@ -1,5 +1,7 @@
 package com.example.backend.dtos.User;
 
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,14 +13,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateUserRequest {
-    @NotBlank(message = "userName is required")
-    private String userName;
-    @NotBlank(message = "userEmail is required")
-    private String userEmail;
-    @NotBlank(message = "contactInfo is required")
+    @Email(message = "Email should be valid")
+    private String email;
+    @Nullable
     private String contactInfo;
-    @NotBlank(message = "firstName is required")
+    @Nullable
     private String firstName;
-    @NotBlank(message = "lastName is required")
+    @Nullable
     private String lastName;
 }

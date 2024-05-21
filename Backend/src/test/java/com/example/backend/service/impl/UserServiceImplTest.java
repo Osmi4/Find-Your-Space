@@ -52,7 +52,7 @@ public class UserServiceImplTest {
     void testGetUserByUserId_Success() {
         UserResponse userResponse = userService.getUserByUserId(user.getUserId());
         assertEquals(userResponse.getUserId(), user.getUserId());
-        assertEquals(userResponse.getUserEmail(), user.getEmail());
+        assertEquals(userResponse.getEmail(), user.getEmail());
         assertEquals(userResponse.getContactInfo(), user.getContactInfo());
         assertEquals(userResponse.getFirstName(), user.getFirstName());
         assertEquals(userResponse.getLastName(), user.getLastName());
@@ -61,6 +61,9 @@ public class UserServiceImplTest {
     void getUsersByFilters_Success() {
         UserFilter userFilter = new UserFilter();
         userFilter.setFirstName(user.getFirstName());
+        userFilter.setLastName(user.getLastName());
+        userFilter.setEmail(user.getEmail());
+        userFilter.setContactInfo(user.getContactInfo());
         Pageable pageable = PageRequest.of(0, 10);
         Page<UserResponse> userResponsePage = userService.getUsersByFilters(userFilter, pageable);
         assertEquals(userResponsePage.getContent().get(0).getUserId(), user.getUserId());

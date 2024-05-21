@@ -1,5 +1,6 @@
 package com.example.backend.service.impl;
 
+import com.example.backend.autoMapper.SpaceMapper;
 import com.example.backend.dtos.Space.*;
 import com.example.backend.entity.Booking;
 import com.example.backend.entity.Permission;
@@ -45,7 +46,8 @@ public class SpaceServiceImpl implements SpaceService {
 
     @Override
     public SpaceResponse addSpace(AddSpaceRequest addSpaceRequest) {
-        Space space = ObjectMapper.mapAddSpaceRequestToSpace(addSpaceRequest);
+        //Space space = ObjectMapper.mapAddSpaceRequestToSpace(addSpaceRequest);
+        Space space = SpaceMapper.INSTANCE.addSpaceRequestToSpace(addSpaceRequest);
         if(space == null){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Space not correctly converted");
         }
@@ -53,7 +55,7 @@ public class SpaceServiceImpl implements SpaceService {
         if(result == null){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Space not saved");
         }
-        SpaceResponse spaceResponse = ObjectMapper.mapSpaceToSpaceResponse(result);
+        SpaceResponse spaceResponse = SpaceMapper.INSTANCE.spaceToSpaceResponse(result);
         if(spaceResponse == null){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Space not correctly converted");
         }
@@ -66,6 +68,7 @@ public class SpaceServiceImpl implements SpaceService {
         return spaceResponse;
     }
 
+    @Transactional
     @Override
     public SpaceResponse editSpace(EditSpaceRequest editSpaceRequest , String spaceId) throws AccessDeniedException {
         permissionService.checkPermission(SecurityContextHolder.getContext().getAuthentication().getName(), Space.class.getSimpleName(), spaceId, PermissionType.UPDATE);
@@ -78,27 +81,15 @@ public class SpaceServiceImpl implements SpaceService {
         if(!spaceOwner.getUserId().equals(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId())){
             throw new UnauthorizedException("You are not the owner of this space");
         }
-
-        if (editSpaceRequest.getSpaceName() != null){
-            space.setSpaceName(editSpaceRequest.getSpaceName());
+        int affectedRows = spaceRepository.updateSpace(spaceId, editSpaceRequest.getSpaceName(), editSpaceRequest.getSpaceLocation(), editSpaceRequest.getSpaceSize(), editSpaceRequest.getSpacePrice(), editSpaceRequest.getSpaceDescription());
+        if(affectedRows == 0) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Space not updated");
         }
-        if (editSpaceRequest.getSpaceLocation() != null){
-            space.setSpaceLocation(editSpaceRequest.getSpaceLocation());
-        }
-        if (editSpaceRequest.getSpaceSize() > 0 ){
-            space.setSpaceSize(editSpaceRequest.getSpaceSize());
-        }
-        if (editSpaceRequest.getSpacePrice() > 0){
-            space.setSpacePrice(editSpaceRequest.getSpacePrice());
-        }
-        if(editSpaceRequest.getSpaceDescription() != null){
-            space.setSpaceDescription(editSpaceRequest.getSpaceDescription());
-        }
-        var result = spaceRepository.save(space);
+        var result  = spaceRepository.findBySpaceId(spaceId).orElse(null);
         if(result == null){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Space not updated");
         }
-        return ObjectMapper.mapSpaceToSpaceResponse(space);
+        return SpaceMapper.INSTANCE.spaceToSpaceResponse(result);
     }
 
     @Override
@@ -118,11 +109,11 @@ public class SpaceServiceImpl implements SpaceService {
         if (deleted == 0 || spaceRepository.findBySpaceId(id).isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "space not deleted");
         }
-        return ObjectMapper.mapSpaceToSpaceResponse(space);
+        return SpaceMapper.INSTANCE.spaceToSpaceResponse(space);
     }
     @Override
     public Page<SpaceResponse> searchSpaces(SpaceFilter filter , Pageable pageable) {
-        return doFilter(filter , Optional.empty() , pageable).map(ObjectMapper::mapSpaceToSpaceResponse);
+        return doFilter(filter , Optional.empty() , pageable).map(SpaceMapper.INSTANCE::spaceToSpaceResponse);
     }
     private boolean checkSpaceAvailability(Space space, Date startDate, Date endDate) throws AccessDeniedException {
         permissionService.checkPermission(SecurityContextHolder.getContext().getAuthentication().getName(), Space.class.getSimpleName(), space.getSpaceId(), PermissionType.READ);
@@ -144,7 +135,7 @@ public class SpaceServiceImpl implements SpaceService {
         if (space == null) {
             throw new ResourceNotFoundException("Space not found", "space", id);
         }
-        return ObjectMapper.mapSpaceToSpaceResponse(space);
+        return SpaceMapper.INSTANCE.spaceToSpaceResponse(space);
     }
     @Override
     public SpaceResponse changeAvailability(String spaceId, Availibility availability) throws AccessDeniedException {
@@ -155,21 +146,25 @@ public class SpaceServiceImpl implements SpaceService {
         if (space == null) {
             throw new ResourceNotFoundException("Space not found", "space", spaceId);
         }
-        space.setAvailibility(availability);
-        spaceRepository.save(space);
-        return ObjectMapper.mapSpaceToSpaceResponse(space);
+        int affectedRows = spaceRepository.updateSpaceAvailability(spaceId, availability);
+        if (affectedRows == 0) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Space not updated");
+        }
+        Space updatedSpace = spaceRepository.findBySpaceId(spaceId).orElse(null);
+        return SpaceMapper.INSTANCE.spaceToSpaceResponse(updatedSpace);
     }
     @Override
     public Page<SpaceResponse> getMySpaces(SpaceFilter filter, Pageable pageable) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        //return doFilter(filter , Optional.ofNullable(user.getUserId()) , pageable).stream().map(ObjectMapper::mapSpaceToSpaceResponse).toList();
-        return doFilter(filter , Optional.ofNullable(user.getUserId()) , pageable).map(ObjectMapper::mapSpaceToSpaceResponse);
+        if(user == null){
+            throw new UnauthorizedException("You are not logged in");
+        }
+        return doFilter(filter , Optional.ofNullable(user.getUserId()) , pageable).map(SpaceMapper.INSTANCE::spaceToSpaceResponse);
     }
 
     @Override
     public Page<SpaceResponse> getAllSpaces(Pageable pageable) {
-        //return spaceRepository.findAll().stream().map(ObjectMapper::mapSpaceToSpaceResponse).toList();
-        return spaceRepository.findAll(pageable).map(ObjectMapper::mapSpaceToSpaceResponse);
+        return spaceRepository.findAll(pageable).map(SpaceMapper.INSTANCE::spaceToSpaceResponse);
     }
 
     @Override

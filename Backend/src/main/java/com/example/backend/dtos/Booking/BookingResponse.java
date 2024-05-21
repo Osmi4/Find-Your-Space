@@ -17,8 +17,8 @@ public class BookingResponse {
     private String bookingId;
     ///Space Response
     private String spaceId;
-    private Date startDate;
-    private Date endDate;
+    private Date startDateTime;
+    private Date endDateTime;
     private Status status;
     private UserResponse client;
     private UserResponse owner;

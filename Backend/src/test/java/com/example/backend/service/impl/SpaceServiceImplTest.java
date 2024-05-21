@@ -75,7 +75,6 @@ public class SpaceServiceImplTest {
         addSpaceRequest.setSpaceLocation("Location1");
         addSpaceRequest.setSpaceSize(100);
         addSpaceRequest.setSpacePrice(1000);
-        addSpaceRequest.setSpaceImage("Image1");
         addSpaceRequest.setSpaceDescription("Space1 description");
         addSpaceRequest.setSpaceType(SpaceType.OFFICE);
 
@@ -95,7 +94,6 @@ public class SpaceServiceImplTest {
         assertEquals("Location1", result.getSpaceLocation());
         assertEquals(100, result.getSpaceSize());
         assertEquals(1000, result.getSpacePrice());
-        assertEquals("Image1", result.getSpaceImage());
     }
     @Test
     public void editSpace_shouldUpdateSpace_whenUserIsOwner() throws AccessDeniedException {
@@ -118,7 +116,6 @@ public class SpaceServiceImplTest {
         assertEquals("Location1", deletedSpace.getSpaceLocation());
         assertEquals(100, deletedSpace.getSpaceSize());
         assertEquals(1000, deletedSpace.getSpacePrice());
-        assertEquals("Image1", deletedSpace.getSpaceImage());
     }
     @Test
     public void searchSpaces_shouldReturnFilteredSpaces_whenFiltersApplied() {
@@ -156,7 +153,6 @@ public class SpaceServiceImplTest {
         assertEquals("Location1", result.getSpaceLocation());
         assertEquals(100, result.getSpaceSize());
         assertEquals(1000, result.getSpacePrice());
-        assertEquals("Image1", result.getSpaceImage());
     }
     @Test
     public void changeAvailability_shouldChangeAvailability_whenSpaceExists() throws AccessDeniedException {
@@ -187,7 +183,6 @@ public class SpaceServiceImplTest {
         assertEquals("Location1", results.getContent().get(0).getSpaceLocation());
         assertEquals(100, results.getContent().get(0).getSpaceSize());
         assertEquals(1000, results.getContent().get(0).getSpacePrice());
-        assertEquals("Image1", results.getContent().get(0).getSpaceImage());
     }
     @Test
     public void getAllSpaces_shouldReturnAllSpaces() {
@@ -201,7 +196,6 @@ public class SpaceServiceImplTest {
         assertEquals("Location1", results.getContent().get(0).getSpaceLocation());
         assertEquals(100, results.getContent().get(0).getSpaceSize());
         assertEquals(1000, results.getContent().get(0).getSpacePrice());
-        assertEquals("Image1", results.getContent().get(0).getSpaceImage());
     }
 
 

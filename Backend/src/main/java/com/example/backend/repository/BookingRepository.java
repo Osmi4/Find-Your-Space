@@ -1,12 +1,14 @@
 package com.example.backend.repository;
 
 import com.example.backend.entity.Booking;
+import com.example.backend.enums.Availibility;
 import com.example.backend.enums.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,4 +52,14 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
 
     @Override
     List<Booking> findAll();
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE Booking b SET " +
+            "b.startDateTime = CASE WHEN :startDateTime IS NULL THEN b.startDateTime ELSE :startDateTime END, " +
+            "b.endDateTime = CASE WHEN :endDateTime IS NULL THEN b.endDateTime ELSE :endDateTime END, " +
+            "b.cost = :cost " +
+            "WHERE b.bookingId = :id")
+    int updateBookingDate(@Param("id") String id, @Param("startDateTime") Date startDateTime, @Param("endDateTime") Date endDateTime, @Param("cost") double cost);
+
 }

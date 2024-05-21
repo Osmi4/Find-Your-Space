@@ -1,5 +1,6 @@
 package com.example.backend.service.impl;
 
+import com.example.backend.autoMapper.BookingMapper;
 import com.example.backend.dtos.Booking.AddBookingRequest;
 import com.example.backend.dtos.Booking.BookingFilter;
 import com.example.backend.dtos.Booking.BookingResponse;
@@ -9,7 +10,6 @@ import com.example.backend.entity.Space;
 import com.example.backend.entity.User;
 import com.example.backend.enums.Status;
 import com.example.backend.exception.ResourceNotFoundException;
-import com.example.backend.mapper.ObjectMapper;
 import com.example.backend.repository.BookingRepository;
 import com.example.backend.repository.SpaceRepository;
 import com.example.backend.repository.UserRepository;
@@ -33,7 +33,7 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final SpaceRepository spaceRepository;
 
-    public BookingServiceImpl(BookingRepository bookingRepository, SpaceRepository spaceRepository, UserRepository userRepository) {
+    public BookingServiceImpl(BookingRepository bookingRepository, SpaceRepository spaceRepository) {
         this.bookingRepository = bookingRepository;
         this.spaceRepository = spaceRepository;
     }
@@ -44,13 +44,13 @@ public class BookingServiceImpl implements BookingService {
         if(booking == null) {
             throw new ResourceNotFoundException("Booking not found", "booking", id);
         }
-        return ObjectMapper.mapBookingToBookingResponse(booking);
+        return BookingMapper.INSTANCE.bookingToBookingResponse(booking);
     }
 
     @Override
     public BookingResponse addBooking(AddBookingRequest addBookingRequest) {
         List<Booking> currentBookings = bookingRepository.findBySpace_SpaceId(addBookingRequest.getSpaceId());
-        if (checkAvailability(currentBookings, addBookingRequest.getEndDate(), addBookingRequest.getStartDate())){
+        if (checkAvailability(currentBookings, addBookingRequest.getEndDateTime(), addBookingRequest.getStartDateTime())){
             throw new RuntimeException("Space is not available at this time");
         }
         Optional<Space> spaceOpt = spaceRepository.findBySpaceId(addBookingRequest.getSpaceId());
@@ -58,14 +58,14 @@ public class BookingServiceImpl implements BookingService {
         if(space == null) {
             throw new ResourceNotFoundException("Space not found", "space", addBookingRequest.getSpaceId());
         }
-        double price = space.getSpacePrice()* (addBookingRequest.getEndDate().getTime() - addBookingRequest.getStartDate().getTime()) / 1000 / 60 / 60;
+        double price = space.getSpacePrice() * (addBookingRequest.getEndDateTime().getTime() - addBookingRequest.getStartDateTime().getTime()) / 1000 / 60 / 60;
         User client = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User Owner = space.getOwner();
         if (Owner.getUserId().equals(client.getUserId())) {
             throw new IllegalArgumentException("Owner can't book their own space");
         }
-        Booking addedBooking = bookingRepository.save(ObjectMapper.mapAddBookingRequestToBooking(addBookingRequest , price , client , space));
-        return ObjectMapper.mapBookingToBookingResponse(addedBooking);
+        Booking addedBooking = bookingRepository.save(BookingMapper.INSTANCE.addBookingRequestToBooking(addBookingRequest, price, client, space));
+        return BookingMapper.INSTANCE.bookingToBookingResponse(addedBooking);
     }
 
 
@@ -76,21 +76,28 @@ public class BookingServiceImpl implements BookingService {
         if(bookingToUpdate == null || !bookingToUpdate.getStatus().equals(Status.INQUIRY) || !bookingToUpdate.getClient().getUserId().equals(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId())) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "booking is not found or not owned by user or not in inquiry status");
         }
+        if(editBookingRequest.getStartDate()==null){
+            editBookingRequest.setStartDate(bookingToUpdate.getStartDateTime());
+        }
+        if(editBookingRequest.getEndDate()==null){
+            editBookingRequest.setEndDate(bookingToUpdate.getEndDateTime());
+        }
         List<Booking> currentBookings = bookingRepository.findBySpace_SpaceId(bookingToUpdate.getSpace().getSpaceId());
         currentBookings.remove(bookingToUpdate);
         if (checkAvailability(currentBookings, editBookingRequest.getEndDate(), editBookingRequest.getStartDate())){
             throw new RuntimeException("Space is not available at this time");
         }
         double price = bookingToUpdate.getSpace().getSpacePrice()* (editBookingRequest.getEndDate().getTime() - editBookingRequest.getStartDate().getTime()) / 1000 / 60 / 60;
-        bookingToUpdate.setStartDateTime(editBookingRequest.getStartDate());
-        bookingToUpdate.setEndDateTime(editBookingRequest.getEndDate());
-        bookingToUpdate.setCost(price);
-        bookingToUpdate.setDateUpdated(new Date());
-        Booking updatedBooking = bookingRepository.save(bookingToUpdate);
-        return ObjectMapper.mapBookingToBookingResponse(updatedBooking);
+        int affectedRows = bookingRepository.updateBookingDate(bookingId, editBookingRequest.getStartDate(), editBookingRequest.getEndDate(), price);
+        if(affectedRows == 0){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "booking not updated");
+        }
+        Booking updatedBooking = bookingRepository.findByBookingId(bookingId).stream().findFirst().orElse(null);
+        if(updatedBooking == null){
+            throw new ResourceNotFoundException("Booking not found", "booking", bookingId);
+        }
+        return BookingMapper.INSTANCE.bookingToBookingResponse(updatedBooking);
     }
-
-
 
     private static boolean checkAvailability(List<Booking> currentBookings, Date editBookingRequest, Date editBookingRequest1) {
         for (Booking booking : currentBookings) {
@@ -118,7 +125,7 @@ public class BookingServiceImpl implements BookingService {
         if(deleted == 0 || bookingRepository.findByBookingId(id).isPresent()){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "booking not deleted");
         }
-        return ObjectMapper.mapBookingToBookingResponse(bookingToDelete);
+        return BookingMapper.INSTANCE.bookingToBookingResponse(bookingToDelete);
     }
 
     @Override
@@ -129,10 +136,8 @@ public class BookingServiceImpl implements BookingService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "user not log in");
         }
         else{
-            //List<Booking> bookings = bookingRepository.findByClient_UserId(user.getUserId());
             Page<Booking> bookings = bookingRepository.findByClient_UserId(user.getUserId(), pageable);
-            //return bookings.stream().map(ObjectMapper::mapBookingToBookingResponse).toList();
-            return bookings.map(ObjectMapper::mapBookingToBookingResponse);
+            return bookings.map(BookingMapper.INSTANCE::bookingToBookingResponse);
         }
     }
 
@@ -145,8 +150,7 @@ public class BookingServiceImpl implements BookingService {
             BookingFilter filter = filterOpt.get();
             User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Page<Booking> bookings = doFilter(filter , Optional.of(user) , Optional.empty() , pageable);
-            //return bookings.stream().map(ObjectMapper::mapBookingToBookingResponse).toList();
-            return bookings.map(ObjectMapper::mapBookingToBookingResponse);
+            return bookings.map(BookingMapper.INSTANCE::bookingToBookingResponse);
         }
     }
 
@@ -162,14 +166,10 @@ public class BookingServiceImpl implements BookingService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "space not found or not owned by user");
         }
         if(filter.isEmpty()){
-            //List<Booking> bookings = bookingRepository.findBySpace_SpaceId(spaceId);
-            //return bookings.stream().map(ObjectMapper::mapBookingToBookingResponse).toList();
-            return bookingRepository.findBySpace_SpaceId(spaceId, pageable).map(ObjectMapper::mapBookingToBookingResponse);
+            return bookingRepository.findBySpace_SpaceId(spaceId, pageable).map(BookingMapper.INSTANCE::bookingToBookingResponse);
         }
         else{
-            //List<Booking> bookings = doFilter(filter.get() , Optional.empty() , Optional.of(space));
-            //return bookings.stream().map(ObjectMapper::mapBookingToBookingResponse).toList();
-            return doFilter(filter.get() , Optional.empty() , Optional.of(space) , pageable).map(ObjectMapper::mapBookingToBookingResponse);
+            return doFilter(filter.get() , Optional.empty() , Optional.of(space) , pageable).map(BookingMapper.INSTANCE::bookingToBookingResponse);
         }
     }
 
@@ -177,12 +177,11 @@ public class BookingServiceImpl implements BookingService {
     public Page<BookingResponse> getSearchAllBookings(Optional<BookingFilter> filter , Pageable pageable) {
         if(filter.isEmpty()) {
             Page<Booking> bookings = bookingRepository.findAll(pageable);
-            return bookings.map(ObjectMapper::mapBookingToBookingResponse);
+            return bookings.map(BookingMapper.INSTANCE::bookingToBookingResponse);
         }
         else{
             Page<Booking> bookings = doFilter(filter.get() , Optional.empty() , Optional.empty() , pageable);
-            //return bookings.stream().map(ObjectMapper::mapBookingToBookingResponse).toList();
-            return bookings.map(ObjectMapper::mapBookingToBookingResponse);
+            return bookings.map(BookingMapper.INSTANCE::bookingToBookingResponse);
         }
     }
 
@@ -214,7 +213,7 @@ public class BookingServiceImpl implements BookingService {
             bookingToUpdate.setStatus(status);
             bookingToUpdate.setDateUpdated(new Date());
             Booking updatedBooking = bookingRepository.save(bookingToUpdate);
-            return ObjectMapper.mapBookingToBookingResponse(updatedBooking);
+            return BookingMapper.INSTANCE.bookingToBookingResponse(updatedBooking);
         }
         else{
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Invalid status change");

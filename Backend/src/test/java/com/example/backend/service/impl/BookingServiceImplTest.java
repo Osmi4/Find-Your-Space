@@ -73,7 +73,6 @@ public class BookingServiceImplTest {
         addSpaceRequest.setSpaceLocation("Location1");
         addSpaceRequest.setSpaceSize(100);
         addSpaceRequest.setSpacePrice(1000);
-        addSpaceRequest.setSpaceImage("Image1");
         addSpaceRequest.setSpaceDescription("Space1 description");
         addSpaceRequest.setSpaceType(SpaceType.OFFICE);
 
@@ -102,15 +101,15 @@ public class BookingServiceImplTest {
         Date endDate = calendar.getTime(); // End date is one day after the start date
 
         addBookingRequest.setSpaceId(spaceAdded.getSpaceId());
-        addBookingRequest.setStartDate(startDate);
-        addBookingRequest.setEndDate(endDate);
+        addBookingRequest.setStartDateTime(startDate);
+        addBookingRequest.setEndDateTime(endDate);
         addBookingRequest.setDescription("Description");
         BookingResponse bookingResponse = bookingService.addBooking(addBookingRequest);
 
         assertNotNull(bookingResponse);
         assertEquals(addBookingRequest.getSpaceId(), bookingResponse.getSpaceId());
-        assertEquals(registerDto2.getEmail(), bookingResponse.getClient().getUserEmail());
-        assertEquals(registerDto.getEmail(), bookingResponse.getOwner().getUserEmail());
+        assertEquals(registerDto2.getEmail(), bookingResponse.getClient().getEmail());
+        assertEquals(registerDto.getEmail(), bookingResponse.getOwner().getEmail());
     }
 
 
@@ -136,8 +135,8 @@ public class BookingServiceImplTest {
         Date endDate = calendar.getTime(); // End date is one day after the start date
 
         addBookingRequest.setSpaceId(spaceAdded.getSpaceId());
-        addBookingRequest.setStartDate(startDate);
-        addBookingRequest.setEndDate(endDate);
+        addBookingRequest.setStartDateTime(startDate);
+        addBookingRequest.setEndDateTime(endDate);
         addBookingRequest.setDescription("Description");
         BookingResponse bookingResponse = bookingService.addBooking(addBookingRequest);
 
@@ -145,8 +144,8 @@ public class BookingServiceImplTest {
         assertNotNull(bookingResponse2);
         assertEquals(bookingResponse.getBookingId(), bookingResponse2.getBookingId());
         assertEquals(bookingResponse.getSpaceId(), bookingResponse2.getSpaceId());
-        assertEquals(bookingResponse.getClient().getUserEmail(), bookingResponse2.getClient().getUserEmail());
-        assertEquals(bookingResponse.getOwner().getUserEmail(), bookingResponse2.getOwner().getUserEmail());
+        assertEquals(bookingResponse.getClient().getEmail(), bookingResponse2.getClient().getEmail());
+        assertEquals(bookingResponse.getOwner().getEmail(), bookingResponse2.getOwner().getEmail());
     }
 
     @Test
@@ -155,8 +154,8 @@ public class BookingServiceImplTest {
         addBookingRequest.setSpaceId(spaceAdded.getSpaceId());
         Date startDate = new Date(System.currentTimeMillis() + 86400000); // Tomorrow
         Date endDate = new Date(); // Today, before startDate
-        addBookingRequest.setStartDate(startDate);
-        addBookingRequest.setEndDate(endDate);
+        addBookingRequest.setStartDateTime(startDate);
+        addBookingRequest.setEndDateTime(endDate);
 
         // Expect an IllegalArgumentException or similar
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -187,8 +186,8 @@ public class BookingServiceImplTest {
         Date endDate = calendar.getTime(); // End date is one day after the start date
 
         addBookingRequest.setSpaceId(spaceAdded.getSpaceId());
-        addBookingRequest.setStartDate(startDate);
-        addBookingRequest.setEndDate(endDate);
+        addBookingRequest.setStartDateTime(startDate);
+        addBookingRequest.setEndDateTime(endDate);
         addBookingRequest.setDescription("Description");
         BookingResponse bookingResponse = bookingService.addBooking(addBookingRequest);
 
@@ -203,8 +202,8 @@ public class BookingServiceImplTest {
         assertNotNull(bookingResponse2);
         assertEquals(bookingResponse.getBookingId(), bookingResponse2.getBookingId());
         assertEquals(bookingResponse.getSpaceId(), bookingResponse2.getSpaceId());
-        assertEquals(bookingResponse.getClient().getUserEmail(), bookingResponse2.getClient().getUserEmail());
-        assertEquals(bookingResponse.getOwner().getUserEmail(), bookingResponse2.getOwner().getUserEmail());
+        assertEquals(bookingResponse.getClient().getEmail(), bookingResponse2.getClient().getEmail());
+        assertEquals(bookingResponse.getOwner().getEmail(), bookingResponse2.getOwner().getEmail());
     }
 
     @Test
@@ -228,8 +227,8 @@ public class BookingServiceImplTest {
         Date endDate = calendar.getTime(); // End date is one day after the start date
 
         addBookingRequest.setSpaceId(spaceAdded.getSpaceId());
-        addBookingRequest.setStartDate(startDate);
-        addBookingRequest.setEndDate(endDate);
+        addBookingRequest.setStartDateTime(startDate);
+        addBookingRequest.setEndDateTime(endDate);
         addBookingRequest.setDescription("Description");
         BookingResponse bookingResponse = bookingService.addBooking(addBookingRequest);
 
@@ -258,8 +257,8 @@ public class BookingServiceImplTest {
         Date endDate = calendar.getTime(); // End date is one day after the start date
 
         addBookingRequest.setSpaceId(spaceAdded.getSpaceId());
-        addBookingRequest.setStartDate(startDate);
-        addBookingRequest.setEndDate(endDate);
+        addBookingRequest.setStartDateTime(startDate);
+        addBookingRequest.setEndDateTime(endDate);
         addBookingRequest.setDescription("Description");
         BookingResponse bookingResponse = bookingService.addBooking(addBookingRequest);
 
@@ -293,8 +292,8 @@ public class BookingServiceImplTest {
         Date endDate = calendar.getTime(); // End date is one day after the start date
 
         addBookingRequest.setSpaceId(spaceAdded.getSpaceId());
-        addBookingRequest.setStartDate(startDate);
-        addBookingRequest.setEndDate(endDate);
+        addBookingRequest.setStartDateTime(startDate);
+        addBookingRequest.setEndDateTime(endDate);
         addBookingRequest.setDescription("Description");
         BookingResponse bookingResponse = bookingService.addBooking(addBookingRequest);
 
@@ -334,8 +333,8 @@ public class BookingServiceImplTest {
         Date endDate = calendar.getTime(); // End date is one day after the start date
 
         addBookingRequest.setSpaceId(spaceAdded.getSpaceId());
-        addBookingRequest.setStartDate(startDate);
-        addBookingRequest.setEndDate(endDate);
+        addBookingRequest.setStartDateTime(startDate);
+        addBookingRequest.setEndDateTime(endDate);
         addBookingRequest.setDescription("Description");
         BookingResponse bookingResponse = bookingService.addBooking(addBookingRequest);
 
@@ -375,8 +374,8 @@ public class BookingServiceImplTest {
         Date endDate = calendar.getTime(); // End date is one day after the start date
 
         addBookingRequest.setSpaceId(spaceAdded.getSpaceId());
-        addBookingRequest.setStartDate(startDate);
-        addBookingRequest.setEndDate(endDate);
+        addBookingRequest.setStartDateTime(startDate);
+        addBookingRequest.setEndDateTime(endDate);
         addBookingRequest.setDescription("Description");
         BookingResponse bookingResponse = bookingService.addBooking(addBookingRequest);
 
@@ -410,8 +409,8 @@ public class BookingServiceImplTest {
         Date endDate = calendar.getTime(); // End date is one day after the start date
 
         addBookingRequest.setSpaceId(spaceAdded.getSpaceId());
-        addBookingRequest.setStartDate(startDate);
-        addBookingRequest.setEndDate(endDate);
+        addBookingRequest.setStartDateTime(startDate);
+        addBookingRequest.setEndDateTime(endDate);
         addBookingRequest.setDescription("Description");
         BookingResponse bookingResponse = bookingService.addBooking(addBookingRequest);
 

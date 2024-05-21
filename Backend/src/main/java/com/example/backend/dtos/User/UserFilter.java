@@ -1,6 +1,7 @@
 package com.example.backend.dtos.User;
 
 import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,9 +13,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserFilter {
     @Nullable
-    private String userName;
-    @Nullable
-    private String userEmail;
+    @Email(message = "Email should be valid")
+    private String email;
     @Nullable
     private String contactInfo;
     @Nullable

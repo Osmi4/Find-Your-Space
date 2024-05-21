@@ -4,6 +4,7 @@ import com.example.backend.enums.Availibility;
 import com.example.backend.enums.SortType;
 import com.example.backend.enums.SortVar;
 import com.example.backend.enums.SpaceType;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

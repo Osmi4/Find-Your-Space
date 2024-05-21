@@ -1,6 +1,7 @@
 package com.example.backend.dtos.Booking;
 
 import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,16 +15,16 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddBookingRequest {
-    @NotNull(message = "Space ID cannot be null")
+    @NotBlank(message = "Space ID cannot be null")
     private String spaceId;
 
     @Future(message = "Start date must be in the future")
-    @NotNull(message = "Start date cannot be null")
-    private Date startDate;
+    @NotBlank(message = "Start date cannot be null")
+    private Date startDateTime;
 
     @Future(message = "End date must be in the future")
-    @NotNull(message = "End date cannot be null")
-    private Date endDate;
+    @NotBlank(message = "End date cannot be null")
+    private Date endDateTime;
 
     private String description;
     //w userze dodac zeby wziac jego contact info

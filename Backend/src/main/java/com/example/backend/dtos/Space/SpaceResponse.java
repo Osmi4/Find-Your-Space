@@ -20,7 +20,6 @@ public class SpaceResponse {
     private String spaceLocation;
     private double spaceSize;
     private double spacePrice;
-    private String spaceImage;
     private UserResponse owner;
     private Availibility availability;
     private Date dateAdded;

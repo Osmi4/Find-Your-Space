@@ -1,5 +1,7 @@
 package com.example.backend.service.impl;
 
+import com.example.backend.autoMapper.SpaceMapper;
+import com.example.backend.autoMapper.UserMapper;
 import com.example.backend.dtos.Report.*;
 import com.example.backend.entity.Report;
 import com.example.backend.entity.Space;
@@ -102,9 +104,9 @@ public class ReportServiceImpl implements ReportService {
                 report.getReportStatus(),
                 report.getReportContent(),
                 report.getReportDateTime(),
-                report.getReporter(),
-                report.getReportedUser() != null ? Optional.ofNullable(userServiceImpl.mapUserToUserResponse(report.getReportedUser())) : null,
-                null
+                UserMapper.INSTANCE.userToUserResponse(report.getReporter()),
+                report.getReportedUser() != null ? Optional.ofNullable(UserMapper.INSTANCE.userToUserResponse(report.getReportedUser())) : null,
+                report.getReportedSpace() != null ? Optional.ofNullable(SpaceMapper.INSTANCE.spaceToSpaceResponse(report.getReportedSpace())) : null
         );
     }
 

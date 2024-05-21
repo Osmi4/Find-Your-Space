@@ -60,7 +60,6 @@ public class RatingServiceImplTest{
         addSpaceRequest.setSpaceLocation("Location1");
         addSpaceRequest.setSpaceSize(100);
         addSpaceRequest.setSpacePrice(1000);
-        addSpaceRequest.setSpaceImage("Image1");
         addSpaceRequest.setSpaceDescription("Space1 description");
         addSpaceRequest.setSpaceType(SpaceType.OFFICE);
     }

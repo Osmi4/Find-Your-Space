@@ -20,27 +20,25 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     Optional<User>findByUserId(@Param("id") String id);
 
-    @Query("SELECT u FROM User u WHERE " +
-            "(:userEmail IS NULL OR u.email = :userEmail) AND " +
-            "(:contactInfo IS NULL OR u.contactInfo = :contactInfo) AND " +
-            "(:firstName IS NULL OR u.firstName = :firstName) AND " +
-            "(:lastName IS NULL OR u.lastName = :lastName)"
-    )
-    Page<User> findUsersByFilter(
-            @Param("userEmail") @Nullable String userEmail,
-            @Param("contactInfo") @Nullable String contactInfo,
-            @Param("firstName") @Nullable String firstName,
-            @Param("lastName") @Nullable String lastName,
-            Pageable pageable
-    );
-
     @Modifying
     @Transactional
-    @Query("UPDATE User u SET u.email = :userEmail, u.contactInfo = :contactInfo, u.firstName = :firstName, u.lastName = :lastName WHERE u.id = :id")
+    @Query("UPDATE User u SET u.email = :email, u.contactInfo = :contactInfo, u.firstName = :firstName, u.lastName = :lastName WHERE u.userId = :id")
     int patchUser(@Param("id") String id,
-                   @Param("userEmail") String userEmail,
+                   @Param("email") String email,
                    @Param("contactInfo") String contactInfo,
                    @Param("firstName") String firstName,
                    @Param("lastName") String lastName);
+
+    @Query("""
+       select u from User u
+       where (:email is null or LOWER(u.email) like LOWER(concat('%', :email, '%')))
+       and (:firstName is null or LOWER(u.firstName) like LOWER(concat('%', :firstName, '%')))
+       and (:lastName is null or LOWER(u.lastName) like LOWER(concat('%', :lastName, '%')))
+       and (:contactInfo is null or LOWER(u.contactInfo) like LOWER(concat('%', :contactInfo, '%')))""")
+    Page<User> findUsersByFilter(@Param("email") String email,
+                                 @Param("firstName") String firstName,
+                                 @Param("lastName") String lastName,
+                                 @Param("contactInfo") String contactInfo,
+                                 Pageable pageable);
 
 }

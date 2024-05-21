@@ -1,5 +1,6 @@
 package com.example.backend.service.impl;
 
+import com.example.backend.autoMapper.RatingMapper;
 import com.example.backend.dtos.Payment.UpdatePaymentRequest;
 import com.example.backend.dtos.Rating.AddRatingRequest;
 import com.example.backend.dtos.Rating.RatingFilter;
@@ -45,27 +46,20 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public RatingResponse addRating(AddRatingRequest addRatingRequest) {
-        Rating rating = mapRatingRequestToRating(addRatingRequest);
+        Space space = spaceRepository.findById(addRatingRequest.getSpaceId())
+                .orElseThrow(() -> new ResourceNotFoundException("Space not found", "spaceId", addRatingRequest.getSpaceId()));
+        Rating rating = RatingMapper.INSTANCE.RatingRequestToRating(addRatingRequest, space);
         Rating savedRating = ratingRepository.save(rating);
-        return mapRatingToRatingResponse(savedRating);
+        return RatingMapper.INSTANCE.RatingToRatingResponse(savedRating);
     }
 
-    private RatingResponse mapRatingToRatingResponse(Rating rating) {
-        RatingResponse ratingResponse = new RatingResponse();
-        ratingResponse.setRatingId(rating.getRatingId());
-        ratingResponse.setScore(rating.getScore());
-        ratingResponse.setComment(rating.getComment());
-        ratingResponse.setDateAdded(rating.getDateAdded());
-        ratingResponse.setSpaceId(rating.getSpace().getSpaceId());
-        ratingResponse.setUser(rating.getUser().getUserId());
-        return ratingResponse;
-    }
+
 
 
     @Override
     public RatingResponse getRating(String id) {
         return ratingRepository.findById(id)
-                .map(this::mapRatingToRatingResponse)
+                .map(RatingMapper.INSTANCE::RatingToRatingResponse)
                 .orElseThrow(() -> new ResourceNotFoundException("Rating not found", "ratingId", id));
     }
 
@@ -86,18 +80,8 @@ public class RatingServiceImpl implements RatingService {
     @Override
     public Page<RatingResponse> getRatingsByFilters(RatingFilter ratingFilter, Pageable pageable) {
         return ratingRepository.findRatingsByFilter(ratingFilter.getSpaceId(), ratingFilter.getOwnerId(), pageable)
-                .map(this::mapRatingToRatingResponse);
+                .map(RatingMapper.INSTANCE::RatingToRatingResponse);
     }
 
-    public Rating mapRatingRequestToRating(AddRatingRequest addRatingRequest) {
-        Rating rating = new Rating();
-        rating.setScore(addRatingRequest.getScore());
-        rating.setComment(addRatingRequest.getComment());
-        rating.setDateAdded(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
-        Optional<Space> spaceOpt = spaceRepository.findBySpaceId(addRatingRequest.getSpaceId());
-        Space space = spaceOpt.orElse(null);
-        rating.setSpace(space);
-        rating.setUser((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        return rating;
-    }
+
 }

@@ -3,6 +3,7 @@ import com.example.backend.dtos.Space.SpaceResponse;
 import com.example.backend.dtos.User.UserResponse;
 import com.example.backend.entity.User;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,12 +20,12 @@ public class ReportResponse {
     private ReportStatus reportStatus;
     private String reportContent;
     private Date reportDateTime;
-    private User reporter;
+    private UserResponse reporter;
     private Optional<UserResponse> reportedUser;
     private Optional<SpaceResponse> reportedSpace;
 
     public ReportResponse(String reportId, ReportType reportType, ReportStatus reportStatus,
-                          String reportContent, Date reportDateTime, User reporter,
+                          String reportContent, Date reportDateTime, UserResponse reporter,
                           Optional<UserResponse> reportedUser, Optional<SpaceResponse> reportedSpace) {
         this.reportId = reportId;
         this.reportType = reportType;

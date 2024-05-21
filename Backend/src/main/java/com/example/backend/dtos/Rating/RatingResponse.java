@@ -18,5 +18,5 @@ public class RatingResponse {
     private String comment;
     private Date dateAdded;
     private String spaceId;
-    private String user;
+    private String userId;
 }

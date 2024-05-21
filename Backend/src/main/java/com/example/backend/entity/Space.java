@@ -44,13 +44,12 @@ public class Space {
     @Column(name = "date_updated", nullable = false)
     private Date dateUpdated;
 
-    @Column(name = "availibility", nullable = false)
+    @Column(name = "availability", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Availibility availibility;
+    private Availibility availability;
 
-    //we will keep image on server and store the path in database
-    @Column(name = "space_image", nullable = true)
-    private String spaceImage;
+    @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Image> images;
 
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)

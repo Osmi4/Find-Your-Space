@@ -1,11 +1,11 @@
 package com.example.backend.service.impl;
 
+import com.example.backend.autoMapper.MessageMapper;
 import com.example.backend.dtos.Message.AddMessage;
 import com.example.backend.dtos.Message.MessageResponse;
 import com.example.backend.entity.Message;
 import com.example.backend.entity.User;
 import com.example.backend.exception.ResourceNotFoundException;
-import com.example.backend.mapper.ObjectMapper;
 import com.example.backend.repository.MessageRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.MessageService;
@@ -41,8 +41,8 @@ public class MessageServiceImpl implements MessageService {
         if(receiver.isEmpty()) {
             throw new ResourceNotFoundException("Receiver not found", "user", message.getReceiverId());
         }
-        Message addedMessage = messageRepository.save(ObjectMapper.mapAddMessageToMessage(message, sender , receiver.get()));
-        return ObjectMapper.mapMessageToMessageResponse(addedMessage);
+        Message addedMessage = messageRepository.save(MessageMapper.INSTANCE.mapAddMessageToMessage(message, sender, receiver.get()));
+        return MessageMapper.INSTANCE.mapMessageToMessageResponse(addedMessage);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class MessageServiceImpl implements MessageService {
         if(message.isEmpty()) {
             throw new ResourceNotFoundException("Message not found", "space", id);
         }
-        return ObjectMapper.mapMessageToMessageResponse(message.get());
+        return MessageMapper.INSTANCE.mapMessageToMessageResponse(message.get());
     }
     @Override
     @Transactional
@@ -64,7 +64,7 @@ public class MessageServiceImpl implements MessageService {
         if(deleted == 0) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "message not deleted");
         }
-        return ObjectMapper.mapMessageToMessageResponse(message.get());
+        return MessageMapper.INSTANCE.mapMessageToMessageResponse(message.get());
     }
 
     @Override
@@ -73,13 +73,13 @@ public class MessageServiceImpl implements MessageService {
         if(user == null) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "user not log in");
         }
-        return messageRepository.findByReceiver_UserId(user.getUserId(), pageable).map(ObjectMapper::mapMessageToMessageResponse);
+        return messageRepository.findByReceiver_UserId(user.getUserId(), pageable).map(MessageMapper.INSTANCE::mapMessageToMessageResponse);
     }
 
     @Override
     public Page<MessageResponse> getMessagesByUserId(String userId, Pageable pageable) {
         Page<Message> messages = messageRepository.findByReceiver_UserIdOrderByMessageDateTimeAsc(userId , pageable);
-        return messageRepository.findByReceiver_UserIdOrderByMessageDateTimeAsc(userId, pageable).map(ObjectMapper::mapMessageToMessageResponse);
+        return messageRepository.findByReceiver_UserIdOrderByMessageDateTimeAsc(userId, pageable).map(MessageMapper.INSTANCE::mapMessageToMessageResponse);
     }
 
     @Override
@@ -88,11 +88,12 @@ public class MessageServiceImpl implements MessageService {
         if(messageOptional.isEmpty()) {
             throw new ResourceNotFoundException("Message not found", "space", messageId);
         }
-        Message messageToUpdate = messageOptional.get();
-        messageToUpdate.setMessageContent(message);
-        messageToUpdate.setMessageDateTime(new Date());
-        Message updatedMessage = messageRepository.save(messageToUpdate);
-        return ObjectMapper.mapMessageToMessageResponse(updatedMessage);
+        int affectedRows = messageRepository.updateMessage(messageId, message);
+        if(affectedRows == 0) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "message not updated");
+        }
+        Message updatedMessage = messageRepository.findByMessageId(messageId).get();
+        return MessageMapper.INSTANCE.mapMessageToMessageResponse(updatedMessage);
     }
 
 

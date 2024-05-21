@@ -1,5 +1,6 @@
 package com.example.backend.dtos.Booking;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -11,9 +12,9 @@ import java.util.Date;
 @Builder
 public class EditBookingRequest {
     @Future(message = "Start date must be in the future")
-    @NotNull(message = "Start date cannot be null")
+    @Nullable
     private Date startDate;
     @Future(message = "End date must be in the future")
-    @NotNull(message = "Start date cannot be null")
+    @Nullable
     private Date endDate;
 }
