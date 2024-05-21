@@ -88,11 +88,8 @@ const Nav=()=>{
       </NavbarContent>
       <NavbarContent justify="end" className='ml-[200px] mr-[30px]'>
         <NavbarItem className="hidden lg:flex">
-          <Link to="/login" className="hover:text-sky-600">Login</Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Button as={Link2} color="default" href="/signup">
-            Sign Up
+        <Button as={Link2} color="default" href="/login">
+            Login
           </Button>
         </NavbarItem>
       </NavbarContent>

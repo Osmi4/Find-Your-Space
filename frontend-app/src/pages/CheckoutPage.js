@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import spaces from "../spaces";
+import {Checkbox, Input, Button} from "@nextui-org/react";
 
 const CheckoutPage = () =>{
     let { id, days } = useParams();
@@ -42,99 +43,107 @@ const CheckoutPage = () =>{
             </div>
         <h2 className="text-xl mb-[20px]">Shipping Information</h2>
       <form onSubmit={handleSubmit} className="w-[450px] flex flex-col gap-y-[10px]">
-        <div className="row flex gap-[10px]">
-          <input
-            type="text"
+      <div className="row flex gap-[10px]">
+          <Input
+            autoFocus
             name="firstName"
-            placeholder="First Name"
+            label="First Name"
+            placeholder="Enter your first name"
+            variant="bordered"
             value={formData.firstName}
             onChange={handleChange}
-            className="w-[220px] border-black border-2 py-[8px] pl-[15px] rounded-2xl"
-          />
-          <input
-            type="text"
+            className="w-[220px]"
+            />
+            <Input
             name="lastName"
-            placeholder="Last Name"
+            label="Last Name"
+            placeholder="Enter your last name"
+            variant="bordered"
             value={formData.lastName}
             onChange={handleChange}
-            className="w-[220px] border-black border-2 py-[8px] pl-[15px] rounded-2xl"
-          />
+            className="w-[220px]"   
+            />
         </div>
 
         <div className="row">
-          <input
-            type="text"
-            name="address"
-            placeholder="Address"
+          <Input
+            name="address"  
+            label="Address"
+            placeholder="Enter your address"
+            variant='bordered'
             value={formData.address}
             onChange={handleChange}
-            className="border-black border-2 py-[8px] pl-[15px] w-full rounded-2xl"
+            className="w-full"
           />
         </div>
 
         <div className="row">
-          <input
-            type="text"
+          <Input
             name="apartmentSuite"
-            placeholder="Apartment/Suite"
+            label="Apartment/Suite"
+            placeholder="Enter your apartment/suite"
+            variant='bordered'
             value={formData.apartmentSuite}
             onChange={handleChange}
-            className="border-black border-2 py-[8px] pl-[15px] w-full rounded-2xl"
+            className="w-full"
           />
         </div>
 
         <div className="row flex gap-[15px]">
-          <input
-            type="text"
+          <Input
             name="country"
-            placeholder="Country"
+            label="Country"
+            variant='bordered'
             value={formData.country}
             onChange={handleChange}
-            className="w-[140px] border-black border-2 py-[8px] pl-[15px] rounded-2xl"
+            className="w-[140px]"
           />
-          <input
-            type="text"
+          <Input
             name="zipCode"
-            placeholder="Zipcode"
+            label="Zipcode"
+            variant='bordered'
             value={formData.zipCode}
             onChange={handleChange}
-            className="w-[140px] border-black border-2 py-[8px] pl-[15px] rounded-2xl"
+            className="w-[140px]"
           />
-          <input
-            type="text"
+          <Input
             name="city"
-            placeholder="City"
+            label="City"
+            variant='bordered'
             value={formData.city}
             onChange={handleChange}
-            className="w-[140px] border-black border-2 py-[8px] pl-[15px] rounded-2xl"
+            className="w-[140px]"
           />
         </div>
 
         <div className="row">
-          <input
-            type="text"
+          <Input
             name="optional"
-            placeholder="Optional"
+            label="Optional"
+            placeholder="Enter additional information (optional)"
+            variant='bordered'
             value={formData.optional}
             onChange={handleChange}
-            className="border-black border-2 py-[8px] pl-[15px] w-full rounded-2xl"
+            className="w-full"
           />
         </div>
-        <div className="flex gap-[10px] my-[15px]">
-            <input
-                type="checkbox"
-                checked={false}
-            />
-            <p className="text-default-500">Save contact information</p>
-        </div>
-        <div className="row bg-black text-center rounded-2xl">
-          <button type="submit" className="text-white py-[10px] ">Continue to Payment</button>
-        </div>
+        <Checkbox
+            classNames={{
+            label: "text-small",
+            }}
+            className='my-[5px]'
+        >
+            Save Contact Information
+        </Checkbox>
+        <Button color="primary" variant='bordered' type="submit" className="w-[100%] text-[16px] py-[20px] font-semibold bg-black">
+          Continue to Payment
+        </Button>
       </form>
       
     </div>
         <div className="mt-[100px] ml-[500px] text-2xl">
             <p>Chosen Location</p>
+            <hr className="border-black w-[450px] mt-[15px] border-1"></hr>
             <div className="flex">
                 <img src={item.image} width={150} alt={item.title} className="rounded-xl mt-[30px]"/>
                 <div className="font-semibold mt-[15px] ml-[10px]">
@@ -144,13 +153,14 @@ const CheckoutPage = () =>{
                     <button className="ml-[200px] mt-[30px] text-xs font-medium underline">Remove</button>
                 </div>
             </div>
-            <input
-            type="text"
+            <Input
             name="couponCode"
+            label="Coupon Code"
             placeholder="Enter coupon code here"
+            variant='bordered'
             value={formData.couponCode}
             onChange={handleChange}
-            className="border-black border-2 py-[8px] pl-[15px] text-lg mt-[200px] w-[450px] rounded-2xl"
+            className="mt-[200px] w-[450px]"
           />
           <hr className="border-black w-[450px] mt-[15px] border-1"></hr>
         <div className="flex gap-[385px]">

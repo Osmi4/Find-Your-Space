@@ -12,7 +12,7 @@
     width: 420px;
     height: 420px;
     background: black;
-    border: 2px solid rgba(255, 255, 255, 1);
+    border: 2px solid #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     color:#fff;
     border-radius: 10px;
@@ -49,8 +49,8 @@
     width: 420px;
     height: 420px;
     background: transparent;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(20px);
+    border: 2px solid white;
+    backdrop-filter: blur(30px);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     color:#fff;
     border-radius: 10px;
@@ -157,7 +157,7 @@
 }
 
 .wordcard .signup p button{
-    color:#fff;
+    color:#005bc4;
     text-decoration: none;
     font-weight: 600;
 }

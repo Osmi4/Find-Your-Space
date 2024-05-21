@@ -8,7 +8,7 @@ import FindSpacePage from "./pages/FindSpacePage";
 import SpacePage from "./pages/SpacePage";
 import ReviewsPage from "./pages/ReviewsPage";
 import CheckoutPage from "./pages/CheckoutPage";
-import RegisterPage from "./pages/RegisterPage";
+import RentPage from "./pages/RentPage";
 function App() {
   const navigate = useNavigate();
 
@@ -19,12 +19,11 @@ function App() {
           <Routes>    
             <Route path="/" element={<HomePage/>}/>    
             <Route path="/login"  element={<LoginPage/>} />
-            <Route path="/signup"  element={<LoginPage/>} />
-            <Route path="/signup/full" element={<RegisterPage/>} />
             <Route path="/find"  element={<FindSpacePage/>} />
             <Route path="space/:id"  element={<SpacePage/>} />
             <Route path="space/:id/reviews" element={<ReviewsPage/>} />
             <Route path="space/:id/checkout/:days" element={<CheckoutPage/>} />
+            <Route path="/rent" element={<RentPage/>} />
           </Routes>
         </div>
         {/* put the footer */}

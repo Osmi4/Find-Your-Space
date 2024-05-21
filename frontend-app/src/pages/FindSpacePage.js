@@ -2,11 +2,12 @@ import spaces from "../spaces";
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {Checkbox} from "@nextui-org/react";
 
 const FindSpacePage = () => {
     const navigate = useNavigate();
 
-    const [filter, setFilter] = useState({
+    const [filter] = useState({
         categories: ["Digital Billboards", "Print Media Spaces", "Transit Advertising", "Shopping Mall Spaces", "Online Platforms"],
         countries: ["Poland","USA","Japan","Germany","France"],
         cities: ["Poznan","Wroclaw","Krakow","Warsaw","Gdansk","Lodz"]
@@ -40,54 +41,75 @@ const FindSpacePage = () => {
         return categoryMatch && countryMatch && cityMatch;
     });
 
-    const clearSelectedFilters = () => setSelectedFilters({ categories: [], countries: [], cities: [] });
+
+    const clearSelectedFilters = () => 
+    {
+    setSelectedFilters({ categories: [], countries: [], cities: [] });
+    }
+    
 
     const openSpacePage = (id) => {
         navigate(`/space/${id}`);
     }
 
     return (
-        <div className="flex mt-[30px] gap-[100px] mx-[100px]">
-            <div className="flex-col w-[200px]">
+        <div className="flex mt-[30px] gap-[100px] ml-[100px]">
+            <div className="flex-col w-[250px] ml-[40px] mr-[20px] mt-[40px]">
                 <div className="flex gap-[20px]">
                     <h1 className="text-xl font-semibold">Filters</h1>
                     <button onClick={clearSelectedFilters} className="text-xs text-gray-400 underline hover:text-gray-700">Clear Filters</button>
                 </div>
-                <p className="text-xs font-semibold my-[10px] ">Categories</p>   
+                <p className="text-sm font-semibold my-[10px] ">Categories</p>   
+                <div className="flex flex-col">
                 {filter.categories.map(category => (
-                    <div key={category} onClick={() => handleCheckboxChange('categories', category)}>
-                        <input
-                            type="checkbox"
-                            id={category}
-                            checked={selectedFilters.categories.includes(category)}
-                        />
-                        <label className="ml-[5px] text-[10px] font-[500]">{category}</label>
-                    </div>
+                    <Checkbox
+                    classNames={{
+                    label: "text-small",
+                    }}
+                    className='mt-[1px]'
+                    id={category}
+                    isSelected={selectedFilters.categories.includes(category)}
+                    onValueChange={() => handleCheckboxChange('categories', category)}
+                    >
+                    {category}
+                    </Checkbox>
                 ))}
-                
-                <p className="text-xs font-semibold my-[10px]">Countries</p>   
+                </div>
+
+                <p className="text-sm font-semibold my-[10px]">Countries</p>   
+                <div className="flex flex-col">
                 {filter.countries.map(country => (
-                    <div key={country} onClick={() => handleCheckboxChange('countries', country)}>
-                        <input
-                            type="checkbox"
-                            id={country}
-                            checked={selectedFilters.countries.includes(country)}
-                        />
-                        <label className="ml-[5px] text-[10px] font-[500]">{country}</label>
-                    </div>
+                    <Checkbox
+                    classNames={{
+                    label: "text-small",
+                    }}
+                    className='mt-[1px]'
+                    id={country}
+                    isSelected={selectedFilters.countries.includes(country)}
+                    onChange={() => handleCheckboxChange('countries', country)}
+                    >
+                    {country}
+                    </Checkbox>
                 ))}
+                </div>
                 
-                <p className="text-xs font-semibold my-[10px]">Cities</p>   
+                <p className="text-sm font-semibold my-[10px]">Cities</p>   
+                <div className="flex flex-col">
                 {filter.cities.map(city => (
-                    <div key={city} onClick={() => handleCheckboxChange('cities', city)}>
-                        <input
-                            type="checkbox"
-                            id={city}
-                            checked={selectedFilters.cities.includes(city)}
-                        />
-                        <label className="ml-[5px] text-[10px] font-[500]">{city}</label>
-                    </div>
+                    <Checkbox
+                    classNames={{
+                    label: "text-small",
+                    }}
+                    className='mt-[1px]'
+                    id={city}
+                    isSelected={selectedFilters.cities.includes(city)}
+                    onChange={() => handleCheckboxChange('cities', city)}
+                    >
+                    {city}
+                    </Checkbox>
                 ))}
+                </div>
+                
             </div>
             
             <div className="flex w-full mt-[50px] gap-y-[20px] gap-x-[15px] flex-wrap">

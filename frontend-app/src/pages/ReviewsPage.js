@@ -10,7 +10,7 @@ const ReviewsPage = () => {
                     <span className="text-4xl">&#9733;</span>
                     <span className="text-4xl">&#9733;</span>
                 </div>
-                <p className="text-2xl my-[20px]">11 reviews</p>
+                <p className="text-2xl my-[20px]">2 reviews</p>
                 <div className="flex items-center mb-[10px] w-[250px]"><p>5 stars</p><hr className="border-black w-[100px] mx-[10px]"></hr> <p>(1)</p></div>
                 <div className="flex items-center mb-[10px] w-[250px]"><p>4 stars</p><hr className="border-black w-[100px] mx-[10px]"></hr> <p>(0)</p></div>
                 <div className="flex items-center mb-[10px] w-[250px]"><p>3 stars</p><hr className="border-black w-[100px] mx-[10px]"></hr> <p>(1)</p></div>
