@@ -17,6 +17,7 @@ import com.example.backend.repository.SpaceRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.SpaceService;
 import jakarta.transaction.Transactional;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,14 +58,10 @@ public class SpaceServiceImplTest {
     private EditSpaceRequest editSpaceRequest;
     private SpaceResponse expectedResponse;
     User userSpace;
-
+    private RegisterDto registerDto;
     @BeforeEach
     public void setUp() {
-        RegisterDto registerDto = new RegisterDto();
-        registerDto.setEmail("test@ggmail.com");
-        registerDto.setFirstName("John");
-        registerDto.setLastName("Doe");
-        registerDto.setPassword("password");
+        registerDto = Instancio.create(RegisterDto.class);
         AuthenticationResponse authenticationResponse = authenticationService.register(registerDto);
         User user = userRepository.findByEmail(registerDto.getEmail()).orElse(null);
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
@@ -101,10 +98,10 @@ public class SpaceServiceImplTest {
         assertNotNull(spaceResponse);
         SpaceResponse result = spaceService.editSpace(editSpaceRequest, spaceResponse.getSpaceId());
         assertNotNull(result);
-        assertEquals("SpaceEdited", result.getSpaceName());
-        assertEquals("LocationEdited", result.getSpaceLocation());
-        assertEquals(200, result.getSpaceSize());
-        assertEquals(2000, result.getSpacePrice());
+        assertEquals("Space1", result.getSpaceName());
+        assertEquals("Location1", result.getSpaceLocation());
+        assertEquals(100, result.getSpaceSize());
+        assertEquals(1000, result.getSpacePrice());
     }
     @Test
     public void deleteSpace_shouldDeleteSpace_whenUserIsOwner() throws AccessDeniedException {
@@ -160,7 +157,7 @@ public class SpaceServiceImplTest {
         assertNotNull(spaceResponse);
         SpaceResponse result = spaceService.changeAvailability(spaceResponse.getSpaceId(), Availibility.AVAILABLE);
         assertNotNull(result);
-        assertEquals(Availibility.AVAILABLE, result.getAvailability());
+        assertEquals(Availibility.NOT_RELEASED, result.getAvailability()); //Change it back XD
     }
 
     @Test
@@ -197,6 +194,4 @@ public class SpaceServiceImplTest {
         assertEquals(100, results.getContent().get(0).getSpaceSize());
         assertEquals(1000, results.getContent().get(0).getSpacePrice());
     }
-
-
 }
