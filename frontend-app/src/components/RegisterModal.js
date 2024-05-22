@@ -1,26 +1,8 @@
-<<<<<<< HEAD:frontend-app/src/components/RegisterModal.js
 import {MailIcon} from '../icons/MailIcon.jsx';
 import {LockIcon} from '../icons/LockIcon.jsx';
 import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Input} from "@nextui-org/react";
-=======
-import {MailIcon} from './MailIcon.jsx';
-import {LockIcon} from './LockIcon.jsx';
-import {useState} from "react";
+import { useState } from 'react';
 import axios from 'axios';
-import {
-    Modal,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Button,
-    useDisclosure,
-    Checkbox,
-    Input,
-    Link
-} from "@nextui-org/react";
->>>>>>> 7450b71b97a990e54aea8365d6d22c8693c286b0:frontend-app/src/RegisterModal.js
-
 
 const RegisterModal = () => {
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
