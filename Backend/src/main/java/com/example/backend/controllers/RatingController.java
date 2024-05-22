@@ -17,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/rating")
+@CrossOrigin(origins = "http://localhost:3000")
 public class RatingController {
     private final RatingService ratingService;
     //uwzglednic ich sortowanie po score

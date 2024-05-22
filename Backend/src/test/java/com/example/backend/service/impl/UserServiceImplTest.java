@@ -11,6 +11,7 @@ import com.example.backend.repository.UserRepository;
 import com.example.backend.service.UserService;
 import jakarta.transaction.Transactional;
 import org.checkerframework.checker.units.qual.A;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +39,7 @@ public class UserServiceImplTest {
     User user;
     @BeforeEach
     public void setUp() {
-        registerDto = new RegisterDto();
-        registerDto.setEmail("test@ggmail.com");
-        registerDto.setFirstName("John");
-        registerDto.setLastName("Doe");
-        registerDto.setPassword("password");
+        registerDto = Instancio.create(RegisterDto.class);
         AuthenticationResponse authenticationResponse = authenticationService.register(registerDto);
         user = userRepository.findByEmail(registerDto.getEmail()).orElse(null);
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());

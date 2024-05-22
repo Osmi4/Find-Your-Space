@@ -1,10 +1,12 @@
 package com.example.backend.service.impl;
 
+import com.example.backend.dtos.Auth.RegisterDto;
 import com.example.backend.dtos.Payment.AddPaymentRequest;
 import com.example.backend.dtos.Payment.PaymentFilter;
 import com.example.backend.dtos.Payment.PaymentResponse;
 import com.example.backend.dtos.Payment.UpdatePaymentRequest;
 import com.example.backend.service.PaymentService;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -19,12 +21,7 @@ public class PaymentServiceImplTest {
     void testAddPayment() {
         // Mock dependencies
         PaymentService paymentService = mock(PaymentService.class);
-        AddPaymentRequest addPaymentRequest = new AddPaymentRequest();
-        addPaymentRequest.setAmount(100.0);
-        addPaymentRequest.setDate("2024-03-20");
-        addPaymentRequest.setPaymentStatus("Paid");
-        addPaymentRequest.setSender("sender@example.com");
-        addPaymentRequest.setReceiver("receiver@example.com");
+        AddPaymentRequest addPaymentRequest = Instancio.create(AddPaymentRequest.class);
 
         PaymentResponse expectedResponse = new PaymentResponse();
         expectedResponse.setPaymentId(123L);

@@ -16,6 +16,7 @@ import com.example.backend.repository.UserRepository;
 import com.example.backend.service.RatingService;
 import com.example.backend.service.SpaceService;
 import jakarta.transaction.Transactional;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,23 +46,14 @@ public class RatingServiceImplTest{
     AddSpaceRequest addSpaceRequest;
     @BeforeEach
     public void setUp() {
-        RegisterDto registerDto = new RegisterDto();
-        registerDto.setEmail("test@ggmail.com");
-        registerDto.setFirstName("John");
-        registerDto.setLastName("Doe");
-        registerDto.setPassword("password");
+        RegisterDto registerDto = Instancio.create(RegisterDto.class);
         AuthenticationResponse authenticationResponse = authenticationService.register(registerDto);
         User user = userRepository.findByEmail(registerDto.getEmail()).orElse(null);
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
-        addSpaceRequest = new AddSpaceRequest();
-        addSpaceRequest.setSpaceName("Space1");
-        addSpaceRequest.setSpaceLocation("Location1");
-        addSpaceRequest.setSpaceSize(100);
-        addSpaceRequest.setSpacePrice(1000);
-        addSpaceRequest.setSpaceDescription("Space1 description");
-        addSpaceRequest.setSpaceType(SpaceType.OFFICE);
+        addSpaceRequest = Instancio.create(AddSpaceRequest.class);
+
     }
     @Test
     void addRatingTest_Success() {

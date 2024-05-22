@@ -12,6 +12,7 @@ import com.example.backend.repository.UserRepository;
 import com.example.backend.service.ReportService;
 import com.example.backend.service.SpaceService;
 import jakarta.transaction.Transactional;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,21 +42,13 @@ public class ReportServiceImplTest {
 
     @BeforeEach
     public void setUp() {
-        registerDto = new RegisterDto();
-        registerDto.setEmail("test@ggmail.com");
-        registerDto.setFirstName("John");
-        registerDto.setLastName("Doe");
-        registerDto.setPassword("password");
+        registerDto = Instancio.create(RegisterDto.class);
         AuthenticationResponse authenticationResponse = authenticationService.register(registerDto);
         User user = userRepository.findByEmail(registerDto.getEmail()).orElse(null);
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
-        registerDto2 = new RegisterDto();
-        registerDto2.setEmail("test2@ggmail.com");
-        registerDto2.setFirstName("John");
-        registerDto2.setLastName("Doe");
-        registerDto2.setPassword("password");
+        registerDto2 = Instancio.create(RegisterDto.class);
         AuthenticationResponse authenticationResponse2 = authenticationService.register(registerDto2);
     }
     @Test

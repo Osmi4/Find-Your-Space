@@ -20,6 +20,7 @@ import com.example.backend.repository.UserRepository;
 import com.example.backend.service.BookingService;
 import com.example.backend.service.SpaceService;
 import jakarta.transaction.Transactional;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,26 +56,18 @@ public class BookingServiceImplTest {
     private ObjectMapper objectMapper;
     private AddBookingRequest addBookingRequest;
     private RegisterDto registerDto;
+    private RegisterDto registerDto2;
     private AddSpaceRequest addSpaceRequest;
     @BeforeEach
     public void setUp() {
-        registerDto = new RegisterDto();
-        registerDto.setEmail("test@ggmail.com");
-        registerDto.setFirstName("John");
-        registerDto.setLastName("Doe");
-        registerDto.setPassword("password");
+        registerDto2 = Instancio.create(RegisterDto.class);
+        registerDto = Instancio.create(RegisterDto.class);
         AuthenticationResponse authenticationResponse = authenticationService.register(registerDto);
         User user = userRepository.findByEmail(registerDto.getEmail()).orElse(null);
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
-        addSpaceRequest = new AddSpaceRequest();
-        addSpaceRequest.setSpaceName("Space1");
-        addSpaceRequest.setSpaceLocation("Location1");
-        addSpaceRequest.setSpaceSize(100);
-        addSpaceRequest.setSpacePrice(1000);
-        addSpaceRequest.setSpaceDescription("Space1 description");
-        addSpaceRequest.setSpaceType(SpaceType.OFFICE);
+        addSpaceRequest = Instancio.create(AddSpaceRequest.class);
 
         addBookingRequest = new AddBookingRequest();
 
@@ -82,13 +75,6 @@ public class BookingServiceImplTest {
     @Test
     void addBooking_Success(){
         SpaceResponse spaceAdded = spaceService.addSpace(addSpaceRequest);
-
-        //new user that will book the space
-        RegisterDto registerDto2 = new RegisterDto();
-        registerDto2.setEmail("test2@ggmail.com");
-        registerDto2.setFirstName("John");
-        registerDto2.setLastName("Doe");
-        registerDto2.setPassword("password");
         AuthenticationResponse authenticationResponse = authenticationService.register(registerDto2);
         User user = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
@@ -117,12 +103,7 @@ public class BookingServiceImplTest {
     void getBooking_Success() {
         SpaceResponse spaceAdded = spaceService.addSpace(addSpaceRequest);
 
-        //add booking
-        RegisterDto registerDto2 = new RegisterDto();
-        registerDto2.setEmail("test2@ggmail.com");
-        registerDto2.setFirstName("John");
-        registerDto2.setLastName("Doe");
-        registerDto2.setPassword("password");
+
         AuthenticationResponse authenticationResponse = authenticationService.register(registerDto2);
         User user = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
@@ -169,11 +150,7 @@ public class BookingServiceImplTest {
     void updateBooking_Success() {
         SpaceResponse spaceAdded = spaceService.addSpace(addSpaceRequest);
         //add booking
-        RegisterDto registerDto2 = new RegisterDto();
-        registerDto2.setEmail("test2@ggmail.com");
-        registerDto2.setFirstName("John");
-        registerDto2.setLastName("Doe");
-        registerDto2.setPassword("password");
+
         AuthenticationResponse authenticationResponse = authenticationService.register(registerDto2);
         User user = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
@@ -209,12 +186,7 @@ public class BookingServiceImplTest {
     @Test
     void deleteBooking_Success() {
         SpaceResponse spaceAdded = spaceService.addSpace(addSpaceRequest);
-        //add booking
-        RegisterDto registerDto2 = new RegisterDto();
-        registerDto2.setEmail("test2@ggmail.com");
-        registerDto2.setFirstName("John");
-        registerDto2.setLastName("Doe");
-        registerDto2.setPassword("password");
+
         AuthenticationResponse authenticationResponse = authenticationService.register(registerDto2);
         User user = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
@@ -240,11 +212,7 @@ public class BookingServiceImplTest {
     @Test
     void getMyBookings_Success() {
         SpaceResponse spaceAdded = spaceService.addSpace(addSpaceRequest);
-        RegisterDto registerDto2 = new RegisterDto();
-        registerDto2.setEmail("test2@ggmail.com");
-        registerDto2.setFirstName("John");
-        registerDto2.setLastName("Doe");
-        registerDto2.setPassword("password");
+
         AuthenticationResponse authenticationResponse = authenticationService.register(registerDto2);
         User user = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
@@ -275,11 +243,7 @@ public class BookingServiceImplTest {
     @Test
     void getSearchMyBookings_Success() {
         SpaceResponse spaceAdded = spaceService.addSpace(addSpaceRequest);
-        RegisterDto registerDto2 = new RegisterDto();
-        registerDto2.setEmail("test2@ggmail.com");
-        registerDto2.setFirstName("John");
-        registerDto2.setLastName("Doe");
-        registerDto2.setPassword("password");
+
         AuthenticationResponse authenticationResponse = authenticationService.register(registerDto2);
         User user = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
@@ -316,11 +280,7 @@ public class BookingServiceImplTest {
     @Test
     void getBookingForSpace_Success() {
         SpaceResponse spaceAdded = spaceService.addSpace(addSpaceRequest);
-        RegisterDto registerDto2 = new RegisterDto();
-        registerDto2.setEmail("test2@ggmail.com");
-        registerDto2.setFirstName("John");
-        registerDto2.setLastName("Doe");
-        registerDto2.setPassword("password");
+
         AuthenticationResponse authenticationResponse = authenticationService.register(registerDto2);
         User user = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
@@ -357,11 +317,7 @@ public class BookingServiceImplTest {
     @Test
     void getSearchAllBookings_Success() {
         SpaceResponse spaceAdded = spaceService.addSpace(addSpaceRequest);
-        RegisterDto registerDto2 = new RegisterDto();
-        registerDto2.setEmail("test2@ggmail.com");
-        registerDto2.setFirstName("John");
-        registerDto2.setLastName("Doe");
-        registerDto2.setPassword("password");
+
         AuthenticationResponse authenticationResponse = authenticationService.register(registerDto2);
         User user = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
@@ -392,11 +348,7 @@ public class BookingServiceImplTest {
     @Test
     void UpdateBookingStatus_Success() {
         SpaceResponse spaceAdded = spaceService.addSpace(addSpaceRequest);
-        RegisterDto registerDto2 = new RegisterDto();
-        registerDto2.setEmail("test2@ggmail.com");
-        registerDto2.setFirstName("John");
-        registerDto2.setLastName("Doe");
-        registerDto2.setPassword("password");
+
         AuthenticationResponse authenticationResponse = authenticationService.register(registerDto2);
         User user = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());

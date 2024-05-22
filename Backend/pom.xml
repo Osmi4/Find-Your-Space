@@ -121,7 +121,12 @@
 			<version>1.4.2.Final</version>
 			<scope>provided</scope>
 		</dependency>
-
+		<dependency>
+			<groupId>org.instancio</groupId>
+			<artifactId>instancio-junit</artifactId>
+			<version>4.0.0</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
