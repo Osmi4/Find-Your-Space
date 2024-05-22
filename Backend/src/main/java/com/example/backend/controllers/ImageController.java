@@ -10,6 +10,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/spaces/{spaceId}/images")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ImageController {
     private final ImageManagementService imageManagementService;
 

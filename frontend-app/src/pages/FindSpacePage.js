@@ -6,7 +6,8 @@ import {Checkbox} from "@nextui-org/react";
 
 const FindSpacePage = () => {
     const navigate = useNavigate();
-
+    //const spaces = fetch("http://localhost:8080/api/space/all").then((response) => response.json());
+    //spaces = spaces.content.map((space, index) => ({ ...space}));
     const [filter] = useState({
         categories: ["Digital Billboards", "Print Media Spaces", "Transit Advertising", "Shopping Mall Spaces", "Online Platforms"],
         countries: ["Poland","USA","Japan","Germany","France"],
@@ -44,7 +45,8 @@ const FindSpacePage = () => {
 
     const clearSelectedFilters = () => 
     {
-    setSelectedFilters({ categories: [], countries: [], cities: [] });
+        setSelectedFilters({ categories: [], countries: [], cities: [] });
+        navigate(0);
     }
     
 
@@ -63,6 +65,7 @@ const FindSpacePage = () => {
                 <div className="flex flex-col">
                 {filter.categories.map(category => (
                     <Checkbox
+                    key={category}
                     classNames={{
                     label: "text-small",
                     }}
@@ -85,7 +88,7 @@ const FindSpacePage = () => {
                     }}
                     className='mt-[1px]'
                     id={country}
-                    isSelected={selectedFilters.countries.includes(country)}
+                    checked={selectedFilters.countries.includes(country)}
                     onChange={() => handleCheckboxChange('countries', country)}
                     >
                     {country}
@@ -102,7 +105,7 @@ const FindSpacePage = () => {
                     }}
                     className='mt-[1px]'
                     id={city}
-                    isSelected={selectedFilters.cities.includes(city)}
+                    checked={selectedFilters.cities.includes(city)}
                     onChange={() => handleCheckboxChange('cities', city)}
                     >
                     {city}

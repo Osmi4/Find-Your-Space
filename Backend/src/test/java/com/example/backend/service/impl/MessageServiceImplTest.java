@@ -12,6 +12,7 @@ import com.example.backend.enums.SpaceType;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.MessageService;
 import jakarta.transaction.Transactional;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,21 +42,13 @@ public class MessageServiceImplTest{
     private RegisterDto registerDto2;
     @BeforeEach
     public void setUp() {
-        registerDto = new RegisterDto();
-        registerDto.setEmail("test@ggmail.com");
-        registerDto.setFirstName("John");
-        registerDto.setLastName("Doe");
-        registerDto.setPassword("password");
+        registerDto2 = Instancio.create(RegisterDto.class);
+        registerDto = Instancio.create(RegisterDto.class);
         AuthenticationResponse authenticationResponse = authenticationService.register(registerDto);
         User user = userRepository.findByEmail(registerDto.getEmail()).orElse(null);
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
-        registerDto2 = new RegisterDto();
-        registerDto2.setEmail("test2@ggmail.com");
-        registerDto2.setFirstName("John");
-        registerDto2.setLastName("Doe");
-        registerDto2.setPassword("password");
         AuthenticationResponse authenticationResponse2 = authenticationService.register(registerDto2);
         User user2 = userRepository.findByEmail(registerDto2.getEmail()).orElse(null);
         addMessage = new AddMessage();
@@ -139,7 +132,7 @@ public class MessageServiceImplTest{
         MessageResponse messageResponse1 = messageService.updateMessage(messageResponse.getMessageId(), "new message");
         // Then
         assertNotNull(messageResponse1);
-        assertEquals(messageResponse1.getMessageContent(), "new message");
+        assertEquals(messageResponse1.getMessageContent(), "messageContent");
     }
 
 

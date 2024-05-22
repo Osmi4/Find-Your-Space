@@ -1,9 +1,9 @@
 import {Link} from 'react-router-dom';
 import {Navbar, NavbarBrand, NavbarContent, NavbarItem,Link as Link2, Button, Input} from "@nextui-org/react";
-import {SearchIcon} from "./SearchIcon.jsx";
-import logo from "./images/logo.png";
+import {SearchIcon} from "../icons/SearchIcon.jsx";
+import logo from "../images/logo.png";
 import { useState , useEffect} from 'react';
-import spaces from './spaces.js';
+import spaces from '../spaces.js';
 
 const Nav=()=>{
     const [searchInput, setSearchInput] = useState("");

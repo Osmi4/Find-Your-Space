@@ -10,7 +10,51 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+<<<<<<< HEAD
 
+=======
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import javax.sql.DataSource;
+
+import java.util.Arrays;
+
+import static com.example.backend.enums.Role.ADMIN;
+
+//@Configuration
+//@EnableWebSecurity
+//public class SecurityConfiguration {
+//
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
+//        http
+//                .csrf(AbstractHttpConfigurer::disable)
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/api/health/**").permitAll()
+//                        .requestMatchers("/index.html").permitAll()
+//                        .requestMatchers("/login/oauth2/code/google").permitAll()
+//                        // more matchers
+//                        .anyRequest().authenticated())
+//                .oauth2Login()
+//                .and()
+//                .logout(logout -> logout
+//                        .logoutSuccessHandler(oidcLogoutSuccessHandler(clientRegistrationRepository))
+//                )
+//                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+//
+//        return http.build();
+//    }
+//
+//    private LogoutSuccessHandler oidcLogoutSuccessHandler(ClientRegistrationRepository clientRegistrationRepository) {
+//        OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
+//        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("{baseUrl}");
+//        return oidcLogoutSuccessHandler;
+//    }
+//}
+>>>>>>> 0d11f1e80ffc04cd2144b410b3eb43052488062a
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
@@ -40,6 +84,7 @@ public class SecurityConfiguration {
 
         return http.build();
     }
+<<<<<<< HEAD
 
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
@@ -47,3 +92,18 @@ public class SecurityConfiguration {
 
     }
 }
+=======
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // Adjust the origin as needed
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+}
+>>>>>>> 0d11f1e80ffc04cd2144b410b3eb43052488062a
