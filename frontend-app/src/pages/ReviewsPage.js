@@ -1,4 +1,11 @@
+//import { useParams } from "react-router-dom";
+
 const ReviewsPage = () => {
+    //let { id } = useParams();
+
+    //const reviews = fetch("http://localhost:8080/api/rating",{method:"GET"}).then((response) => response.json());
+    //reviews = reviews.content.filter((review, index) => (review.spaceId === id));
+
     return (
         <div className="flex font-semibold">
             <div className="ml-[200px] mt-[70px] mr-[150px]">

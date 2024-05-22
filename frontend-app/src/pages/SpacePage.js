@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
 import spaces from "../spaces";
-import { Link } from "react-router-dom";
 import { useState } from "react";
 import {RangeCalendar, Button} from "@nextui-org/react";
 import {today, getLocalTimeZone} from "@internationalized/date";
@@ -13,6 +12,7 @@ const SpacePage = () => {
       
     let { id } = useParams();
     const item = spaces.find(item => item.id === parseInt(id));
+    //const item = fetch(`http://localhost:8080/api/space/${id}`).then((response) => response.json());
     const [numberOfDays, setNumberOfDays] = useState(0);
 
     const calendarChangeHandler = (date) => {
@@ -20,7 +20,7 @@ const SpacePage = () => {
     const endDate = new Date(date.end.year, date.end.month - 1, date.end.day);
 
     const differenceInTime = endDate - startDate;
-
+    
     const differenceInDays = differenceInTime / (1000 * 3600 * 24);
     setNumberOfDays(differenceInDays + 1);
     };

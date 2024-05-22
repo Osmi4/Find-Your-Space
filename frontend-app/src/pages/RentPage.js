@@ -1,4 +1,4 @@
-import { useState } from 'react';   
+import { useState, useRef } from 'react';   
 import {Checkbox, Input, Textarea, Button} from "@nextui-org/react";
 
 const RentPage = () => {
@@ -14,9 +14,10 @@ const RentPage = () => {
         rentCity: '',
         rentZipCode: '',
         rentAddress: '',
-        price: '',
-        duration: '',
-        additionalInfo: ''
+        rentPrice: '',
+        rentDescription: '',
+        rentName: '',
+        rentSize: ''  
       });
 
       const handleChange = (e) => {
@@ -28,6 +29,36 @@ const RentPage = () => {
         e.preventDefault();
         console.log('Form submitted:', formData);
       };
+        const fileInputRef = useRef(null);
+      
+        const handleButtonClick = () => {
+          fileInputRef.current.click();
+
+          fetch("http://localhost:8080/api/space", {method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body:{
+            spaceName: formData.rentName,
+            spaceSize: formData.rentSize,
+            spaceLocation: `${formData.rentCity}, ${formData.rentAddress}`,
+            spacePrice: formData.rentPrice,
+            spaceDescription: formData.rentDescription,
+          }}).then((response) => response.json());
+        };
+        
+        const handleFileChange = (event) => {
+          const files = event.target.files;
+          if (files.length > 0) {
+            const file = files[0];
+            console.log(`Selected file: ${file.name}`);
+      
+            const reader = new FileReader();
+            reader.onload = function(e) {
+            };
+            reader.readAsDataURL(file);
+          }
+        };
 
     return (
         <div className="flex mt-[150px] ml-[350px]">
@@ -133,6 +164,28 @@ const RentPage = () => {
         </Checkbox>
         </div>
         <div className="flex flex-col gap-y-[10px]">
+            <div className="row">
+                <Input
+                name="rentName"  
+                label="Space Name"
+                placeholder="Enter title of the space"
+                variant='bordered'
+                value={formData.rentName}
+                onChange={handleChange}
+                className="w-full"
+                />
+            </div>
+            <div className="row">
+                <Input
+                name="rentSize"  
+                label="Space Size(m²)"
+                placeholder="Enter size of the space"
+                variant='bordered'
+                value={formData.rentSize}
+                onChange={handleChange}
+                className="w-full"
+                />
+            </div>
             <div className="row flex gap-[10px]">
                 <Input
                 name="rentCity"
@@ -166,7 +219,7 @@ const RentPage = () => {
             </div>
             <div className="row">
                 <Input
-                name="price"  
+                name="rentPrice"  
                 label="Price (per month) in $"
                 placeholder="Enter price of the space"
                 variant='bordered'
@@ -176,35 +229,36 @@ const RentPage = () => {
                 />
             </div>
             <div className="row">
-                <Input
-                name="duration"  
-                label="Active Rent Duration (months)"
-                placeholder="Enter active duration of the rent"
-                variant='bordered'
-                value={formData.rentDuration}
-                onChange={handleChange}
-                className="w-full"
-                />
-            </div>
-            <div className="row">
                 <Textarea
-                name="additionalInfo"  
-                label="Additional Information"
-                placeholder="Enter additional information about the space"
+                name="rentDescription"  
+                label="Description"
+                placeholder="Enter description of the space"
                 variant='bordered'
-                value={formData.rentAdditionalInfo}
+                value={formData.rentDescription}
                 onChange={handleChange}
                 className="w-full"
                 />
             </div>
-            <Button color="primary" variant='bordered' type="submit" className="w-[100%] h-[45px] text-[14px] font-semibold bg-black">
+            <Button color="primary" 
+            variant='bordered' 
+            type="submit" 
+            className="w-[100%] h-[45px] text-[14px] font-semibold bg-black"
+            onClick={handleButtonClick}
+            >
                 Add pictures of the advertised space
             </Button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={handleFileChange}
+            />
         </div>
       </form>
     </div>
     </div>
     )
-}
+} 
 
 export default RentPage;

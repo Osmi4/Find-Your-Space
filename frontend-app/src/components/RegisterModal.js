@@ -1,6 +1,6 @@
-import {MailIcon} from './MailIcon.jsx';
-import {LockIcon} from './LockIcon.jsx';
-import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Checkbox, Input, Link} from "@nextui-org/react";
+import {MailIcon} from '../icons/MailIcon.jsx';
+import {LockIcon} from '../icons/LockIcon.jsx';
+import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Input} from "@nextui-org/react";
 
 
 const RegisterModal=()=>{
