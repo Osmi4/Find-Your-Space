@@ -10,6 +10,8 @@ import ReviewsPage from "./pages/ReviewsPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import RentPage from "./pages/RentPage";
 import AboutPage from "./pages/AboutPage";
+import AccountPage from "./pages/AccountPage";
+import MySpacesPage from "./pages/MySpacesPage";
 function App() {
   const navigate = useNavigate();
 
@@ -26,6 +28,8 @@ function App() {
             <Route path="space/:id/checkout/:days" element={<CheckoutPage/>} />
             <Route path="/rent" element={<RentPage/>} />
             <Route path="/about" element={<AboutPage/>} />
+            <Route path="/account" element={<AccountPage />}/>
+            <Route path="/my_spaces" element={<MySpacesPage />}/>
           </Routes>
         </div>
         <></> 

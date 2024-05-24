@@ -55,6 +55,15 @@ public class ImageManagementServiceImpl implements ImageManagementService {
         imageRepository.delete(image);
     }
 
+    @Override
+    public String getImage(String spaceId) {
+        Image image = imageRepository.findBySpaceId(spaceId);
+        if(image == null) {
+            throw new ResourceNotFoundException("Image not found" , "spaceId", spaceId);
+        }
+        return image.getImageUrl();
+    }
+
     private File convertMultiPartToFile(MultipartFile multipartFile) throws IOException {
         Path tempDir = Files.createTempDirectory("temp_files");
         File tempFile = tempDir.resolve(Objects.requireNonNull(multipartFile.getOriginalFilename())).toFile();

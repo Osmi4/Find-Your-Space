@@ -11,6 +11,7 @@ import com.example.backend.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -61,6 +62,12 @@ public class UserServiceImpl implements UserService {
         if(affectedRows==0){
             throw new ResourceNotFoundException("User not found!", "userId", userId);
         }
+    }
+
+    @Override
+    public UserResponse getMyDetails() {
+        User user  = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return UserMapper.INSTANCE.userToUserResponse(user);
     }
 
 }

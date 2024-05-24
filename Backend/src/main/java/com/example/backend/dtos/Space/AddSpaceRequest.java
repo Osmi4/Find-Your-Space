@@ -21,16 +21,16 @@ public class AddSpaceRequest {
     @NotBlank(message = "Space location is required.")
     private String spaceLocation;
 
-    @NotBlank(message = "Space size is required.")
+    @NotNull(message = "Space size is required.")
     @Min(value = 1, message = "Space size must be greater than 0.")
     private double spaceSize;
 
-    @NotBlank(message = "Space price is required.")
+    @NotNull(message = "Space price is required.")
     @Min(value = 0, message = "Space price must be non-negative.")
     private double spacePrice;
 
     private String spaceDescription;
 
-    @NotBlank(message = "Space type is required.")
+    @NotNull(message = "Space type is required.")
     private SpaceType spaceType;
 }

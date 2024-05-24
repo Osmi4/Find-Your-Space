@@ -13,4 +13,6 @@ public interface UserService {
     Page<UserResponse> getUsersByFilters(UserFilter userFilter, Pageable pageable);
 
     void updateUser(String userId,UpdateUserRequest updateUserRequest);
+
+    UserResponse getMyDetails();
 }

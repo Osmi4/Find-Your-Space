@@ -42,7 +42,7 @@ public class SpaceController {
     }
     //ma wiecej informacji bo to jest tylko dla ownera dla admina wszytskie tutaj
 
-    @GetMapping("/my-spaces")
+    @PostMapping("/my-spaces")
     public ResponseEntity<Page<SpaceResponse>> getMySpaces(@Valid @RequestBody SpaceFilter filter, @RequestParam(defaultValue = "0") int page,
                                                            @RequestParam(defaultValue = "10") int size){
         Pageable pageable = PageRequest.of(page, size);

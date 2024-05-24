@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/api/spaces/{spaceId}/images")
+@RequestMapping("/api/space/{spaceId}/images")
 @CrossOrigin(origins = "http://localhost:3000")
 public class ImageController {
     private final ImageManagementService imageManagementService;
@@ -21,6 +21,10 @@ public class ImageController {
     @PostMapping
     public ResponseEntity<Image> uploadImage(@PathVariable String spaceId, @RequestParam("image") MultipartFile file) throws Exception {
         return ResponseEntity.ok(imageManagementService.uploadAndSaveImage(file, spaceId));
+    }
+    @GetMapping()
+    public ResponseEntity<String> getImage(@PathVariable String spaceId) throws Exception {
+        return ResponseEntity.ok(imageManagementService.getImage(spaceId));
     }
 
     @DeleteMapping("/{imageId}")

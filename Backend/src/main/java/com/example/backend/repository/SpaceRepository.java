@@ -71,4 +71,6 @@ public interface SpaceRepository extends JpaRepository<Space, String> {
             "WHERE s.spaceId = :id")
     int updateSpaceAvailability(@Param("id") String id,@Param("availability") Availibility availability);
 
+
+
 }

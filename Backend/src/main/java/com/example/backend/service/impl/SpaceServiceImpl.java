@@ -159,7 +159,8 @@ public class SpaceServiceImpl implements SpaceService {
         if(user == null){
             throw new UnauthorizedException("You are not logged in");
         }
-        return doFilter(filter , Optional.ofNullable(user.getUserId()) , pageable).map(SpaceMapper.INSTANCE::spaceToSpaceResponse);
+       return doFilter(filter , Optional.ofNullable(user.getUserId()) , pageable).map(SpaceMapper.INSTANCE::spaceToSpaceResponse);
+        //return spaceRepository.findByOwner_UserId(user.getUserId(), pageable).map(SpaceMapper.INSTANCE::spaceToSpaceResponse);
     }
 
     @Override
