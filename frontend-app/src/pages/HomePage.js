@@ -9,11 +9,10 @@ const HomePage = () => {
     }   
     return (
         <div className="text-center justify-center">
-            <h1 className="text-4xl bold text-center font-semibold mt-[50px]">Find a space for your advertisement</h1>
-            <p className="text-gray-400 text-center py-[20px] mx-[490px]">"Find Your Space" simplifies advertising by connecting businesses with ideal ad locations and helping space owners monetize their assets effortlessly.</p>
-            {/* <Link className="border-1 py-[10px] px-[20px] text-xs text-extrabold border-black hover:bg-gray-300" to="/find">Search spaces</Link> */}
+            <h1 className="lg:text-4xl text-2xl bold text-center font-semibold lg:mt-[50px] mt-[25px] mx-[20px]">Find a space for your advertisement</h1>
+            <p className="text-gray-400 text-center lg:py-[20px] py-[10px] mx-[25vw] text-xs lg:text-lg">"Find Your Space" simplifies advertising by connecting businesses with ideal ad locations and helping space owners monetize their assets effortlessly.</p>
             <Button color="primary" variant="bordered" className="bg-black" onClick={searchSpaces}>Search spaces</Button>
-            <img src={HomePagePic} className="w-[50%] h-[35%] bg-center mt-[30px] block mx-auto" alt=""/> 
+            <img src={HomePagePic} className="lg:w-[50%] lg:h-[35%] bg-center mt-[30px] block mx-auto w-[80%] h-[35%]" alt=""/> 
         </div>
     );
 }

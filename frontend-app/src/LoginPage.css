@@ -1,15 +1,20 @@
 .forms {
     display:flex; 
+    flex-direction: column;
+    gap: 20px;
     align-items: center;
     justify-content: center;
     min-height:100vh;
     background: url('../public/bg-img.jpg') no-repeat;
     background-size: cover;
     background-position: center;
+    @media (min-width: 640px) { 
+        flex-direction: row;
+    }
 }
 
 .wordcard {
-    width: 420px;
+    width: 300px;
     height: 420px;
     background: black;
     border: 2px solid #fff;
@@ -19,19 +24,9 @@
     margin: 0 10px;
     align-items: center;
     display: grid;
-}
-
-.wordcardinv {
-    width: 420px;
-    height: 420px;
-    background: #fff;
-    border: 2px solid black;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    color:black;
-    border-radius: 10px;
-    margin: 0 10px;
-    align-items: center;
-    display: grid;
+    @media (min-width: 640px) { 
+        width: 420px;
+     }
 }
 
 .wordcard h1 {  
@@ -46,7 +41,7 @@
 }
 
 .wrapper {
-    width: 420px;
+    width: 300px;
     height: 420px;
     background: transparent;
     border: 2px solid white;
@@ -56,6 +51,11 @@
     border-radius: 10px;
     padding: 30px 40px;
     margin: 0 10px;
+    margin-top: 20px;
+    @media (min-width: 640px) { 
+        margin-top: 0;
+        width: 420px;
+    }
 }
 
 .wrapper h1 {

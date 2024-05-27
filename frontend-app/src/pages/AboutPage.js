@@ -9,18 +9,19 @@ import Linkedin from "../images/linkedin.webp";
 const AboutPage = () => {
     return (
         <div>
-            <h1 className="text-4xl font-semibold text-center mt-[70px]">About Us</h1>
-            <p className="text-center text-xl mt-[20px] mx-[500px] text-gray-500">FindYourSpace makes advertisements simple. 
+            <h1 className="text-2xl lg:text-4xl font-semibold text-center mt-[35px]">About Us</h1>
+            <p className="text-center text-xs sm:text-sm md:text-md lg:text-xl mt-[1vh] mx-[25vw] text-gray-500">
+                FindYourSpace makes advertisements simple. 
                 Forget about long meetings and lengthy contracts. 
                 Need a place for your billboard? Company posters on bus stops? 
                 FindYourSpace enables you to rent these spaces with a few simple clicks.</p>
 
-            <hr className="border-blue-600 w-[1620px] mt-[25px] border-1 mx-[150px]"></hr>
-            <h1 className="text-4xl font-semibold text-center mt-[20px]">Meet Our Team</h1>
-            <p className="text-center text-xl mt-[20px] mx-[500px] text-gray-500">
+            <hr className="border-blue-600 w-[85vw] mt-[1.5vh] border-1 mx-[7.5vw]"></hr>
+            <h1 className="text-2xl lg:text-4xl font-semibold text-center mt-[1.5vh]">Meet Our Team</h1>
+            <p className="text-center text-xs sm:text-sm md:text-md lg:text-xl mt-[1vh] mx-[26vw] text-gray-500">
                 We are a young group of students from the Warsaw University of Technology, and each of us tries to bring benefits to the project with their unique set of skills. 
             </p>
-            <div className="flex justify-center mt-[40px] gap-[40px]">
+            <div className="flex flex-col xl:flex-row justify-center mt-[2vh] gap-[2vw]">
                 <div className="flex flex-col items-center gap-[10px]">
                 <Card
                 isFooterBlurred
@@ -176,7 +177,7 @@ const AboutPage = () => {
                 </Button> 
                 </div>
             </div>  
-            <hr className="border-blue-600 w-[1620px] mt-[25px] border-1 mx-[150px]"></hr>
+            <hr className="border-blue-600 w-[85vw] mt-[25px] border-1 mx-[7.5vw]"></hr>
         </div>
     );
 };
