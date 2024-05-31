@@ -1,107 +1,59 @@
 package com.example.backend.config;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.cache.concurrent.ConcurrentMapCache;
+import com.example.backend.auth.Auth0UserInfoService;
+import com.example.backend.auth.AuthenticationService;
+import com.example.backend.auth.JwtUtil;
+import com.example.backend.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
-import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import javax.sql.DataSource;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static com.example.backend.enums.Role.ADMIN;
-
-//@Configuration
-//@EnableWebSecurity
-//public class SecurityConfiguration {
-//
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
-//        http
-//                .csrf(AbstractHttpConfigurer::disable)
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/api/health/**").permitAll()
-//                        .requestMatchers("/index.html").permitAll()
-//                        .requestMatchers("/login/oauth2/code/google").permitAll()
-//                        // more matchers
-//                        .anyRequest().authenticated())
-//                .oauth2Login()
-//                .and()
-//                .logout(logout -> logout
-//                        .logoutSuccessHandler(oidcLogoutSuccessHandler(clientRegistrationRepository))
-//                )
-//                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-//
-//        return http.build();
-//    }
-//
-//    private LogoutSuccessHandler oidcLogoutSuccessHandler(ClientRegistrationRepository clientRegistrationRepository) {
-//        OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
-//        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("{baseUrl}");
-//        return oidcLogoutSuccessHandler;
-//    }
-//}
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfiguration {
-    private final AuthenticationProvider authenticationProvider;
-    private final JwtAuthenticationFilter jwtAuthFilter;
+    private final JwtUtil jwtUtil;
+    private final Auth0UserInfoService auth0UserInfoService;
+    private final UserService userService;
+    public SecurityConfiguration(JwtUtil jwtUtil, Auth0UserInfoService auth0UserInfoService, UserService userService) {
+        this.jwtUtil = jwtUtil;
+        this.auth0UserInfoService = auth0UserInfoService;
+        this.userService = userService;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter("/**", jwtUtil, auth0UserInfoService,  userService);
+
         http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/health/**").permitAll()
-                        .requestMatchers("/index.html").permitAll()
-                        .requestMatchers("/api/payment/charge").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "favicon.ico").permitAll()
-                        .requestMatchers("/api/auth/change-password").authenticated()
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/user/**").permitAll()
-                        .requestMatchers("/api/permission/**").hasAnyRole(ADMIN.name())
-                        .requestMatchers("/api/admin/**").hasAnyRole(ADMIN.name())
-                        .requestMatchers("/api/space/**").permitAll()
-                        .anyRequest().authenticated())
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests(authorizeRequests ->
+                        authorizeRequests
+                                .requestMatchers("/", "/index.html").permitAll()
+                                .anyRequest().authenticated()
+                )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+//                .oauth2ResourceServer(oauth2ResourceServer ->
+//                        oauth2ResourceServer
+//                                .jwt(jwt ->
+//                                        jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())
+//                                )
+//                )
+//                .addFilterAfter( jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // Example: Adjust according to your needs
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
-        configuration.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        return new JwtAuthenticationConverter();
+
     }
 }

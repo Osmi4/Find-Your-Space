@@ -3,7 +3,6 @@ package com.example.backend.service.impl;
 import com.example.backend.autoMapper.SpaceMapper;
 import com.example.backend.dtos.Space.*;
 import com.example.backend.entity.Booking;
-import com.example.backend.entity.Permission;
 import com.example.backend.entity.Space;
 import com.example.backend.entity.User;
 import com.example.backend.enums.Availibility;

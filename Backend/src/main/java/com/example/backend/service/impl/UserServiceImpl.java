@@ -1,10 +1,13 @@
 package com.example.backend.service.impl;
 
+import com.example.backend.auth.AuthenticationResponse;
 import com.example.backend.autoMapper.UserMapper;
+import com.example.backend.dtos.Auth.RegisterDto;
 import com.example.backend.dtos.User.UpdateUserRequest;
 import com.example.backend.dtos.User.UserFilter;
 import com.example.backend.dtos.User.UserResponse;
 import com.example.backend.entity.User;
+import com.example.backend.enums.Role;
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.UserService;
@@ -12,20 +15,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-
-import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
     @Override
     public UserResponse getUserByUserId(String id) {
@@ -36,6 +38,15 @@ public class UserServiceImpl implements UserService {
         }
         return userResponse;
     }
+
+    @Override
+    public UserResponse getUserByUserEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found!", "email", email));
+        UserResponse userResponse = UserMapper.INSTANCE.userToUserResponse(user);
+        if(userResponse==null){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not correctly converted");
+        }
+        return userResponse;    }
 
     @Override
     public Page<UserResponse> getUsersByFilters(UserFilter userFilter, Pageable pageable) {
@@ -69,5 +80,18 @@ public class UserServiceImpl implements UserService {
         User user  = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return UserMapper.INSTANCE.userToUserResponse(user);
     }
+    public UserResponse registerWithoutDuplicateCheck(RegisterDto registerDto) {
+        var user = User.builder()
+                .firstName(registerDto.getFirstName())
+                .lastName(registerDto.getLastName())
+                .email(registerDto.getEmail())
+                .password(passwordEncoder.encode(registerDto.getPassword()))
+                .contactInfo(registerDto.getContactInfo())
+                .role(Role.USER)
+                .build();
 
+        User userSaved= userRepository.save(user);
+
+        return UserMapper.INSTANCE.userToUserResponse(userSaved);
+    }
 }
