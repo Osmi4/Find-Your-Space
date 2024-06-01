@@ -16,5 +16,5 @@ public class UserResponse {
     private String firstName;
     private String lastName;
     private String pictureUrl;
-    private String detailsConfigured;
+    private Boolean detailsConfigured;
 }
