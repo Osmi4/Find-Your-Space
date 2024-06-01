@@ -28,18 +28,21 @@ const SpacePage = () => {
     const navigate = useNavigate();
 
     return (
-        <div className="flex mt-[100px] gap-[100px]">
-            <div key={item.id} className="ml-[250px]">
-                <img src={item.image} width={680} alt={item.title} className="rounded-xl"/>
+        <div className="2xl:flex 2xl:mt-[10vh] mt-[20px] gap-[100px]">
+            <div key={item.id} className="2xl:ml-[13vw] ml-[25vw]">
+                <img src={item.image} alt={item.title} className="rounded-xl w-[50vw] 2xl:w-[34vw]"/>
             </div>
             <div className="mt-[20px]">
-                <h1 className="text-5xl font-semibold mb-[10px]">{item.title}</h1>
-                <p className="text-3xl mb-[20px]">{item.price}</p>
-                <p className="w-[500px] mb-[20px]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                <div className="flex gap-[10px] mx-[122px]">
+                <h1 className="text-2xl 2xl:text-5xl font-semibold mb-[10px] text-center 2xl:w-[25vw]">{item.title}</h1>
+                <p className="text-2xl 2xl:text-3xl mb-[20px] text-center">{item.price}</p>
+                <p className="2xl:w-[26vw] mx-[4vw] mb-[20px] 2xl:mx-0 text-left 2xl:text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+                Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <div className="mx-[6vw] flex justify-center">
                     <RangeCalendar aria-label="Date (No Selection)" isDateUnavailable={isDateUnavailable} onChange={calendarChangeHandler}/>
                 </div>
-                <div className="flex mt-[20px] gap-[20px] ml-[40px]">
+                <div className="flex mt-[20px] gap-[20px] mx-[2vw] mb-[20px]">
                     <Button color={numberOfDays === 0 ? "danger" : "primary" } type="submit" className="w-[200px] text-[16px] py-[21px] font-semibold" onClick={()=> navigate(`checkout/${numberOfDays}`)} disabled={numberOfDays === 0}>
                         Rent Now
                     </Button>

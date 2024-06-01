@@ -56,6 +56,7 @@ const RegisterModal = () => {
                 isOpen={isOpen}
                 onOpenChange={onOpenChange} // manage modal open state
                 placement="top-center"
+                className="mt-[25vh] mx-[5vw]"
             >
                 <ModalContent>
                     <ModalHeader className="flex flex-col gap-1">Register</ModalHeader>

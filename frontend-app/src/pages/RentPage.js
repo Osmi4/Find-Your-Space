@@ -124,13 +124,14 @@ const RentPage = () => {
     return (
         <div className="flex justify-center items-center h-screen">
             <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-3xl">
-                <h1 className="text-4xl font-semibold mb-8 text-center">Rent your space</h1>
-                <form onSubmit={handleSpaceSubmit} className="flex flex-col gap-y-6">
-                    <div className="flex gap-x-6 mb-6">
+                <h1 className="text-2xl sm:text-4xl font-semibold mb-[10px] text-center sm:mt-0 sm:mb-8">Rent your space</h1>
+                <p className='text-gray-700 font-bold text-sm text-center mb-[10px] sm:text-lg sm:text-left ml-[0.5vw]'>Please enter the details about your space below :</p>
+                <form onSubmit={handleSpaceSubmit} className="flex flex-col gap-y-[15px]">
+                    <div className="flex sm:gap-x-6 gap-x-[10px]">
                         <Input
                             name="spaceName"
-                            label="Name of the space"
-                            placeholder="Enter name of the space"
+                            label="Name"
+                            placeholder="Enter name"
                             variant="bordered"
                             value={spaceInfo.spaceName}
                             onChange={handleSpaceChange}
@@ -139,18 +140,18 @@ const RentPage = () => {
                         <Input
                             name="rentCity"
                             label="City"
-                            placeholder="Enter city of the space"
+                            placeholder="Enter city"
                             variant="bordered"
                             value={spaceInfo.rentCity}
                             onChange={handleSpaceChange}
                             className="w-1/2"
                         />
                     </div>
-                    <div className="flex gap-x-6 mb-6">
+                    <div className="flex sm:gap-x-6 gap-x-[10px]">
                         <Input
                             name="rentZipCode"
                             label="ZIP Code"
-                            placeholder="Enter ZIP code of the space"
+                            placeholder="Enter ZIP code"
                             variant="bordered"
                             value={spaceInfo.rentZipCode}
                             onChange={handleSpaceChange}
@@ -159,18 +160,18 @@ const RentPage = () => {
                         <Input
                             name="rentAddress"
                             label="Address"
-                            placeholder="Enter address of the space"
+                            placeholder="Enter address"
                             variant="bordered"
                             value={spaceInfo.rentAddress}
                             onChange={handleSpaceChange}
                             className="w-1/2"
                         />
                     </div>
-                    <div className="flex gap-x-6 mb-6">
+                    <div className="flex sm:gap-x-6 gap-x-[10px]">
                         <Input
                             name="rentPrice"
-                            label="Price (per month) in $"
-                            placeholder="Enter price of the space"
+                            label="Price per month in $"
+                            placeholder="Enter price "
                             variant="bordered"
                             value={spaceInfo.rentPrice}
                             onChange={handleSpaceChange}
@@ -179,13 +180,14 @@ const RentPage = () => {
                         <Input
                             name="size"
                             label="Size in m2"
-                            placeholder="Enter size of the space"
+                            placeholder="Enter size"
                             variant="bordered"
                             value={spaceInfo.size}
                             onChange={handleSpaceChange}
                             className="w-1/2"
                         />
                     </div>
+                    <p className='text-gray-700 font-bold text-sm sm:text-lg sm:text-left ml-[0.5vw]'>Choose Type of the space :</p>
                     <Select
                         name="spaceType"
                         placeholder="Select type of the space"
@@ -202,14 +204,14 @@ const RentPage = () => {
                     <Textarea
                         name="spaceDescription"
                         label="Space Description"
-                        placeholder="Enter description of the space"
+                        placeholder="Enter description"
                         variant="bordered"
                         value={spaceInfo.spaceDescription}
                         onChange={handleSpaceChange}
                         className="mb-6"
                     />
                     <div className="mb-6">
-                        <label className="block text-gray-700 text-sm font-bold mb-2">
+                        <label className="block text-gray-700 text-sm font-bold mb-4 ml-[0.5vw]">
                             Upload Images
                         </label>
                         <input
