@@ -59,7 +59,7 @@ public class SpaceController {
         return ResponseEntity.ok(spaceService.getSpace(id));
     }
 
-    @GetMapping("/search")
+    @PostMapping("/search")
     public ResponseEntity<Page<SpaceResponse>> searchSpaces(@Valid @RequestBody SpaceFilter filter, @RequestParam(defaultValue = "0") int page,
                                                             @RequestParam(defaultValue = "10") int size){
         Pageable pageable = PageRequest.of(page, size);
