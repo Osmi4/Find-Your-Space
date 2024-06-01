@@ -5,7 +5,7 @@ import "../LoginPage.css"
 
 const LoginPage = () => {   
     return (<div class="forms">
-        <LoginForm isLogin={true}/> 
+        {/*<LoginForm isLogin={true}/> */}
         <WordCard />
         </div>)
   }

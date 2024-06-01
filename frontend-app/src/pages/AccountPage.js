@@ -1,21 +1,29 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const AccountPage = () => {
+    const { getAccessTokenSilently } = useAuth0();
     const [userInfo, setUserInfo] = useState({});
-    const token = localStorage.getItem('token');
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        if (token) {
-            axios.get('http://localhost:8080/api/user/my-details', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            }).then(response => {
+        const fetchUserInfo = async () => {
+            try {
+                const token = await getAccessTokenSilently();
+                const response = await axios.get('http://localhost:8080/api/user/my-details', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
                 setUserInfo(response.data);
-            }).catch(error => {
+            } catch (error) {
                 console.error("Error fetching user info", error);
-            });
-        }
-    }, [token]);
+                setError(error);
+            }
+        };
+
+        fetchUserInfo();
+    }, [getAccessTokenSilently]);
+
 
     return (
         <div className="container mx-auto p-4">

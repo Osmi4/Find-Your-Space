@@ -1,22 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
+import { useAuth0 } from '@auth0/auth0-react';
 
 const UserIcon = () => {
     const navigate = useNavigate();
+    const { logout, isAuthenticated } = useAuth0();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
+        if (isAuthenticated) {
             setIsLoggedIn(true);
+        } else {
+            setIsLoggedIn(false);
         }
-    }, []);
+    }, [isAuthenticated]);
 
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        setIsLoggedIn(false);
-        navigate('/login');
+        logout({ returnTo: window.location.origin });
     };
 
     return (
