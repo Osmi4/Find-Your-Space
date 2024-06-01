@@ -25,6 +25,11 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping("/confirm-login")
+    public ResponseEntity<String> confirmLogin() {
+        return ResponseEntity.ok("User logged in successfully!");
+    }
+
     @GetMapping("/my-details")
     public ResponseEntity<UserResponse> getMyDetails() {
         return ResponseEntity.ok(userService.getMyDetails());
