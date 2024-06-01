@@ -29,4 +29,7 @@ public class RegisterDto {
     @NotBlank(message = "Last name cannot be blank")
     @Pattern(regexp = "^[A-Z][a-z]*$", message = "Last name must start with a capital letter and contain only letters")
     private String lastName;
+
+
+    private String pictureUrl;
 }

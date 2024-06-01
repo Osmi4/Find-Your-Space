@@ -49,14 +49,14 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
             } catch (Exception e) {
                 String[] firstNameLastName = userInfo.getName().split(" ");
 
-                RegisterDto registerDto = new RegisterDto(userInfo.getEmail(), "12345678","contactinfo",firstNameLastName[0],firstNameLastName[1]);
+                RegisterDto registerDto = new RegisterDto(userInfo.getEmail(), "","",firstNameLastName[0],firstNameLastName[1],userInfo.getPicture());
                 userService.registerWithoutDuplicateCheck(registerDto);
             }
 
             if (token != null && token.startsWith("Bearer ")) {
                 UserDetails userDetails = User.builder()
                         .username(userInfo.getEmail())
-                        .password("12345678")
+                        .password("")
                         .authorities(Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")))
                         .build();
                 if (userDetails != null) {

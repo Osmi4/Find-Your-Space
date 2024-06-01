@@ -3,6 +3,7 @@ package com.example.backend.service.impl;
 import com.example.backend.auth.AuthenticationResponse;
 import com.example.backend.autoMapper.UserMapper;
 import com.example.backend.dtos.Auth.RegisterDto;
+import com.example.backend.dtos.User.UpdateUserDetailsRequest;
 import com.example.backend.dtos.User.UpdateUserRequest;
 import com.example.backend.dtos.User.UserFilter;
 import com.example.backend.dtos.User.UserResponse;
@@ -69,7 +70,24 @@ public class UserServiceImpl implements UserService {
         if(updateUserRequest.getLastName()==null || updateUserRequest.getLastName().isEmpty()){
             updateUserRequest.setLastName(userToUpdate.getLastName());
         }
-        int affectedRows= userRepository.patchUser(userId, updateUserRequest.getEmail(), updateUserRequest.getContactInfo(), updateUserRequest.getFirstName(), updateUserRequest.getLastName());
+        int affectedRows= userRepository.patchUser(userId, updateUserRequest.getEmail(), updateUserRequest.getFirstName(), updateUserRequest.getLastName());
+        if(affectedRows==0){
+            throw new ResourceNotFoundException("User not found!", "userId", userId);
+        }
+    }
+
+    @Override
+    public void updateUserDetails(String userId, UpdateUserDetailsRequest updateUserRequestDetails) {
+        User userToUpdate = userRepository.findByUserId(userId).orElseThrow(() -> new ResourceNotFoundException("User not found!", "userId", userId));
+
+        if(!userToUpdate.getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to change other users details");
+        }
+        userToUpdate.setBankAccount(updateUserRequestDetails.getBankAccountNumber());
+        userToUpdate.setContactInfo(updateUserRequestDetails.getContactInfo());
+        userToUpdate.setDetailsConfigured(true);
+
+        int affectedRows = userRepository.patchUserDetails(userId, updateUserRequestDetails.getContactInfo(), updateUserRequestDetails.getBankAccountNumber(),true);
         if(affectedRows==0){
             throw new ResourceNotFoundException("User not found!", "userId", userId);
         }
@@ -77,7 +95,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getMyDetails() {
-        User user  = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
+                () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName()));
         return UserMapper.INSTANCE.userToUserResponse(user);
     }
     public UserResponse registerWithoutDuplicateCheck(RegisterDto registerDto) {
@@ -85,9 +104,9 @@ public class UserServiceImpl implements UserService {
                 .firstName(registerDto.getFirstName())
                 .lastName(registerDto.getLastName())
                 .email(registerDto.getEmail())
-                .password(passwordEncoder.encode(registerDto.getPassword()))
-                .contactInfo(registerDto.getContactInfo())
+                .pictureUrl(registerDto.getPictureUrl())
                 .role(Role.USER)
+                .detailsConfigured(false)
                 .build();
 
         User userSaved= userRepository.save(user);

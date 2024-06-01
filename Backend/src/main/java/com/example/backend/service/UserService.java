@@ -1,6 +1,7 @@
 package com.example.backend.service;
 
 import com.example.backend.dtos.Auth.RegisterDto;
+import com.example.backend.dtos.User.UpdateUserDetailsRequest;
 import com.example.backend.dtos.User.UpdateUserRequest;
 import com.example.backend.dtos.User.UserFilter;
 import com.example.backend.dtos.User.UserResponse;
@@ -16,6 +17,7 @@ public interface UserService {
     Page<UserResponse> getUsersByFilters(UserFilter userFilter, Pageable pageable);
 
     void updateUser(String userId,UpdateUserRequest updateUserRequest);
+    void updateUserDetails(String userId, UpdateUserDetailsRequest updateUserRequestDetails);
 
     UserResponse getMyDetails();
     UserResponse registerWithoutDuplicateCheck(RegisterDto registerDto);

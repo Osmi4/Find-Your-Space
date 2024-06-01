@@ -1,5 +1,6 @@
 package com.example.backend.controllers;
 
+import com.example.backend.dtos.User.UpdateUserDetailsRequest;
 import com.example.backend.dtos.User.UpdateUserRequest;
 import com.example.backend.dtos.User.UserFilter;
 import com.example.backend.dtos.User.UserResponse;
@@ -47,4 +48,9 @@ public class UserController {
         return new ResponseEntity("User updated successfully!", HttpStatus.OK);
     }
     //change user details
+    @PatchMapping("/{id}/details")
+    public ResponseEntity<String> updateUserDetails(@PathVariable String id, @Valid @RequestBody UpdateUserDetailsRequest userDetails) {
+        userService.updateUserDetails(id, userDetails);
+        return new ResponseEntity("User updated successfully!", HttpStatus.OK);
+    }
 }

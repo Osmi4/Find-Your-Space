@@ -24,7 +24,7 @@ public class User implements UserDetails {
     @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password", nullable = true)
     private String password;
 
     @Column(name = "role", nullable = false)
@@ -39,6 +39,12 @@ public class User implements UserDetails {
 
     @Column(name = "last_name", nullable = false)
     private String lastName;
+
+    @Column(name = "details_configured", nullable = false, columnDefinition = "boolean default false")
+    private Boolean detailsConfigured;
+
+    @Column(name = "picture_url", nullable = true)
+    private String pictureUrl;
 
     //it will be coded
     @Column(name = "bank_account", nullable = true)

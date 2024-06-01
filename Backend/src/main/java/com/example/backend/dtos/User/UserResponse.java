@@ -15,4 +15,6 @@ public class UserResponse {
     private String contactInfo;
     private String firstName;
     private String lastName;
+    private String pictureUrl;
+    private String detailsConfigured;
 }
