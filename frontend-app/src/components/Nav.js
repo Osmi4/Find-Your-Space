@@ -8,7 +8,7 @@ import spaces from '../spaces.js';
 import UserIcon from "../pages/UserIcon";
 
 const Nav = () => {
-    const { loginWithRedirect, logout, isAuthenticated, user } = useAuth0();
+    const { loginWithRedirect, isAuthenticated, user } = useAuth0();
     const [searchInput, setSearchInput] = useState("");
     const [filteredSpaces, setFilteredSpaces] = useState([]);
 

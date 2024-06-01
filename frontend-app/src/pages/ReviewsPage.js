@@ -1,10 +1,13 @@
 //import { useParams } from "react-router-dom";
+import ReviewModal from "../components/ReviewModal";
+import { useAuth0 } from '@auth0/auth0-react';
 
 const ReviewsPage = () => {
     //let { id } = useParams();
 
     //const reviews = fetch("http://localhost:8080/api/rating",{method:"GET"}).then((response) => response.json());
     //reviews = reviews.content.filter((review, index) => (review.spaceId === id));
+    const { isAuthenticated} = useAuth0();
 
     return (
         <div className="flex flex-col lg:flex-row font-semibold items-center text-center lg:items-start lg:text-left">
@@ -47,8 +50,6 @@ const ReviewsPage = () => {
                         <p className="mr-[2px]">Was this review helpful?</p>
                         <button className="mr-[2px]">Yes (1)</button>
                         <button>No (0)</button>
-                        <div className="border-l-[2px] border-black mx-[20px]"></div>
-                        <button>Flag as inappropriate</button>
                     </div>
                 </div>
                 <div className="mt-[50px]">
@@ -70,10 +71,10 @@ const ReviewsPage = () => {
                         <p className="mr-[2px]">Was this review helpful?</p>
                         <button className="mr-[2px]">Yes (5)</button>
                         <button>No (1)</button>
-                        <div className="border-l-[2px] border-black mx-[20px]"></div>
-                        <button>Flag as inappropriate</button>
                     </div>
                 </div>
+                {!isAuthenticated && <p className="mt-[20px] text-red-600">Please log in to write a review</p>}
+                {isAuthenticated && <ReviewModal />}
             </div>  
 
         </div>  
