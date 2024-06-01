@@ -73,7 +73,9 @@ public class ReportServiceImpl implements ReportService {
         Report report = new Report();
         report.setReportType(addReportRequest.getReportType());
         report.setReportContent(addReportRequest.getReportContent());
-        report.setReporter((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        //report.setReporter((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        report.setReporter((User)userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
+                () -> new NoSuchElementException("User not found")));
         switch (addReportRequest.getReportType()) {
             case USER:
                 Optional<User> userOptional = userRepository.findByUserId(addReportRequest.getReportedId());

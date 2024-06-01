@@ -33,7 +33,9 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public MessageResponse addMessage(AddMessage message) {
-        User sender = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        //User sender = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User sender = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
+                () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName()));
         if(sender == null) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "user not log in");
         }
@@ -69,7 +71,9 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public Page<MessageResponse> getMyMessages(Pageable pageable) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        //User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
+                () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName()));
         if(user == null) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "user not log in");
         }

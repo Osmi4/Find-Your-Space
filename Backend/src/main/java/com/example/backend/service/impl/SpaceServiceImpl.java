@@ -27,6 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.nio.file.AccessDeniedException;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -46,7 +47,7 @@ public class SpaceServiceImpl implements SpaceService {
     @Override
     public SpaceResponse addSpace(AddSpaceRequest addSpaceRequest) {
         //Space space = ObjectMapper.mapAddSpaceRequestToSpace(addSpaceRequest);
-        Space space = SpaceMapper.INSTANCE.addSpaceRequestToSpace(addSpaceRequest);
+        Space space = SpaceMapper.INSTANCE.addSpaceRequestToSpace(addSpaceRequest , userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElse(null));
         if(space == null){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Space not correctly converted");
         }
@@ -77,7 +78,10 @@ public class SpaceServiceImpl implements SpaceService {
             throw new ResourceNotFoundException("Space not found", "space", spaceId);
         }
         User spaceOwner = space.getOwner();
-        if(!spaceOwner.getUserId().equals(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId())){
+//        if(!spaceOwner.getUserId().equals(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId())){
+//            throw new UnauthorizedException("You are not the owner of this space");
+//        }
+        if(!spaceOwner.getUserId().equals(Objects.requireNonNull(userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElse(null)).getUserId())){
             throw new UnauthorizedException("You are not the owner of this space");
         }
         int affectedRows = spaceRepository.updateSpace(spaceId, editSpaceRequest.getSpaceName(), editSpaceRequest.getSpaceLocation(), editSpaceRequest.getSpaceSize(), editSpaceRequest.getSpacePrice(), editSpaceRequest.getSpaceDescription());
@@ -101,7 +105,7 @@ public class SpaceServiceImpl implements SpaceService {
         if (space==null) {
             throw new ResourceNotFoundException("Space not found", "space", id);
         }
-        if(!space.getOwner().getUserId().equals(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId())){
+        if(!space.getOwner().getUserId().equals(Objects.requireNonNull(userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElse(null)).getUserId())){
             throw new UnauthorizedException("You are not the owner of this space");
         }
         int deleted = spaceRepository.deleteBySpaceId(id);
@@ -154,7 +158,8 @@ public class SpaceServiceImpl implements SpaceService {
     }
     @Override
     public Page<SpaceResponse> getMySpaces(SpaceFilter filter, Pageable pageable) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        //User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElse(null);
         if(user == null){
             throw new UnauthorizedException("You are not logged in");
         }
