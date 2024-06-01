@@ -105,29 +105,33 @@ const RentPage = () => {
     };
 
     const uploadImages = async (spaceId) => {
-        const formData = new FormData();
-        spaceInfo.images.forEach((image) => {
-            formData.append('image', image);
-        });
-
-        const token = localStorage.getItem('token'); // Retrieve the token from local storage
-
-        try {
-            const response = await axios.post(`http://localhost:8080/api/space/${spaceId}/images`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${token}` // Include the token in the headers
-                }
+        if (isAuthenticated) {
+            const token = await getAccessTokenSilently();
+            localStorage.setItem('authToken', token);
+            const formData = new FormData();
+            spaceInfo.images.forEach((image) => {
+                formData.append('image', image);
             });
 
-            if (response.status === 200) {
-                alert("Images uploaded successfully!");
-            } else {
-                alert("Failed to upload images.");
+            //const token = localStorage.getItem('token'); // Retrieve the token from local storage
+
+            try {
+                const response = await axios.post(`http://localhost:8080/api/space/${spaceId}/images`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${token}` // Include the token in the headers
+                    }
+                });
+
+                if (response.status === 200) {
+                    alert("Images uploaded successfully!");
+                } else {
+                    alert("Failed to upload images.");
+                }
+            } catch (error) {
+                console.error("Error uploading images:", error);
+                alert("An error occurred while uploading the images.");
             }
-        } catch (error) {
-            console.error("Error uploading images:", error);
-            alert("An error occurred while uploading the images.");
         }
     };
 
