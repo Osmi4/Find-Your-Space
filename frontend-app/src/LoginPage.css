@@ -14,7 +14,7 @@
 }
 
 .wordcard {
-    width: 300px;
+    width: 360px;
     height: 420px;
     background: black;
     border: 2px solid #fff;
@@ -30,9 +30,12 @@
 }
 
 .wordcard h1 {  
-    font-size: 50px;
+    font-size: 42px;
     font-weight: 700;
     text-align: center;
+    @media (min-width: 640px) { 
+        font-size: 50px;
+     }
 }
 .wordcardinv h1 {
     font-size: 50px;
@@ -41,7 +44,7 @@
 }
 
 .wrapper {
-    width: 300px;
+    width: 360px;
     height: 420px;
     background: transparent;
     border: 2px solid white;

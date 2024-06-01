@@ -33,26 +33,26 @@ const CheckoutPage = () =>{
       };
 
     return (
-        <div className="flex mt-[70px] ml-[200px]">
+      <div className="flex flex-col xl:flex-row xl:mt-[70px] xl:ml-[200px] mt-[4vh]">
         <div className="">
-            <h1 className="text-4xl font-semibold mb-[30px]">Checkout</h1>
-            <div className="flex items-center mb-[50px] ml-[100px]">
+            <h1 className="text-2xl xl:text-4xl font-semibold xl:mb-[30px] mb-[1vh] ml-[1vw] lg:text-left text-center">Checkout</h1>
+            <div className="flex items-center xl:mb-[50px] mb-[2vh] lg:ml-[100px] justify-center xl:justify-normal">
                 <p className="font-semibold text-lg">Adress</p>
                 <hr className="border-black w-[70px] mx-[20px]"></hr>
                 <p className="text-lg">Payment</p>
             </div>
-        <h2 className="text-xl mb-[20px]">Shipping Information</h2>
-      <form onSubmit={handleSubmit} className="w-[450px] flex flex-col gap-y-[10px]">
+        <h2 className="text-lg xl:mb-[20px] ml-[1vw] text-gray-700 font-bold text-center xl:text-left mb-[2vh]">Shipping Information</h2>
+      <form onSubmit={handleSubmit} className="xl:w-[450px] flex flex-col gap-y-[10px] mx-[1vw]">
       <div className="row flex gap-[10px]">
           <Input
             autoFocus
             name="firstName"
             label="First Name"
-            placeholder="Enter your first name"
+            placeholder="Enter your first name" 
             variant="bordered"
             value={formData.firstName}
             onChange={handleChange}
-            className="w-[220px]"
+            className="w-[1/2]"
             />
             <Input
             name="lastName"
@@ -61,7 +61,7 @@ const CheckoutPage = () =>{
             variant="bordered"
             value={formData.lastName}
             onChange={handleChange}
-            className="w-[220px]"   
+            className="w-[1/2]"   
             />
         </div>
 
@@ -96,7 +96,7 @@ const CheckoutPage = () =>{
             variant='bordered'
             value={formData.country}
             onChange={handleChange}
-            className="w-[140px]"
+            className="w-[1/3]"
           />
           <Input
             name="zipCode"
@@ -104,7 +104,7 @@ const CheckoutPage = () =>{
             variant='bordered'
             value={formData.zipCode}
             onChange={handleChange}
-            className="w-[140px]"
+            className="w-[1/3]"
           />
           <Input
             name="city"
@@ -112,7 +112,7 @@ const CheckoutPage = () =>{
             variant='bordered'
             value={formData.city}
             onChange={handleChange}
-            className="w-[140px]"
+            className="w-[1/3]"
           />
         </div>
 
@@ -141,16 +141,16 @@ const CheckoutPage = () =>{
       </form>
       
     </div>
-        <div className="mt-[100px] ml-[500px] text-2xl">
-            <p>Chosen Location</p>
-            <hr className="border-black w-[450px] mt-[15px] border-1"></hr>
-            <div className="flex">
-                <img src={item.image} width={150} alt={item.title} className="rounded-xl mt-[30px]"/>
+        <div className="xl:mt-[100px] xl:ml-[500px] mt-[4vh] xl:text-2xl text-xl text-center xl:text-left ">
+            <p className="text-gray-700 font-bold">Chosen Location</p>
+            <hr className="border-black xl:w-[450px] w-[90vw] mt-[15px] border-1 mx-[5vw] xl:mx-0"></hr>
+            <div className="flex flex-col xl:flex-row items-center xl:items-normal">
+                <img src={item.image} alt={item.title} className="rounded-xl mt-[30px] xl:w-[150px] xl:h-[150px] w-[50vw] h-[50vw]"/>
                 <div className="font-semibold mt-[15px] ml-[10px]">
                     <p className="text-2xl mt-[20px]">{item.title}</p>
                     <p className="text-xs mt-[10px] font-medium">Duration: {days} days</p>
                     <p className="text-2xl mt-[10px]">${Math.ceil(price / 30 * parseInt(days))}</p>
-                    <button className="ml-[200px] mt-[30px] text-xs font-medium underline">Remove</button>
+                    <button className="xl:ml-[200px] xl:mt-[30px] text-xs font-medium underline">Remove</button>
                 </div>
             </div>
             <Input
@@ -160,12 +160,12 @@ const CheckoutPage = () =>{
             variant='bordered'
             value={formData.couponCode}
             onChange={handleChange}
-            className="mt-[200px] w-[450px]"
+            className="xl:mt-[200px] xl:w-[450px] mt-[5vh] mx-[1vw] xl:mx-0"
           />
-          <hr className="border-black w-[450px] mt-[15px] border-1"></hr>
-        <div className="flex gap-[385px]">
-            <p className="text-sm font-medium">Total</p>
-            <p className="text-sm font-medium">${Math.ceil(price / 30 * parseInt(days))}</p>
+          <hr className="border-black xl:w-[450px] w-[95vw] mx-[2.5vw] xl:mx-0 mt-[15px] border-1"></hr>
+        <div className="flex xl:gap-[385px] mb-[2vh]">
+            <p className="text-sm font-medium ml-[2.5vw] xl:ml-0">Total</p>
+            <p className="text-sm font-medium ml-[77.5vw] xl:ml-0">${Math.ceil(price / 30 * parseInt(days))}</p>
         </div>
         </div>
     </div>
