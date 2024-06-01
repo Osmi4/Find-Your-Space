@@ -22,11 +22,12 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Modifying
     @Transactional
-    @Query("UPDATE User u SET u.email = :email, u.firstName = :firstName, u.lastName = :lastName WHERE u.userId = :id")
+    @Query("UPDATE User u SET u.email = :email, u.firstName = :firstName, u.lastName = :lastName, u.contactInfo=:contactInfo WHERE u.userId = :id")
     int patchUser(@Param("id") String id,
                    @Param("email") String email,
                    @Param("firstName") String firstName,
-                   @Param("lastName") String lastName);
+                   @Param("lastName") String lastName,
+                  @Param("contactInfo") String contactInfo);
 
     @Modifying
     @Transactional
