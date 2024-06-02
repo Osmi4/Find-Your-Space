@@ -1,20 +1,17 @@
 package com.example.backend.service.impl;
 
 import com.example.backend.autoMapper.RatingMapper;
-import com.example.backend.dtos.Payment.UpdatePaymentRequest;
 import com.example.backend.dtos.Rating.AddRatingRequest;
 import com.example.backend.dtos.Rating.RatingFilter;
 import com.example.backend.dtos.Rating.RatingResponse;
-import com.example.backend.dtos.Report.ReportStatus;
 import com.example.backend.entity.Rating;
-import com.example.backend.entity.Report;
 import com.example.backend.entity.Space;
-import com.example.backend.entity.User;
+import com.example.backend.enums.PermissionType;
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.repository.RatingRepository;
-import com.example.backend.repository.ReportRepository;
 import com.example.backend.repository.SpaceRepository;
 import com.example.backend.repository.UserRepository;
+import com.example.backend.service.PermissionService;
 import com.example.backend.service.RatingService;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -24,11 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.nio.file.AccessDeniedException;
 import java.util.Optional;
 
 @Service
@@ -37,11 +30,13 @@ public class RatingServiceImpl implements RatingService {
     private final RatingRepository ratingRepository;
     private final SpaceRepository spaceRepository;
     private final UserRepository userRepository;
+    private final PermissionService permissionService;
 
-    public RatingServiceImpl(RatingRepository ratingRepository, SpaceRepository spaceRepository, UserRepository userRepository) {
+    public RatingServiceImpl(RatingRepository ratingRepository, SpaceRepository spaceRepository, UserRepository userRepository, PermissionService permissionService) {
         this.ratingRepository = ratingRepository;
         this.spaceRepository = spaceRepository;
         this.userRepository = userRepository;
+        this.permissionService = permissionService;
     }
 
     @Override
@@ -51,6 +46,8 @@ public class RatingServiceImpl implements RatingService {
         Rating rating = RatingMapper.INSTANCE.RatingRequestToRating(addRatingRequest, space, userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
                 () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName())));
         Rating savedRating = ratingRepository.save(rating);
+        permissionService.createPermissionFromListOfPermissions(savedRating.getUser().getEmail(), Rating.class.getSimpleName(), savedRating.getRatingId(), PermissionServiceImpl.OWNER_PERMISSIONS);
+        permissionService.createPermissionsForAdminsFromListOfPermissions(savedRating.getUser().getEmail(),Rating.class.getSimpleName(), savedRating.getRatingId(), PermissionServiceImpl.ADMIN_PERMISSIONS);
         return RatingMapper.INSTANCE.RatingToRatingResponse(savedRating);
     }
 
@@ -66,7 +63,9 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     @Transactional
-    public void deleteRating(String id) {
+    public void deleteRating(String id) throws AccessDeniedException {
+        permissionService.checkPermission(SecurityContextHolder.getContext().getAuthentication().getName(), Space.class.getSimpleName(), id, PermissionType.DELETE);
+
         Optional<Rating> rating = ratingRepository.findById(id);
         if (rating.isEmpty()) {
             throw new ResourceNotFoundException("Rating not found", "ratingId", id);

@@ -29,5 +29,7 @@ public interface PermissionService {
 
     List<String> filterResourceIdsByPermission(List<String> resourceIds, String username, String resourceName, PermissionType requiredPermission);
 
-    List<Permission> createPermissionFromListOfPermissions(String email, String simpleName, String spaceId, List<PermissionType> ownerPermissions);
+    List<Permission> createPermissionFromListOfPermissions(String requestorEmail, String simpleName, String spaceId, List<PermissionType> ownerPermissions);
+
+    List<Permission> createPermissionsForAdminsFromListOfPermissions(String requestorEmail,String resourceName, String resourceId, List<PermissionType> permissionTypes);
 }

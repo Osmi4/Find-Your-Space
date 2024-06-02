@@ -7,13 +7,14 @@ import com.example.backend.dtos.Rating.RatingResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 public interface RatingService {
     RatingResponse addRating(AddRatingRequest addRatingRequest);
     RatingResponse getRating(String id);
 
-    void deleteRating(String id);
+    void deleteRating(String id) throws AccessDeniedException;
 
     Page<RatingResponse> getRatingsByFilters(RatingFilter ratingFilter, Pageable pageable);
 }

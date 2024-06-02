@@ -3,6 +3,7 @@ package com.example.backend.service.impl;
 import com.example.backend.autoMapper.SpaceMapper;
 import com.example.backend.autoMapper.UserMapper;
 import com.example.backend.dtos.Report.*;
+import com.example.backend.entity.Rating;
 import com.example.backend.entity.Report;
 import com.example.backend.entity.Space;
 import com.example.backend.entity.User;

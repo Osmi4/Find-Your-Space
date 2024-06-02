@@ -65,7 +65,7 @@ public class SpaceServiceImpl implements SpaceService {
         }
 
         permissionService.createPermissionFromListOfPermissions(result.getOwner().getEmail(), Space.class.getSimpleName(), result.getSpaceId(), PermissionServiceImpl.OWNER_PERMISSIONS);
-
+        permissionService.createPermissionsForAdminsFromListOfPermissions(result.getOwner().getEmail(),Space.class.getSimpleName(), result.getSpaceId(), PermissionServiceImpl.ADMIN_PERMISSIONS);
         return spaceResponse;
     }
 
