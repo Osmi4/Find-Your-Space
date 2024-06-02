@@ -1,14 +1,12 @@
 package com.example.backend.service;
 
-import com.example.backend.dtos.Payment.AddPaymentRequest;
-import com.example.backend.dtos.Payment.PaymentFilter;
-import com.example.backend.dtos.Payment.PaymentResponse;
-import com.example.backend.dtos.Payment.UpdatePaymentRequest;
+import com.example.backend.dtos.Payment.*;
+import com.stripe.exception.StripeException;
 
 import java.util.List;
 
 public interface PaymentService {
-    PaymentResponse addPayment(AddPaymentRequest addPaymentRequest);
+    String addPayment(PaymentRequest addPaymentRequest, String currency) throws StripeException;
 
     PaymentResponse getPayment(String id);
 

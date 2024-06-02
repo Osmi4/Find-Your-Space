@@ -1,20 +1,46 @@
 package com.example.backend.service.impl;
 
-import com.example.backend.dtos.Payment.AddPaymentRequest;
-import com.example.backend.dtos.Payment.PaymentFilter;
-import com.example.backend.dtos.Payment.PaymentResponse;
-import com.example.backend.dtos.Payment.UpdatePaymentRequest;
+import com.example.backend.dtos.Payment.*;
+import com.example.backend.entity.Booking;
+import com.example.backend.enums.Status;
+import com.example.backend.repository.BookingRepository;
+import com.example.backend.repository.ReportRepository;
 import com.example.backend.service.PaymentService;
-import org.hibernate.annotations.SecondaryRow;
+import com.stripe.exception.StripeException;
+import com.stripe.model.Charge;
+import com.stripe.param.ChargeCreateParams;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
+    private final BookingRepository bookingRepository;
+
+    public PaymentServiceImpl(BookingRepository bookingRepository) {
+        this.bookingRepository = bookingRepository;
+    }
+
     @Override
-    public PaymentResponse addPayment(AddPaymentRequest addPaymentRequest) {
-        return null;
+    public String addPayment(PaymentRequest paymentRequest,String currency) throws StripeException {
+        Booking booking = bookingRepository.findById(paymentRequest.getBookingId()).orElseThrow(() -> new RuntimeException("Booking not found"));
+        if(!booking.getStatus().equals(Status.PENDING)){
+            throw new RuntimeException("Booking is not pending");
+        }
+        if(booking.getCost() != paymentRequest.getAmount()){
+            throw new RuntimeException("Amount mismatch");
+        }
+        ChargeCreateParams createParams = new ChargeCreateParams.Builder()
+                .setAmount((long) paymentRequest.getAmount())
+                .setCurrency(currency)
+                .setSource(paymentRequest.getToken())
+                .build();
+
+        Charge charge = Charge.create(createParams);
+        // Update booking status
+        booking.setStatus(Status.COMPLETED);
+        bookingRepository.save(booking);
+        return charge.getId();
     }
 
     @Override
