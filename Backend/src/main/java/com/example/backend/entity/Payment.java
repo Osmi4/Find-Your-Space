@@ -4,11 +4,13 @@ import com.example.backend.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Data
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
+@Getter
+@Setter
 @Table(name = "payment", uniqueConstraints = {@UniqueConstraint(columnNames = "payment_id")})
 public class Payment {
     @Id

@@ -2,31 +2,49 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Checkbox } from "@nextui-org/react";
 import axios from "axios";
+import { useAuth0 } from '@auth0/auth0-react';
 
 const FindSpacePage = () => {
     const navigate = useNavigate();
+    const { loginWithRedirect, logout, isAuthenticated, user, getAccessTokenSilently } = useAuth0();
 
     const [spaces, setSpaces] = useState([]);
     const [filter] = useState({
-        categories: ["Digital Billboards", "Print Media Spaces", "Transit Advertising", "Shopping Mall Spaces", "Online Platforms"],
-        countries: ["Poland", "USA", "Japan", "Germany", "France"],
+        categories: [
+        "OFFICE",
+        "MEETING ROOM",
+        "EVENT SPACE",
+        "COWORKING SPACE",
+        "RETAIL SPACE",
+        "STORAGE SPACE",
+        "PARKING SPACE",
+        "WAREHOUSE",
+        "INDUSTRIAL SPACE",
+        "OTHER"],
         cities: ["Poznan", "Wroclaw", "Krakow", "Warsaw", "Gdansk", "Lodz"]
     });
 
     const [selectedFilters, setSelectedFilters] = useState({
         categories: [],
-        countries: [],
         cities: []
     });
 
     useEffect(() => {
+        
         const fetchSpaces = async () => {
+            if (isAuthenticated) {
+                const token = await getAccessTokenSilently();
+                localStorage.setItem('authToken', token);
+
             try {
-                const response = await axios.get("http://localhost:8080/api/space/all");
+                const response = await axios.get("http://localhost:8080/api/space/all", {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
                 setSpaces(response.data.content);
             } catch (error) {
                 console.error("Error fetching spaces:", error);
             }
+        }
         };
 
         fetchSpaces();
@@ -49,13 +67,13 @@ const FindSpacePage = () => {
 
     const filteredItems = spaces.filter(item => {
         const categoryMatch = selectedFilters.categories.length === 0 || selectedFilters.categories.includes(item.category);
-        const countryMatch = selectedFilters.countries.length === 0 || selectedFilters.countries.includes(item.country);
+        //const countryMatch = selectedFilters.countries.length === 0 || selectedFilters.countries.includes(item.country);
         const cityMatch = selectedFilters.cities.length === 0 || selectedFilters.cities.includes(item.city);
-        return categoryMatch && countryMatch && cityMatch;
+        return categoryMatch && cityMatch;
     });
 
     const clearSelectedFilters = () => {
-        setSelectedFilters({ categories: [], countries: [], cities: [] });
+        setSelectedFilters({ categories: [], cities: [] });
         navigate(0);
     };
 
@@ -88,7 +106,7 @@ const FindSpacePage = () => {
                     ))}
                 </div>
 
-                <p className="text-sm font-semibold my-[10px]">Countries</p>
+                {/* <p className="text-sm font-semibold my-[10px]">Countries</p>
                 <div className="flex flex-col">
                     {filter.countries.map(country => (
                         <Checkbox
@@ -104,7 +122,7 @@ const FindSpacePage = () => {
                             {country}
                         </Checkbox>
                     ))}
-                </div>
+                </div> */}
 
                 <p className="text-sm font-semibold my-[10px]">Cities</p>
                 <div className="flex flex-col">

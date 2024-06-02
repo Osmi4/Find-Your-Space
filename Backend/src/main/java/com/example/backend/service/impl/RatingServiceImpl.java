@@ -48,7 +48,8 @@ public class RatingServiceImpl implements RatingService {
     public RatingResponse addRating(AddRatingRequest addRatingRequest) {
         Space space = spaceRepository.findById(addRatingRequest.getSpaceId())
                 .orElseThrow(() -> new ResourceNotFoundException("Space not found", "spaceId", addRatingRequest.getSpaceId()));
-        Rating rating = RatingMapper.INSTANCE.RatingRequestToRating(addRatingRequest, space);
+        Rating rating = RatingMapper.INSTANCE.RatingRequestToRating(addRatingRequest, space, userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
+                () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName())));
         Rating savedRating = ratingRepository.save(rating);
         return RatingMapper.INSTANCE.RatingToRatingResponse(savedRating);
     }

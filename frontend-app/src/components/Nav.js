@@ -1,14 +1,16 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, Input, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/react";
 import { SearchIcon } from "../icons/SearchIcon.jsx";
 import logo from "../images/logo.png";
 import { useState, useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import axios from 'axios';
 import spaces from '../spaces.js';
 import UserIcon from "../pages/UserIcon";
 
 const Nav = () => {
-    const { loginWithRedirect, logout, isAuthenticated, user } = useAuth0();
+    const { loginWithRedirect, isAuthenticated, getAccessTokenSilently, user } = useAuth0();
+    const navigate = useNavigate();
     const [searchInput, setSearchInput] = useState("");
     const [filteredSpaces, setFilteredSpaces] = useState([]);
 
@@ -19,6 +21,29 @@ const Nav = () => {
     const pageChanged = () => {
         setSearchInput("");
     }
+
+    useEffect(() => {
+        const checkProfileCompletion = async () => {
+            if (isAuthenticated) {
+                const token = await getAccessTokenSilently();
+                localStorage.setItem('authToken', token);
+
+                try {
+                    const response = await axios.get('http://localhost:8080/api/user/my-details', {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    //console.log(response.data);
+                    if (!response.data.detailsConfigured) {
+                        navigate('/complete-profile');
+                    }
+                } catch (error) {
+                    console.error("Error checking profile completeness", error);
+                }
+            }
+        };
+
+        checkProfileCompletion();
+    }, [isAuthenticated, getAccessTokenSilently, navigate]);
 
     useEffect(() => {
         if (searchInput.length > 0) {
@@ -133,9 +158,6 @@ const Nav = () => {
                 ) : (
                     <NavbarItem>
                         <UserIcon user={user} />
-                        {/*<Button onClick={() => logout({ returnTo: window.location.origin })} color="default">*/}
-                        {/*    Logout*/}
-                        {/*</Button>*/}
                     </NavbarItem>
                 )}
             </NavbarContent>

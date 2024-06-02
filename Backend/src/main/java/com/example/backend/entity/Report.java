@@ -9,11 +9,12 @@ import java.util.Date;
 import java.util.Optional;
 
 
-@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Getter
+@Setter
 @Table(name = "report" , uniqueConstraints = {@UniqueConstraint(columnNames = "report_id")})
 public class Report {
     @Id

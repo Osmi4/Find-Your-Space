@@ -32,10 +32,12 @@ import java.util.Optional;
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final SpaceRepository spaceRepository;
+    private final UserRepository userRepository;
 
-    public BookingServiceImpl(BookingRepository bookingRepository, SpaceRepository spaceRepository) {
+    public BookingServiceImpl(BookingRepository bookingRepository, SpaceRepository spaceRepository, UserRepository userRepository) {
         this.bookingRepository = bookingRepository;
         this.spaceRepository = spaceRepository;
+        this.userRepository = userRepository;
     }
     @Override
     public BookingResponse getBooking(String id) {
@@ -59,7 +61,9 @@ public class BookingServiceImpl implements BookingService {
             throw new ResourceNotFoundException("Space not found", "space", addBookingRequest.getSpaceId());
         }
         double price = space.getSpacePrice() * (addBookingRequest.getEndDateTime().getTime() - addBookingRequest.getStartDateTime().getTime()) / 1000 / 60 / 60;
-        User client = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        //User client = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User client = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
+                () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName()));
         User Owner = space.getOwner();
         if (Owner.getUserId().equals(client.getUserId())) {
             throw new IllegalArgumentException("Owner can't book their own space");
@@ -73,7 +77,8 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponse updateBooking(EditBookingRequest editBookingRequest, String bookingId) {
         Booking bookingToUpdate = bookingRepository.findByBookingId(bookingId).stream().findFirst().orElse(null);
-        if(bookingToUpdate == null || !bookingToUpdate.getStatus().equals(Status.INQUIRY) || !bookingToUpdate.getClient().getUserId().equals(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId())) {
+        if(bookingToUpdate == null || !bookingToUpdate.getStatus().equals(Status.INQUIRY) || !bookingToUpdate.getClient().getUserId().equals(userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
+                () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName())).getUserId())){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "booking is not found or not owned by user or not in inquiry status");
         }
         if(editBookingRequest.getStartDate()==null){
@@ -118,7 +123,8 @@ public class BookingServiceImpl implements BookingService {
         if(!bookingToDelete.getStatus().equals(Status.INQUIRY)){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "booking is not in inquiry status");
         }
-        if(!bookingToDelete.getClient().getUserId().equals(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId())) {
+        if(!bookingToDelete.getClient().getUserId().equals(userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
+                () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName())).getUserId())){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "booking is not owned by user");
         }
         int deleted =bookingRepository.deleteByBookingId(id);
@@ -130,7 +136,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Page<BookingResponse> getMyBookings(Pageable pageable) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        //User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User)userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
+                () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName()));
         //do sprawdzenia
         if(user == null){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "user not log in");
@@ -148,7 +156,9 @@ public class BookingServiceImpl implements BookingService {
         }
         else{
             BookingFilter filter = filterOpt.get();
-            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            //User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            User user = (User)userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
+                    () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName()));
             Page<Booking> bookings = doFilter(filter , Optional.of(user) , Optional.empty() , pageable);
             return bookings.map(BookingMapper.INSTANCE::bookingToBookingResponse);
         }
@@ -156,7 +166,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Page<BookingResponse> getBookingForSpace(String spaceId, Optional<BookingFilter> filter , Pageable pageable) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        //User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User)userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
+                () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName()));
         if(user == null) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "user not log in");
         }
@@ -187,7 +199,10 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponse updateBookingStatus(Status status, String id) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+       // User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
+                () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName()));
+
         Space space = spaceRepository.findByBookings_BookingId(id).orElse(null);
         assert space != null;
         if(!user.getUserId().equals(space.getOwner().getUserId())){

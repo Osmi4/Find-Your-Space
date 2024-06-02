@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
         if(updateUserRequest.getLastName()==null || updateUserRequest.getLastName().isEmpty()){
             updateUserRequest.setLastName(userToUpdate.getLastName());
         }
-        int affectedRows= userRepository.patchUser(userId, updateUserRequest.getEmail(), updateUserRequest.getFirstName(), updateUserRequest.getLastName());
+        int affectedRows= userRepository.patchUser(userId, updateUserRequest.getEmail(), updateUserRequest.getFirstName(), updateUserRequest.getLastName() , updateUserRequest.getContactInfo());
         if(affectedRows==0){
             throw new ResourceNotFoundException("User not found!", "userId", userId);
         }

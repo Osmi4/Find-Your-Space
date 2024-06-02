@@ -168,7 +168,7 @@ const CheckoutPage = () =>{
             <p className="text-sm font-medium ml-[77.5vw] xl:ml-0">${Math.ceil(price / 30 * parseInt(days))}</p>
         </div>
         </div>
-    </div>
+    </div> 
     )
 }
 

@@ -2,20 +2,23 @@ import { useState } from 'react';
 import { Input, Textarea, Button } from "@nextui-org/react";
 import { Select } from 'antd';
 import axios from 'axios';
+import { useAuth0 } from '@auth0/auth0-react';
 
 const RentPage = () => {
     const spaceTypes = [
         "OFFICE",
-        "MEETING_ROOM",
-        "EVENT_SPACE",
-        "COWORKING_SPACE",
-        "RETAIL_SPACE",
-        "STORAGE_SPACE",
-        "PARKING_SPACE",
+        "MEETING ROOM",
+        "EVENT SPACE",
+        "COWORKING SPACE",
+        "RETAIL SPACE",
+        "STORAGE SPACE",
+        "PARKING SPACE",
         "WAREHOUSE",
-        "INDUSTRIAL_SPACE",
+        "INDUSTRIAL SPACE",
         "OTHER"
     ];
+
+    const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
 
     const [spaceInfo, setSpaceInfo] = useState({
         spaceName: '',
@@ -31,13 +34,17 @@ const RentPage = () => {
     const [imagePreviews, setImagePreviews] = useState([]);
     const [spaceId, setSpaceId] = useState(null);
 
+    const mapSpaceType = (type) => {  
+        return type.replace(' ', '_');
+    }
+
     const handleSpaceChange = (e) => {
         const { name, value } = e.target;
         setSpaceInfo({ ...spaceInfo, [name]: value });
     };
 
     const handleSpaceTypeChange = (value) => {
-        setSpaceInfo({ ...spaceInfo, spaceType: value });
+        setSpaceInfo({ ...spaceInfo, spaceType: mapSpaceType(value) });
     };
 
     const handleImageChange = (e) => {
@@ -68,13 +75,15 @@ const RentPage = () => {
             spaceLocation: `${spaceInfo.rentCity}, ${spaceInfo.rentAddress}, ${spaceInfo.rentZipCode}`,
             spaceSize: parseFloat(spaceInfo.size),
             spacePrice: parseFloat(spaceInfo.rentPrice),
-            spaceType: spaceInfo.spaceType,
-            spaceDescription: spaceInfo.spaceDescription
+            spaceDescription: spaceInfo.spaceDescription,
+            spaceType: spaceInfo.spaceType
         };
 
-        const token = localStorage.getItem('token'); // Retrieve the token from local storage
-
-        try {
+        
+        if (isAuthenticated) {
+            const token = await getAccessTokenSilently();
+            localStorage.setItem('authToken', token);
+        try {  
             const response = await axios.post('http://localhost:8080/api/space', spaceData, {
                 headers: {
                     Authorization: `Bearer ${token}` // Include the token in the headers
@@ -92,32 +101,37 @@ const RentPage = () => {
             console.error("Error submitting space information:", error);
             alert("An error occurred while submitting the space information.");
         }
+    }
     };
 
     const uploadImages = async (spaceId) => {
-        const formData = new FormData();
-        spaceInfo.images.forEach((image) => {
-            formData.append('image', image);
-        });
-
-        const token = localStorage.getItem('token'); // Retrieve the token from local storage
-
-        try {
-            const response = await axios.post(`http://localhost:8080/api/space/${spaceId}/images`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${token}` // Include the token in the headers
-                }
+        if (isAuthenticated) {
+            const token = await getAccessTokenSilently();
+            localStorage.setItem('authToken', token);
+            const formData = new FormData();
+            spaceInfo.images.forEach((image) => {
+                formData.append('image', image);
             });
 
-            if (response.status === 200) {
-                alert("Images uploaded successfully!");
-            } else {
-                alert("Failed to upload images.");
+            //const token = localStorage.getItem('token'); // Retrieve the token from local storage
+
+            try {
+                const response = await axios.post(`http://localhost:8080/api/space/${spaceId}/images`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${token}` // Include the token in the headers
+                    }
+                });
+
+                if (response.status === 200) {
+                    alert("Images uploaded successfully!");
+                } else {
+                    alert("Failed to upload images.");
+                }
+            } catch (error) {
+                console.error("Error uploading images:", error);
+                alert("An error occurred while uploading the images.");
             }
-        } catch (error) {
-            console.error("Error uploading images:", error);
-            alert("An error occurred while uploading the images.");
         }
     };
 

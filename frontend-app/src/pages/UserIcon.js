@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
 import { useAuth0 } from '@auth0/auth0-react';
 
-const UserIcon = () => {
+const UserIcon = ({user}) => {
     const navigate = useNavigate();
     const { logout, isAuthenticated } = useAuth0();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -23,9 +23,7 @@ const UserIcon = () => {
     return (
         <Dropdown>
             <DropdownTrigger>
-                <Avatar color="primary" as="button">
-                    Icon
-                </Avatar>
+                <Avatar src={user.picture} as="button"/>
             </DropdownTrigger>
             <DropdownMenu>
                 {isLoggedIn ? (

@@ -5,11 +5,13 @@ import lombok.*;
 
 import java.util.Date;
 
-@Data
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
+@Getter
+@Setter
 @Table(name = "message", uniqueConstraints = {@UniqueConstraint(columnNames = "message_id")})
 public class Message {
     //dodac space

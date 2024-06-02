@@ -27,13 +27,13 @@ public interface SpaceMapper {
             @Mapping(target = "availability", constant = "NOT_RELEASED"),
             @Mapping(target = "dateAdded", expression = "java(new java.util.Date())"),
             @Mapping(target = "dateUpdated", expression = "java(new java.util.Date())"),
-            @Mapping(target = "owner", expression = "java(getAuthenticatedUser())"),
+            @Mapping(target = "owner", source = "user"),
             @Mapping(target = "ratings", ignore = true),
             @Mapping(target = "images", ignore = true),
             @Mapping(target = "bookings", ignore = true),
             @Mapping(target = "spaceId", ignore = true)
     })
-    Space addSpaceRequestToSpace(AddSpaceRequest addSpaceRequest);
+    Space addSpaceRequestToSpace(AddSpaceRequest addSpaceRequest , User user);
 
     @Mappings({
             @Mapping(target = "owner", source = "owner"),
@@ -44,8 +44,8 @@ public interface SpaceMapper {
 
     UserResponse userToUserResponse(User user);
 
-    default User getAuthenticatedUser() {
-        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    }
+//    default User getAuthenticatedUser() {
+//        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//    }
 
 }
