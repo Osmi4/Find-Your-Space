@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 @Service
 public class PermissionServiceImpl implements PermissionService {
 
+    public static final List<PermissionType> OWNER_PERMISSIONS = List.of( PermissionType.WRITE, PermissionType.READ,PermissionType.UPDATE, PermissionType.DELETE);
+    public static final List<PermissionType> ADMIN_PERMISSIONS = List.of( PermissionType.WRITE, PermissionType.READ,PermissionType.UPDATE, PermissionType.DELETE);
     @Autowired
     private PermissionRepository permissionRepository;
 
@@ -38,6 +40,13 @@ public class PermissionServiceImpl implements PermissionService {
     public Permission createPermission(String username, String resourceName, String resourceId, PermissionType permissionType) {
         Permission permission = new Permission(username, resourceName, resourceId, permissionType);
         return permissionRepository.save(permission);
+    }
+
+    public List<Permission> createPermissionFromListOfPermissions(String username, String resourceName, String resourceId, List<PermissionType> permissionTypes) {
+        List<Permission> permissions = permissionTypes.stream()
+                .map(permissionType -> new Permission(username, resourceName, resourceId, permissionType))
+                .collect(Collectors.toList());
+        return permissionRepository.saveAll(permissions);
     }
 
 

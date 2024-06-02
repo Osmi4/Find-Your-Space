@@ -59,10 +59,7 @@ public class SpaceServiceImpl implements SpaceService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Space not correctly converted");
         }
 
-        permissionService.createPermission(result.getOwner().getEmail(), Space.class.getSimpleName(), result.getSpaceId(), PermissionType.WRITE);
-        permissionService.createPermission(result.getOwner().getEmail(), Space.class.getSimpleName(), result.getSpaceId(), PermissionType.READ);
-        permissionService.createPermission(result.getOwner().getEmail(), Space.class.getSimpleName(), result.getSpaceId(), PermissionType.DELETE);
-        permissionService.createPermission(result.getOwner().getEmail(), Space.class.getSimpleName(), result.getSpaceId(), PermissionType.UPDATE);
+        permissionService.createPermissionFromListOfPermissions(result.getOwner().getEmail(), Space.class.getSimpleName(), result.getSpaceId(), PermissionServiceImpl.OWNER_PERMISSIONS);
 
         return spaceResponse;
     }
@@ -115,8 +112,6 @@ public class SpaceServiceImpl implements SpaceService {
         return doFilter(filter , Optional.empty() , pageable).map(SpaceMapper.INSTANCE::spaceToSpaceResponse);
     }
     private boolean checkSpaceAvailability(Space space, Date startDate, Date endDate) throws AccessDeniedException {
-        permissionService.checkPermission(SecurityContextHolder.getContext().getAuthentication().getName(), Space.class.getSimpleName(), space.getSpaceId(), PermissionType.READ);
-
         List<Booking> bookings = bookingRepository.findBySpace_SpaceId(space.getSpaceId());
         for (Booking booking : bookings) {
             if (booking.getStartDateTime().before(startDate) && booking.getEndDateTime().after(endDate)) {
@@ -127,8 +122,6 @@ public class SpaceServiceImpl implements SpaceService {
     }
     @Override
     public SpaceResponse getSpace(String id) throws AccessDeniedException {
-        permissionService.checkPermission(SecurityContextHolder.getContext().getAuthentication().getName(), Space.class.getSimpleName(), id, PermissionType.READ);
-
         Optional<Space> spaceOpt = spaceRepository.findBySpaceId(id);
         Space space = spaceOpt.orElse(null);
         if (space == null) {
