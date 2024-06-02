@@ -102,7 +102,7 @@ const SpaceEditPage = () => {
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700">Space Size (sq ft)</label>
+                    <label className="block text-gray-700">Space Size (sq m)</label>
                     <input
                         type="number"
                         name="spaceSize"
