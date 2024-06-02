@@ -35,7 +35,7 @@ public class SecurityConfiguration {
                 .and()
                 .authorizeRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/", "/index.html").permitAll()
+                                .requestMatchers("/", "/index.html","index.html").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

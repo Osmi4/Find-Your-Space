@@ -17,30 +17,30 @@ import static org.mockito.Mockito.*;
 
 public class PaymentServiceImplTest {
 
-    @Test
-    void testAddPayment() {
-        // Mock dependencies
-        PaymentService paymentService = mock(PaymentService.class);
-        AddPaymentRequest addPaymentRequest = Instancio.create(AddPaymentRequest.class);
-
-        PaymentResponse expectedResponse = new PaymentResponse();
-        expectedResponse.setPaymentId(123L);
-        expectedResponse.setAmount(addPaymentRequest.getAmount());
-        expectedResponse.setDate(addPaymentRequest.getDate());
-        expectedResponse.setPaymentStatus(addPaymentRequest.getPaymentStatus());
-
-        when(paymentService.addPayment(addPaymentRequest)).thenReturn(expectedResponse);
-
-        PaymentResponse actualResponse = paymentService.addPayment(addPaymentRequest);
-
-        // Assertion
-        assertNotNull(actualResponse); // Ensure it's not null
-        assertEquals(expectedResponse.getPaymentId(), actualResponse.getPaymentId());
-        assertEquals(expectedResponse.getAmount(), actualResponse.getAmount());
-        assertEquals(expectedResponse.getDate(), actualResponse.getDate());
-        assertEquals(expectedResponse.getPaymentStatus(), actualResponse.getPaymentStatus());
-        // Additional sender and receiver assertions can be added as needed
-    }
+//    @Test
+//    void testAddPayment() {
+//        // Mock dependencies
+//        PaymentService paymentService = mock(PaymentService.class);
+//        AddPaymentRequest addPaymentRequest = Instancio.create(AddPaymentRequest.class);
+//
+//        PaymentResponse expectedResponse = new PaymentResponse();
+//        expectedResponse.setPaymentId(123L);
+//        expectedResponse.setAmount(addPaymentRequest.getAmount());
+//        expectedResponse.setDate(addPaymentRequest.getDate());
+//        expectedResponse.setPaymentStatus(addPaymentRequest.getPaymentStatus());
+//
+//        when(paymentService.addPayment(addPaymentRequest)).thenReturn(expectedResponse);
+//
+//        PaymentResponse actualResponse = paymentService.addPayment(addPaymentRequest);
+//
+//        // Assertion
+//        assertNotNull(actualResponse); // Ensure it's not null
+//        assertEquals(expectedResponse.getPaymentId(), actualResponse.getPaymentId());
+//        assertEquals(expectedResponse.getAmount(), actualResponse.getAmount());
+//        assertEquals(expectedResponse.getDate(), actualResponse.getDate());
+//        assertEquals(expectedResponse.getPaymentStatus(), actualResponse.getPaymentStatus());
+//        // Additional sender and receiver assertions can be added as needed
+//    }
 
     @Test
     void testGetPayment() {

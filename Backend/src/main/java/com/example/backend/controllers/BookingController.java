@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,15 +54,15 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.addBooking(addBookingRequest));
     }
     @PutMapping("/{id}")
-    public ResponseEntity<BookingResponse> updateBooking(@PathVariable String id , @RequestBody EditBookingRequest editBookingRequest){
+    public ResponseEntity<BookingResponse> updateBooking(@PathVariable String id , @RequestBody EditBookingRequest editBookingRequest) throws AccessDeniedException {
         return ResponseEntity.ok(bookingService.updateBooking(editBookingRequest , id));
     }
     @PutMapping("/status/{id}")
-    public ResponseEntity<BookingResponse> updateStatus(@PathVariable String id , @RequestBody Status status){
+    public ResponseEntity<BookingResponse> updateStatus(@PathVariable String id , @RequestBody Status status) throws AccessDeniedException {
         return ResponseEntity.ok(bookingService.updateBookingStatus(status , id));
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<BookingResponse> deleteBooking(@PathVariable String id){
+    public ResponseEntity<BookingResponse> deleteBooking(@PathVariable String id) throws AccessDeniedException {
         return ResponseEntity.ok(bookingService.deleteBooking(id));
     }
 
