@@ -93,7 +93,7 @@ const MySpacesPage = () => {
                             )}
                             <h2 className="text-xl font-semibold">{space.spaceName}</h2>
                             <p className="text-gray-700">Location: {space.spaceLocation}</p>
-                            <p className="text-gray-700">Size: {space.spaceSize} sq.ft.</p>
+                            <p className="text-gray-700">Size: {space.spaceSize} sq.m.</p>
                             <p className="text-gray-700">Price: ${space.spacePrice}</p>
                             <p className="text-gray-700">Description: {space.spaceDescription}</p>
                             <p className="text-gray-700">Availability: {space.availability}</p>

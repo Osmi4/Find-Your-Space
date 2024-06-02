@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
+import {Input, Button} from "@nextui-org/react";
 
 const CompleteProfile = () => {
     const { getAccessTokenSilently, user, loginWithRedirect } = useAuth0();
@@ -72,31 +73,32 @@ const CompleteProfile = () => {
     return (
         <div className="container mx-auto p-4">
             <div className="bg-white shadow-md rounded-lg p-6">
-                <h1 className="text-2xl font-bold mb-4">Complete Your Profile</h1>
+                <h1 className="text-2xl font-bold mb-4 text-gray-700">Complete Your Profile</h1>
                 <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label className="block text-gray-700">Bank Account</label>
-                        <input
+                        <Input
+                            label="Bank Account"
+                            placeholder='Please enter your bank account number'
                             type="text"
                             name="bankAccountNumber"
                             value={profileData.bankAccountNumber}
                             onChange={handleChange}
-                            className="w-full p-2 border border-gray-300 rounded mt-1"
+                            className="w-full mt-1 mb-3"
+                            variant='bordered'
                             required
+                            
                         />
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-700">Contact Info</label>
-                        <input
+                        <Input
+                            label="Phone number"
+                            placeholder='Please enter your phone number'
                             type="text"
                             name="contactInfo"
                             value={profileData.contactInfo}
                             onChange={handleChange}
-                            className="w-full p-2 border border-gray-300 rounded mt-1"
+                            className="w-full mt-1 mb-3"
+                            variant='bordered'
                             required
                         />
-                    </div>
-                    <button type="submit" className="bg-blue-500 text-white p-2 rounded">Submit</button>
+                    <Button type="submit" color="primary">Submit</Button>
                 </form>
             </div>
         </div>

@@ -6,7 +6,8 @@ import { useAuth0 } from '@auth0/auth0-react';
 
 const FindSpacePage = () => {
     const navigate = useNavigate();
-    const { loginWithRedirect, logout, isAuthenticated, user, getAccessTokenSilently } = useAuth0();
+    const {  getAccessTokenSilently } = useAuth0();
+    const [loading, setLoading] = useState(true);
 
     const [spaces, setSpaces] = useState([]);
     const [filter] = useState({
@@ -30,9 +31,7 @@ const FindSpacePage = () => {
     });
 
     useEffect(() => {
-        
         const fetchSpaces = async () => {
-            if (isAuthenticated) {
                 const token = await getAccessTokenSilently();
                 localStorage.setItem('authToken', token);
 
@@ -40,15 +39,38 @@ const FindSpacePage = () => {
                 const response = await axios.get("http://localhost:8080/api/space/all", {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-                setSpaces(response.data.content);
+                const spacesWithImages = await Promise.all(response.data.content.map(async space => {
+                    if (space.spaceId) {
+                        const imageUrl = await fetchImage(space.spaceId, token);
+                        return { ...space, imageUrl };
+                    }
+                    return space;
+                }));
+                setSpaces(spacesWithImages);
+                setLoading(false);
             } catch (error) {
                 console.error("Error fetching spaces:", error);
+                setLoading(false);
             }
-        }
         };
-
+        console.log(spaces);
         fetchSpaces();
-    }, []);
+    }, [getAccessTokenSilently]);
+
+    const fetchImage = async (spaceId, token) => {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/space/${spaceId}/images`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching image:', error);
+            return null;
+        }
+    };
 
     const handleCheckboxChange = (filterType, value) => {
         setSelectedFilters(prevFilters => {
@@ -66,9 +88,15 @@ const FindSpacePage = () => {
     };
 
     const filteredItems = spaces.filter(item => {
-        const categoryMatch = selectedFilters.categories.length === 0 || selectedFilters.categories.includes(item.category);
-        //const countryMatch = selectedFilters.countries.length === 0 || selectedFilters.countries.includes(item.country);
-        const cityMatch = selectedFilters.cities.length === 0 || selectedFilters.cities.includes(item.city);
+        console.log(spaces)
+        const categoryMatch = selectedFilters.categories.length === 0 || selectedFilters.categories.includes(item.spaceType);
+        const parts = item.spaceLocation.split(',');
+
+        let rentCity = '';
+        if (parts.length > 0) {
+            rentCity = parts[0].trim();
+        }
+        const cityMatch = selectedFilters.cities.length === 0 || selectedFilters.cities.includes(rentCity);
         return categoryMatch && cityMatch;
     });
 
@@ -146,9 +174,9 @@ const FindSpacePage = () => {
             <div className="flex w-full mt-[50px] gap-y-[20px] gap-x-[15px] flex-wrap">
                 {filteredItems.map(item => (
                     <div key={item.id} onClick={() => openSpacePage(item.id)} >
-                        <img src={item.image} width={300} alt={item.title} className="rounded-lg hover:scale-105 ease-out duration-200" />
-                        <h1 className="font-bold text-sm mt-[10px] mb-[3px] hover:underline hover:cursor-pointer">{item.title}</h1>
-                        <h2 className="text-xs">{item.price}</h2>
+                        <img src={item.imageUrl} width={300} alt={item.spaceName} className="rounded-lg hover:scale-105 ease-out duration-200" />
+                        <h1 className="font-bold text-sm mt-[10px] mb-[3px] hover:underline hover:cursor-pointer">{item.spaceName}</h1>
+                        <h2 className="text-xs">{item.spacePrice}$/mo</h2>
                     </div>
                 ))}
             </div>
