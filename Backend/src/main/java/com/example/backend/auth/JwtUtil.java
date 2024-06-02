@@ -7,30 +7,30 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.security.interfaces.RSAPublicKey;
+import java.util.Base64;
 
 @Component
 public class JwtUtil {
 
-    @Value("xxxx")
-    private String secret;
+    private static final String PUBLIC_KEY = "YBXNDJEx_7_zARXHyrBPXnQGzywmh3lmFA_FRwKfDruWS_R2AQo9Q5CkhhAu36Br"; // Replace with your actual public key
 
-    private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes());
-    }
-
-    public Claims extractAllClaims(String token) {
+    public static Claims decodeJWT(String jwt) {
+        RSAPublicKey publicKey = getPublicKey(PUBLIC_KEY);
         return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
+                .setSigningKey(publicKey)
                 .build()
-                .parseClaimsJws(token)
+                .parseClaimsJws(jwt)
                 .getBody();
     }
 
-    public String extractSubject(String token) {
-        return extractAllClaims(token).getSubject();
-    }
-
-    public String extractIssuer(String token) {
-        return extractAllClaims(token).getIssuer();
+    private static RSAPublicKey getPublicKey(String base64PublicKey) {
+        try {
+            byte[] decoded = Base64.getDecoder().decode(base64PublicKey);
+            Key key = Keys.hmacShaKeyFor(decoded);
+            return (RSAPublicKey) key;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to decode public key", e);
+        }
     }
 }

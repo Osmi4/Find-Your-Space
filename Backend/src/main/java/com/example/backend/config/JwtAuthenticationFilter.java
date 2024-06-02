@@ -3,6 +3,20 @@ import com.example.backend.auth.AuthenticationService;
 import com.example.backend.dtos.Auth.RegisterDto;
 import com.example.backend.dtos.User.UserResponse;
 import com.example.backend.service.UserService;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.proc.BadJOSEException;
+import com.nimbusds.jose.proc.JWSVerificationKeySelector;
+import com.nimbusds.jose.util.DefaultResourceRetriever;
+import com.nimbusds.jose.util.ResourceRetriever;
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.proc.DefaultJWTProcessor;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import org.json.JSONException;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,10 +32,17 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.util.StringUtils;
 
+import javax.crypto.SecretKey;
+import java.security.Key;
+import java.util.Base64;
 import java.util.Collections;
+import org.json.JSONObject;
 
 public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -39,31 +60,35 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException, IOException, ServletException {
-        String token = request.getHeader("Authorization");
+        String token = request.getHeader("Authorization").substring(7);
         try{
-            Auth0UserInfo userInfo = auth0UserInfoService.getUserInfo(token.substring(7));
+                if (StringUtils.hasText(token)) {
+                    JSONObject claims =jwtDecoder(token);
 
+                    String emailClaim = claims.getString("email");
+                    String givenName = claims.getString("given_name");
+                    String familyName = claims.getString("family_name");
+                    String picture = claims.getString("picture");
             try{
-                UserResponse user = userService.getUserByUserEmail(userInfo.getEmail());
+                UserResponse user = userService.getUserByUserEmail(emailClaim);
                 System.out.println(user);
             } catch (Exception e) {
-                String[] firstNameLastName = userInfo.getName().split(" ");
 
-                RegisterDto registerDto = new RegisterDto(userInfo.getEmail(), "","",firstNameLastName[0],firstNameLastName[1],userInfo.getPicture());
+                RegisterDto registerDto = new RegisterDto(emailClaim, "","",givenName,familyName,picture);
                 userService.registerWithoutDuplicateCheck(registerDto);
             }
-
-            if (token != null && token.startsWith("Bearer ")) {
                 UserDetails userDetails = User.builder()
-                        .username(userInfo.getEmail())
+                        .username(emailClaim)
                         .password("")
                         .authorities(Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")))
                         .build();
-                if (userDetails != null) {
-                    return new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, Collections.emptyList());
+
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    return authentication;
                 }
-            }
+
         }catch (Exception e){
             System.out.println("Failed to authenticate user: " + e.getMessage());
             throw new AuthenticationServiceException("Failed to authenticate user: " + e.getMessage(), e);
@@ -72,6 +97,16 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
         return null;
     }
 
+    public JSONObject jwtDecoder(String jwtToken) throws JSONException {
+        String[] chunks = jwtToken.split("\\.");
+        Base64.Decoder decoder = Base64.getUrlDecoder();
+
+        String header = new String(decoder.decode(chunks[0]));
+        String payload = new String(decoder.decode(chunks[1]));
+        JSONObject jsonObject = new JSONObject(payload);
+
+        return jsonObject;
+    }
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException, java.io.IOException {
         SecurityContextHolder.getContext().setAuthentication(authResult);
@@ -131,3 +166,5 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 //        filterChain.doFilter(request, response);
 //    }
 }
+
+
