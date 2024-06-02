@@ -8,6 +8,7 @@ import com.example.backend.dtos.Booking.EditBookingRequest;
 import com.example.backend.entity.Booking;
 import com.example.backend.entity.Space;
 import com.example.backend.entity.User;
+import com.example.backend.enums.PermissionType;
 import com.example.backend.enums.Status;
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.repository.BookingRepository;
@@ -15,15 +16,14 @@ import com.example.backend.repository.SpaceRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.BookingService;
 import jakarta.transaction.Transactional;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -33,11 +33,13 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final SpaceRepository spaceRepository;
     private final UserRepository userRepository;
+    private final PermissionServiceImpl permissionService;
 
-    public BookingServiceImpl(BookingRepository bookingRepository, SpaceRepository spaceRepository, UserRepository userRepository) {
+    public BookingServiceImpl(BookingRepository bookingRepository, SpaceRepository spaceRepository, UserRepository userRepository, PermissionServiceImpl permissionService) {
         this.bookingRepository = bookingRepository;
         this.spaceRepository = spaceRepository;
         this.userRepository = userRepository;
+        this.permissionService = permissionService;
     }
     @Override
     public BookingResponse getBooking(String id) {
@@ -69,13 +71,19 @@ public class BookingServiceImpl implements BookingService {
             throw new IllegalArgumentException("Owner can't book their own space");
         }
         Booking addedBooking = bookingRepository.save(BookingMapper.INSTANCE.addBookingRequestToBooking(addBookingRequest, price, client, space));
+        // add permissions
+
+        permissionService.createPermissionFromListOfPermissions(addedBooking.getClient().getEmail(), Booking.class.getSimpleName(),addedBooking.getBookingId(), PermissionServiceImpl.OWNER_PERMISSIONS);
+        permissionService.createPermissionsForAdminsFromListOfPermissions(addedBooking.getClient().getEmail(),Booking.class.getSimpleName(), addedBooking.getBookingId(), PermissionServiceImpl.ADMIN_PERMISSIONS);
         return BookingMapper.INSTANCE.bookingToBookingResponse(addedBooking);
     }
 
 
 
     @Override
-    public BookingResponse updateBooking(EditBookingRequest editBookingRequest, String bookingId) {
+    public BookingResponse updateBooking(EditBookingRequest editBookingRequest, String bookingId) throws AccessDeniedException {
+        permissionService.checkPermission(SecurityContextHolder.getContext().getAuthentication().getName(), Booking.class.getSimpleName(), bookingId, PermissionType.UPDATE);
+
         Booking bookingToUpdate = bookingRepository.findByBookingId(bookingId).stream().findFirst().orElse(null);
         if(bookingToUpdate == null || !bookingToUpdate.getStatus().equals(Status.INQUIRY) || !bookingToUpdate.getClient().getUserId().equals(userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
                 () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName())).getUserId())){
@@ -115,7 +123,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingResponse deleteBooking(String id) {
+    public BookingResponse deleteBooking(String id) throws AccessDeniedException {
+        permissionService.checkPermission(SecurityContextHolder.getContext().getAuthentication().getName(), Booking.class.getSimpleName(), id, PermissionType.DELETE);
+
         Booking bookingToDelete = bookingRepository.findByBookingId(id).stream().findFirst().orElse(null);
         if(bookingToDelete==null){
             throw new ResourceNotFoundException("Booking not found", "booking", id);
@@ -198,8 +208,10 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingResponse updateBookingStatus(Status status, String id) {
-       // User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public BookingResponse updateBookingStatus(Status status, String id) throws AccessDeniedException {
+        permissionService.checkPermission(SecurityContextHolder.getContext().getAuthentication().getName(), Booking.class.getSimpleName(), id, PermissionType.UPDATE);
+
+        // User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
                 () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName()));
 

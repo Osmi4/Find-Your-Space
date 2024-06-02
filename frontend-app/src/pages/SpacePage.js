@@ -13,6 +13,21 @@ const SpacePage = () => {
     const [numberOfDays, setNumberOfDays] = useState(0);
     const now = today(getLocalTimeZone());
 
+    const fetchImage = async (spaceId, token) => {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/space/${spaceId}/images`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching image:', error);
+            return null;
+        }
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             const token = await getAccessTokenSilently();
@@ -23,6 +38,10 @@ const SpacePage = () => {
                         'Content-Type': 'application/json'
                     }
                 });
+                let spaceData = response.data;
+                const imageUrl = await fetchImage(spaceData.spaceId, token);
+                
+                spaceData.image = imageUrl;
                 setItem(response.data);
             } catch (error) {
                 console.error("Error fetching space data", error);
@@ -51,20 +70,12 @@ const SpacePage = () => {
     return (
         <div className="2xl:flex 2xl:mt-[10vh] mt-[20px] gap-[100px]">
             <div key={item.id} className="2xl:ml-[13vw] ml-[25vw]">
-                <img src={item.image} alt={item.title} className="rounded-xl w-[50vw] 2xl:w-[34vw]"/>
+                <img src={item.image} alt={item.spaceName} className="rounded-xl w-[50vw] 2xl:w-[34vw]"/>
             </div>
             <div className="mt-[20px]">
-                <h1 className="text-2xl 2xl:text-5xl font-semibold mb-[10px] text-center 2xl:w-[25vw]">{item.title}</h1>
-                <p className="text-2xl 2xl:text-3xl mb-[20px] text-center">{item.price}</p>
-                <p className="2xl:w-[26vw] mx-[4vw] mb-[20px] 2xl:mx-0 text-left 2xl:text-center">Lorem ipsum dolor sit
-                    amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua.
-                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                    consequat.
-                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                    pariatur.
-                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                    est laborum.</p>
+                <h1 className="text-2xl 2xl:text-5xl font-semibold mb-[10px] text-center 2xl:w-[25vw]">{item.spaceName}</h1>
+                <p className="text-2xl 2xl:text-3xl mb-[20px] text-center">{item.spacePrice}$ / month</p>
+                <p className="2xl:w-[26vw] mx-[4vw] mb-[20px] 2xl:mx-0 text-left 2xl:text-center">{item.spaceDescription}</p>
                 <div className="mx-[6vw] flex justify-center">
                     <RangeCalendar aria-label="Date (No Selection)" isDateUnavailable={isDateUnavailable}
                                    onChange={calendarChangeHandler}/>
