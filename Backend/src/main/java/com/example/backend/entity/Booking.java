@@ -6,11 +6,13 @@ import lombok.*;
 
 import java.util.Date;
 
-@Data
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Getter
+@Setter
 @Table(name = "booking" , uniqueConstraints = {@UniqueConstraint(columnNames = "booking_id")})
 public class Booking {
     @Id

@@ -9,11 +9,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Getter
+@Setter
 @Table(name = "space", uniqueConstraints = {@UniqueConstraint(columnNames = "spaceId")})
 public class Space {
     @Id

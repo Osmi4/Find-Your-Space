@@ -5,11 +5,13 @@ import lombok.*;
 
 import java.util.Date;
 
-@Data
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Getter
+@Setter
 @Table(name = "rating" , uniqueConstraints = {@UniqueConstraint(columnNames = "ratingId")})
 public class Rating {
     @Id

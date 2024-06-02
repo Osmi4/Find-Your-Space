@@ -3,6 +3,7 @@ package com.example.backend.service.impl;
 import com.example.backend.autoMapper.SpaceMapper;
 import com.example.backend.dtos.Space.*;
 import com.example.backend.entity.Booking;
+import com.example.backend.entity.Image;
 import com.example.backend.entity.Space;
 import com.example.backend.entity.User;
 import com.example.backend.enums.Availibility;
@@ -11,6 +12,7 @@ import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.exception.UnauthorizedException;
 import com.example.backend.mapper.ObjectMapper;
 import com.example.backend.repository.BookingRepository;
+import com.example.backend.repository.ImageRepository;
 import com.example.backend.repository.SpaceRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.PermissionService;
@@ -35,13 +37,15 @@ public class SpaceServiceImpl implements SpaceService {
     private final SpaceRepository spaceRepository;
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
+    private final ImageRepository imageRepository;
     @Autowired
     private PermissionService permissionService;
 
-    public SpaceServiceImpl(SpaceRepository spaceRepository, UserRepository userRepository, BookingRepository bookingRepository) {
+    public SpaceServiceImpl(SpaceRepository spaceRepository, UserRepository userRepository, BookingRepository bookingRepository, ImageRepository imageRepository) {
         this.spaceRepository = spaceRepository;
         this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
+        this.imageRepository = imageRepository;
     }
 
     @Override
@@ -108,8 +112,19 @@ public class SpaceServiceImpl implements SpaceService {
         if(!space.getOwner().getUserId().equals(Objects.requireNonNull(userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElse(null)).getUserId())){
             throw new UnauthorizedException("You are not the owner of this space");
         }
-        int deleted = spaceRepository.deleteBySpaceId(id);
-        if (deleted == 0 || spaceRepository.findBySpaceId(id).isPresent()) {
+        if(!space.getBookings().isEmpty()){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Space has bookings");
+        }
+        //int deleted = spaceRepository.deleteBySpaceId(id);
+        //int deleted = spaceRepository.deleteBySpaceId(id);
+        //spaceRepository.delete(space);
+        for (Image image : space.getImages()) {
+            imageRepository.delete(image);
+        }
+
+        // Now delete the space
+        spaceRepository.delete(space);
+        if (spaceRepository.findBySpaceId(id).isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "space not deleted");
         }
         return SpaceMapper.INSTANCE.spaceToSpaceResponse(space);

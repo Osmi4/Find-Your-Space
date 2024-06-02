@@ -18,6 +18,7 @@ public class SpaceResponse {
     private String spaceId;
     private String spaceName;
     private String spaceLocation;
+    private String spaceDescription;
     private double spaceSize;
     private double spacePrice;
     private UserResponse owner;

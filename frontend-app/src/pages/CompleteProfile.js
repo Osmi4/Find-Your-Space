@@ -4,7 +4,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
 
 const CompleteProfile = () => {
-    const { getAccessTokenSilently, user } = useAuth0();
+    const { getAccessTokenSilently, user, loginWithRedirect } = useAuth0();
     const [profileData, setProfileData] = useState({ contactInfo: '', bankAccountNumber: ''});
     const [userId, setUserId] = useState(null);
     const navigate = useNavigate();
@@ -18,18 +18,28 @@ const CompleteProfile = () => {
                 });
                 setUserId(response.data.userId);
                 setProfileData({
-                    bankAccountNumber: '',
-                    contactInfo:  ''
+                    bankAccountNumber: response.data.bankAccountNumber || '',
+                    contactInfo: response.data.contactInfo || ''
                 });
             } catch (error) {
                 console.error("Error fetching user details", error);
+                if (error.response && error.response.status === 401) {
+                    // If unauthorized, try to get a new token
+                    try {
+                        await getAccessTokenSilently();
+                        fetchUserId(); // Retry fetching user details
+                    } catch (retryError) {
+                        console.error("Retrying fetch user details failed", retryError);
+                        loginWithRedirect(); // Redirect to login if retry fails
+                    }
+                }
             }
         };
 
         if (user) {
             fetchUserId();
         }
-    }, [user, getAccessTokenSilently]);
+    }, [user, getAccessTokenSilently, loginWithRedirect]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -47,6 +57,15 @@ const CompleteProfile = () => {
             navigate('/');
         } catch (error) {
             console.error("Error completing profile", error);
+            if (error.response && error.response.status === 401) {
+                try {
+                    await getAccessTokenSilently();
+                    handleSubmit(); // Retry submitting the form
+                } catch (retryError) {
+                    console.error("Retrying submit failed", retryError);
+                    loginWithRedirect(); // Redirect to login if retry fails
+                }
+            }
         }
     };
 
