@@ -8,6 +8,7 @@ import com.example.backend.enums.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,9 +17,9 @@ public interface BookingService {
 
     BookingResponse addBooking(AddBookingRequest addBookingRequest);
 
-    BookingResponse updateBooking(EditBookingRequest editBookingRequest , String bookingId);
+    BookingResponse updateBooking(EditBookingRequest editBookingRequest , String bookingId) throws AccessDeniedException;
 
-    BookingResponse deleteBooking(String id);
+    BookingResponse deleteBooking(String id) throws AccessDeniedException;
 
     Page<BookingResponse> getMyBookings(Pageable pageable);
 
@@ -28,5 +29,5 @@ public interface BookingService {
 
     Page<BookingResponse> getSearchAllBookings(Optional<BookingFilter> filter, Pageable pageable);
 
-    BookingResponse updateBookingStatus(Status status, String id);
+    BookingResponse updateBookingStatus(Status status, String id) throws AccessDeniedException;
 }
