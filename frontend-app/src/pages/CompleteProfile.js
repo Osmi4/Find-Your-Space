@@ -6,7 +6,7 @@ import { Input, Button } from "@nextui-org/react";
 
 const CompleteProfile = () => {
     const { user, loginWithRedirect } = useAuth0();
-    const [profileData, setProfileData] = useState({ contactInfo: '', bankAccountNumber: '' });
+    const [profileData, setProfileData] = useState({ contactInfo: '', bankAccountNumber: '', firstName: '' , lastName: '' });
     const [userId, setUserId] = useState(null);
     const navigate = useNavigate();
 
@@ -20,7 +20,9 @@ const CompleteProfile = () => {
                 setUserId(response.data.userId);
                 setProfileData({
                     bankAccountNumber: response.data.bankAccountNumber || '',
-                    contactInfo: response.data.contactInfo || ''
+                    contactInfo: response.data.contactInfo || '',
+                    firstName: response.data.firstName || '',
+                    lastName: response.data.lastName || ''
                 });
             } catch (error) {
                 console.error("Error fetching user details", error);
@@ -45,7 +47,7 @@ const CompleteProfile = () => {
         const token = localStorage.getItem('authToken');
 
         try {
-            await axios.patch(`http://localhost:8080/api/user/${userId}/details`, profileData, {
+            await axios.patch(`http://localhost:8080/api/user/my-details`, profileData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             navigate('/');

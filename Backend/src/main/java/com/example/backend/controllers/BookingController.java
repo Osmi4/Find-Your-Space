@@ -34,10 +34,10 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.getSearchAllBookings(filter , pageable));
     }
     @GetMapping("/my-Bookings")
-    public ResponseEntity<Page<BookingResponse>> searchMyBookings(@Valid @RequestBody Optional<BookingFilter> filter, @RequestParam(defaultValue = "0") int page,
+    public ResponseEntity<Page<BookingResponse>> searchMyBookings(@RequestParam(defaultValue = "0") int page,
                                                           @RequestParam(defaultValue = "10") int size){
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(bookingService.getSearchMyBookings(filter , pageable));
+        return ResponseEntity.ok(bookingService.getMyBookings(pageable));
     }
     @GetMapping("/spaces-owner/{SpaceId}")
     public ResponseEntity<Page<BookingResponse>> searchToMySpace(@PathVariable String SpaceId,@Valid @RequestBody Optional<BookingFilter> filter , @RequestParam(defaultValue = "0") int page,
