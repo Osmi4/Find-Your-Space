@@ -33,10 +33,10 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Modifying
     @Transactional
-    @Query("UPDATE User u SET u.bankAccount = :bankAccount, u.contactInfo = :contactInfo, u.detailsConfigured = :detailsConfigured WHERE u.userId = :id")
+    @Query("UPDATE User u SET u.bankAccount = :bankAccount, u.contactInfo = :contactInfo, u.firstName=:firstName, u.lastName=:lastName , u.detailsConfigured = :detailsConfigured WHERE u.userId = :id")
     int patchUserDetails(@Param("id") String id,
                   @Param("contactInfo") String contactInfo,
-                  @Param("bankAccount") String bankAccount, @Param("detailsConfigured") boolean detailsConfigured
+                  @Param("bankAccount") String bankAccount, @Param("firstName") String firstName , @Param("lastName") String lastName , @Param("detailsConfigured") boolean detailsConfigured
     );
 
     @Query("""

@@ -17,8 +17,10 @@ public interface UserService {
     Page<UserResponse> getUsersByFilters(UserFilter userFilter, Pageable pageable);
 
     void updateUser(String userId,UpdateUserRequest updateUserRequest);
-    void updateUserDetails(String userId, UpdateUserDetailsRequest updateUserRequestDetails);
+    void updateUserDetails(UpdateUserDetailsRequest updateUserRequestDetails);
 
     UserResponse getMyDetails();
     UserResponse registerWithoutDuplicateCheck(RegisterDto registerDto);
+
+    String getBankAccount();
 }
