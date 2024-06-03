@@ -141,6 +141,7 @@ public class BookingServiceImpl implements BookingService {
         if(deleted == 0 || bookingRepository.findByBookingId(id).isPresent()){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "booking not deleted");
         }
+
         return BookingMapper.INSTANCE.bookingToBookingResponse(bookingToDelete);
     }
 

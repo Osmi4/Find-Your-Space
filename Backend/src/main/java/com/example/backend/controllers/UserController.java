@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +28,8 @@ public class UserController {
 
     @GetMapping("/confirm-login")
     public ResponseEntity<String> confirmLogin() {
-        return ResponseEntity.ok("User logged in successfully!");
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        return ResponseEntity.ok("User with id " + userId + " is logged in!");
     }
 
     @GetMapping("/my-details")
