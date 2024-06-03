@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth0 } from '@auth0/auth0-react';
 import { Button } from '@nextui-org/react';
 
 const SpaceEditPage = () => {
-    const { getAccessTokenSilently } = useAuth0();
     const { spaceId } = useParams();
     const navigate = useNavigate();
     const [spaceData, setSpaceData] = useState({
@@ -20,8 +18,8 @@ const SpaceEditPage = () => {
 
     useEffect(() => {
         const fetchSpaceData = async () => {
+            const token = localStorage.getItem('authToken');
             try {
-                const token = await getAccessTokenSilently();
                 const response = await axios.get(`http://localhost:8080/api/space/${spaceId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
@@ -41,7 +39,7 @@ const SpaceEditPage = () => {
         };
 
         fetchSpaceData();
-    }, [spaceId, getAccessTokenSilently]);
+    }, [spaceId]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -49,8 +47,8 @@ const SpaceEditPage = () => {
     };
 
     const handleAvailabilityChange = async () => {
+        const token = localStorage.getItem('authToken');
         try {
-            const token = await getAccessTokenSilently();
             const response = await axios.put(`http://localhost:8080/api/space/${spaceId}/change_availability`, availability, {
                 headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
             });
@@ -62,8 +60,8 @@ const SpaceEditPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const token = localStorage.getItem('authToken');
         try {
-            const token = await getAccessTokenSilently();
             await axios.put(`http://localhost:8080/api/space/${spaceId}`, spaceData, {
                 headers: { Authorization: `Bearer ${token}` }
             });

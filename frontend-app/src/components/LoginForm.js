@@ -4,14 +4,17 @@ import {LockIcon} from '../icons/LockIcon.jsx';
 import {Checkbox} from "@nextui-org/react";
 import {Link} from "@nextui-org/react";
 import {Button} from "@nextui-org/react";
-import {useState} from "react";
-import axios from 'axios';
+import {useState, useEffect} from "react";
+import {useAuth0} from '@auth0/auth0-react';
 
 const LoginForm = () => {
+    const { loginWithRedirect, getIdTokenClaims, isAuthenticated } = useAuth0();
     const [formData, setFormData] = useState({
         email: '',
         password: ''
     });
+    const [token, setToken] = useState("");
+
     const handleChange = (e) => {
         const {name, value} = e.target;
         setFormData(prevData => ({
@@ -20,31 +23,45 @@ const LoginForm = () => {
         }));
     };
 
+    useEffect(() => {
+        const fetchToken = async () => {
+            try {
+                const accessToken = await getIdTokenClaims();
+                setToken(accessToken.__raw);
+                localStorage.setItem('authToken', accessToken.__raw);
+            } catch (error) {
+                console.error("Error fetching access token:", error);
+            }
+        };
+
+        if (isAuthenticated) {
+            fetchToken();
+        }
+    }, [isAuthenticated, getIdTokenClaims]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:8080/api/auth/login', {
+            // Perform login
+            await loginWithRedirect({
                 email: formData.email,
                 password: formData.password,
             });
 
-            if (response.status === 200) {
-                const token = response.data.token;
-                localStorage.setItem('token', token);
-                alert("Login successful!");
-            }
+            // Token handling is done in the useEffect hook
+            alert("Login successful!");
         } catch (error) {
             console.error("There was an error logging in!", error);
             alert("Login failed!");
         }
     };
+
     return (
-        <div class="wrapper">
+        <div className="wrapper">
             <form onSubmit={handleSubmit}>
                 <h1>Login</h1>
                 <div className="flex flex-col gap-4 mt-[20px] mb-[5px]">
-
                     <Input
                         label="Email"
                         name="email"

@@ -9,7 +9,7 @@ import spaces from '../spaces.js';
 import UserIcon from "../pages/UserIcon";
 
 const Nav = () => {
-    const { loginWithRedirect, isAuthenticated, getAccessTokenSilently, user } = useAuth0();
+    const { loginWithRedirect, isAuthenticated, getIdTokenClaims, user } = useAuth0();
     const navigate = useNavigate();
     const [searchInput, setSearchInput] = useState("");
     const [filteredSpaces, setFilteredSpaces] = useState([]);
@@ -25,14 +25,14 @@ const Nav = () => {
     useEffect(() => {
         const checkProfileCompletion = async () => {
             if (isAuthenticated) {
-                const token = await getAccessTokenSilently();
+                const tokenClaims = await getIdTokenClaims();
+                const token = tokenClaims.__raw;
                 localStorage.setItem('authToken', token);
 
                 try {
                     const response = await axios.get('http://localhost:8080/api/user/my-details', {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-                    //console.log(response.data);
                     if (!response.data.detailsConfigured) {
                         navigate('/complete-profile');
                     }
@@ -43,7 +43,7 @@ const Nav = () => {
         };
 
         checkProfileCompletion();
-    }, [isAuthenticated, getAccessTokenSilently, navigate]);
+    }, [isAuthenticated, getIdTokenClaims, navigate]);
 
     useEffect(() => {
         if (searchInput.length > 0) {
@@ -93,7 +93,6 @@ const Nav = () => {
                         </DropdownItem>
                     </DropdownMenu>
                 </Dropdown>
-
 
                 <div className='hidden lg:flex gap-8 items-center'>
                     <NavbarItem isActive>

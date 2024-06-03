@@ -2,12 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Checkbox, Input, Button } from "@nextui-org/react";
 import axios from "axios";
-import { useAuth0 } from '@auth0/auth0-react';
 
 const FindSpacePage = () => {
     const navigate = useNavigate();
-    const { isAuthenticated, getAccessTokenSilently } = useAuth0();
-
     const [spaces, setSpaces] = useState([]);
     const [filter, setFilter] = useState({
         categories: [
@@ -38,18 +35,19 @@ const FindSpacePage = () => {
 
     useEffect(() => {
         const fetchSpaces = async () => {
-            if (isAuthenticated) {
-                const token = await getAccessTokenSilently();
-                localStorage.setItem('authToken', token);
+            const token = localStorage.getItem('authToken');
 
+            if (token) {
                 try {
                     const response = await axios.post("http://localhost:8080/api/space/search", selectedFilters, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
+
                     const spacesWithImages = await Promise.all(response.data.content.map(async space => {
                         const imageUrl = await fetchImage(space.spaceId, token);
                         return { ...space, imageUrl };
                     }));
+
                     setSpaces(spacesWithImages);
                 } catch (error) {
                     console.error("Error fetching spaces:", error);
@@ -58,7 +56,7 @@ const FindSpacePage = () => {
         };
 
         fetchSpaces();
-    }, [isAuthenticated, selectedFilters, getAccessTokenSilently]);
+    }, [selectedFilters]);
 
     const fetchImage = async (spaceId, token) => {
         try {
@@ -95,10 +93,9 @@ const FindSpacePage = () => {
     };
 
     const handleFilterSubmit = async () => {
-        if (isAuthenticated) {
-            const token = await getAccessTokenSilently();
-            localStorage.setItem('authToken', token);
+        const token = localStorage.getItem('authToken');
 
+        if (token) {
             const filtersToSend = {
                 ...selectedFilters,
                 spaceSizeUpperBound: selectedFilters.spaceSizeUpperBound === Number.MAX_SAFE_INTEGER ? 1000000 : selectedFilters.spaceSizeUpperBound,

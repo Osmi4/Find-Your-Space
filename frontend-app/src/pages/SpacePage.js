@@ -3,10 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { RangeCalendar, Button } from "@nextui-org/react";
 import { today, getLocalTimeZone } from "@internationalized/date";
 import axios from "axios";
-import { useAuth0 } from "@auth0/auth0-react";
 
 const SpacePage = () => {
-    const { getAccessTokenSilently } = useAuth0();
     const { id } = useParams();
     const navigate = useNavigate();
     const [item, setItem] = useState(null);
@@ -30,7 +28,7 @@ const SpacePage = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const token = await getAccessTokenSilently();
+            const token = localStorage.getItem('authToken');
             try {
                 const response = await axios.get(`http://localhost:8080/api/space/${id}`, {
                     headers: {
@@ -40,16 +38,16 @@ const SpacePage = () => {
                 });
                 let spaceData = response.data;
                 const imageUrl = await fetchImage(spaceData.spaceId, token);
-                
+
                 spaceData.image = imageUrl;
-                setItem(response.data);
+                setItem(spaceData);
             } catch (error) {
                 console.error("Error fetching space data", error);
             }
         };
 
         fetchData();
-    }, [id, getAccessTokenSilently]);
+    }, [id]);
 
     const isDateUnavailable = (date) => date.compare(now) < 0;
 

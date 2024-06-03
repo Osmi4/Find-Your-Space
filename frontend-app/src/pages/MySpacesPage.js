@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@nextui-org/react';
-import { useAuth0 } from "@auth0/auth0-react";
 
 const MySpacesPage = () => {
-    const { getAccessTokenSilently } = useAuth0();
     const [spaces, setSpaces] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
@@ -13,7 +11,10 @@ const MySpacesPage = () => {
     useEffect(() => {
         const fetchSpaces = async () => {
             try {
-                const token = await getAccessTokenSilently();
+                const token = localStorage.getItem('authToken');
+                console.log(token);
+                if (!token) throw new Error("No auth token found");
+
                 const spaceFilter = {};
 
                 const response = await axios.post('http://localhost:8080/api/space/my-spaces', spaceFilter, {
@@ -40,7 +41,7 @@ const MySpacesPage = () => {
         };
 
         fetchSpaces();
-    }, [getAccessTokenSilently]);
+    }, []);
 
     const fetchImage = async (spaceId, token) => {
         try {
@@ -61,7 +62,9 @@ const MySpacesPage = () => {
         if (!window.confirm('Are you sure you want to delete this space?')) return;
 
         try {
-            const token = await getAccessTokenSilently();
+            const token = localStorage.getItem('authToken');
+            if (!token) throw new Error("No auth token found");
+
             await axios.delete(`http://localhost:8080/api/space/${spaceId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });

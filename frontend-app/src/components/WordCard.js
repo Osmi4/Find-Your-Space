@@ -3,18 +3,19 @@ import { useAuth0 } from '@auth0/auth0-react';
 import RegisterModal from './RegisterModal';
 
 const WordCard = () => {
-    const { loginWithRedirect, isAuthenticated, getAccessTokenSilently } = useAuth0();
+    const { loginWithRedirect, isAuthenticated, getIdTokenClaims } = useAuth0();
 
     useEffect(() => {
         const storeToken = async () => {
             if (isAuthenticated) {
-                const token = await getAccessTokenSilently();
+                const tokenClaims = await getIdTokenClaims();
+                const token = tokenClaims.__raw;
                 localStorage.setItem('authToken', token);
             }
         };
 
         storeToken();
-    }, [isAuthenticated, getAccessTokenSilently]);
+    }, [isAuthenticated, getIdTokenClaims]);
 
     return (
         <div className="wordcard">
