@@ -32,7 +32,7 @@ public class RatingController {
         return ResponseEntity.ok(ratingService.addRating(addRatingRequest));
     }
 
-    @GetMapping("/")
+    @PostMapping("/filter")
     public ResponseEntity<Page<RatingResponse>>getRatingsByFilter(@RequestBody RatingFilter ratingFilter, @RequestParam(defaultValue = "0") int page,
                                                                   @RequestParam(defaultValue = "10") int size){
         Pageable pageable = PageRequest.of(page, size);
