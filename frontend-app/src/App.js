@@ -19,6 +19,7 @@ import MessagePage from "./pages/MessagePage";
 import ReportPage from "./pages/ReportPage";
 import MyReportsPage from "./pages/MyReportsPage";
 import BookingsForSpacePage from "./pages/BookingsForSpacePage";
+import MyBookingsPage from "./pages/MyBookingsPage";
 function App() {
   const navigate = useNavigate();
 
@@ -44,6 +45,7 @@ function App() {
             <Route path="report/:id"  element={<ReportPage/>}/>
             <Route path="/my-reports" element={<MyReportsPage/>}/>
             <Route path="/space/:spaceId/bookings" element={<BookingsForSpacePage />} />
+            <Route path="/my-bookings" element={<MyBookingsPage />} />
           </Routes>
         </div>
         <></> 
