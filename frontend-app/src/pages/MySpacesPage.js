@@ -12,7 +12,6 @@ const MySpacesPage = () => {
         const fetchSpaces = async () => {
             try {
                 const token = localStorage.getItem('authToken');
-                console.log(token);
                 if (!token) throw new Error("No auth token found");
 
                 const spaceFilter = {};
