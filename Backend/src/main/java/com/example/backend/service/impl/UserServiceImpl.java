@@ -109,6 +109,7 @@ public class UserServiceImpl implements UserService {
                 .firstName(registerDto.getFirstName())
                 .lastName(registerDto.getLastName())
                 .email(registerDto.getEmail())
+                .password(passwordEncoder.encode(registerDto.getPassword()))
                 .pictureUrl(registerDto.getPictureUrl())
                 .role(Role.USER)
                 .detailsConfigured(false)
