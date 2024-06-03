@@ -86,7 +86,7 @@ const MySpacesPage = () => {
                 let response;
 
                     if(selectedFilters.spaceType.length === 0 && selectedFilters.availability.length === 0) {
-                        response = await axios.get("http://localhost:8080/api/space/all", {
+                        response = await axios.get("http://localhost:8080/api/space/all-my-spaces", {
                             headers: { Authorization: `Bearer ${token}` },
                             params: { page: selectedFilters.page, size: selectedFilters.size }
                         });

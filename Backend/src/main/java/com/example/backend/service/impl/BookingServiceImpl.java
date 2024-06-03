@@ -8,6 +8,7 @@ import com.example.backend.dtos.Booking.EditBookingRequest;
 import com.example.backend.entity.Booking;
 import com.example.backend.entity.Space;
 import com.example.backend.entity.User;
+import com.example.backend.enums.Availibility;
 import com.example.backend.enums.PermissionType;
 import com.example.backend.enums.Status;
 import com.example.backend.exception.ResourceNotFoundException;
@@ -62,14 +63,17 @@ public class BookingServiceImpl implements BookingService {
         if(space == null) {
             throw new ResourceNotFoundException("Space not found", "space", addBookingRequest.getSpaceId());
         }
+        if(!space.getAvailability().equals(Availibility.AVAILABLE)){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Space not available");
+        }
         double price = space.getSpacePrice() * (addBookingRequest.getEndDateTime().getTime() - addBookingRequest.getStartDateTime().getTime()) / 1000 / 60 / 60;
         //User client = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User client = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
                 () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName()));
         User Owner = space.getOwner();
-//        if (Owner.getUserId().equals(client.getUserId())) {
-//            throw new IllegalArgumentException("Owner can't book their own space");
-//        }
+        if (Owner.getUserId().equals(client.getUserId())) {
+            throw new IllegalArgumentException("Owner can't book their own space");
+        }
         Booking addedBooking = bookingRepository.save(BookingMapper.INSTANCE.addBookingRequestToBooking(addBookingRequest, price, client, space));
         // add permissions
 

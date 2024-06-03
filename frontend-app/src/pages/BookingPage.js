@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import PaymentForm from "../components/PaymentForm";
 
 const BookingPage = () => {
     const { bookingId } = useParams();
@@ -38,44 +39,92 @@ const BookingPage = () => {
         fetchBookingDetails();
     }, [bookingId]);
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div style={styles.loading}>Loading...</div>;
 
     return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Booking Details</h1>
+        <div style={styles.container}>
+            <h1 style={styles.title}>Booking Details</h1>
             {booking && (
-                <div className="bg-white p-4 rounded-lg shadow-md mb-4">
-                    <p className="text-lg font-semibold">Booking ID: {booking.bookingId}</p>
-                    <p className="text-gray-600">Start Date: {new Date(booking.startDateTime).toLocaleString()}</p>
-                    <p className="text-gray-600">End Date: {new Date(booking.endDateTime).toLocaleString()}</p>
-                    <p className="text-gray-600">Description: {booking.description}</p>
-                    <p className="text-gray-600">Status: {booking.status}</p>
-                    <p className="text-gray-600">Cost: ${booking.cost}</p>
-                    <p className="text-gray-600">Date Added: {new Date(booking.dateAdded).toLocaleString()}</p>
-                    <p className="text-gray-600">Date Updated: {new Date(booking.dateUpdated).toLocaleString()}</p>
+                <div style={styles.card}>
+                    <p style={styles.cardText}><strong>Booking ID:</strong> {booking.bookingId}</p>
+                    <p style={styles.cardText}><strong>Start Date:</strong> {new Date(booking.startDateTime).toLocaleString()}</p>
+                    <p style={styles.cardText}><strong>End Date:</strong> {new Date(booking.endDateTime).toLocaleString()}</p>
+                    <p style={styles.cardText}><strong>Description:</strong> {booking.description}</p>
+                    <p style={styles.cardText}><strong>Status:</strong> {booking.status}</p>
+                    <p style={styles.cardText}><strong>Cost:</strong> ${booking.cost}</p>
+                    <p style={styles.cardText}><strong>Date Added:</strong> {new Date(booking.dateAdded).toLocaleString()}</p>
+                    <p style={styles.cardText}><strong>Date Updated:</strong> {new Date(booking.dateUpdated).toLocaleString()}</p>
                 </div>
             )}
             {space && (
-                <div className="bg-white p-4 rounded-lg shadow-md mb-4">
-                    <h2 className="text-xl font-semibold mb-2">Space Details</h2>
-                    <p className="text-lg font-semibold">Space Name: {space.spaceName}</p>
-                    <p className="text-gray-600">Description: {space.spaceDescription}</p>
-                    <p className="text-gray-600">Location: {space.spaceLocation}</p>
-                    <p className="text-gray-600">Size: {space.spaceSize} sq ft</p>
-                    <p className="text-gray-600">Price: ${space.spacePrice}</p>
+                <div style={styles.card}>
+                    <h2 style={styles.subtitle}>Space Details</h2>
+                    <p style={styles.cardText}><strong>Space Name:</strong> {space.spaceName}</p>
+                    <p style={styles.cardText}><strong>Description:</strong> {space.spaceDescription}</p>
+                    <p style={styles.cardText}><strong>Location:</strong> {space.spaceLocation}</p>
+                    <p style={styles.cardText}><strong>Size:</strong> {space.spaceSize} sq ft</p>
+                    <p style={styles.cardText}><strong>Price:</strong> ${space.spacePrice}</p>
                 </div>
             )}
             {owner && (
-                <div className="bg-white p-4 rounded-lg shadow-md mb-4">
-                    <h2 className="text-xl font-semibold mb-2">Owner Details</h2>
-                    <p className="text-lg font-semibold">Name: {owner.firstName} {owner.lastName}</p>
-                    <p className="text-gray-600">Email: {owner.email}</p>
-                    <p className="text-gray-600">Contact Info: {owner.contactInfo}</p>
-                    {owner.pictureUrl && <img src={owner.pictureUrl} alt="Owner" className="w-32 h-32 rounded-full mt-2" />}
+                <div style={styles.card}>
+                    <h2 style={styles.subtitle}>Owner Details</h2>
+                    <p style={styles.cardText}><strong>Name:</strong> {owner.firstName} {owner.lastName}</p>
+                    <p style={styles.cardText}><strong>Email:</strong> {owner.email}</p>
+                    <p style={styles.cardText}><strong>Contact Info:</strong> {owner.contactInfo}</p>
+                    {owner.pictureUrl && <img src={owner.pictureUrl} alt="Owner" style={styles.ownerImage} />}
                 </div>
+            )}
+            {booking && booking.status === 'ACCEPTED' && (
+                <PaymentForm bookingId={booking.bookingId} amount={booking.cost} />
             )}
         </div>
     );
+};
+
+const styles = {
+    container: {
+        maxWidth: '800px',
+        margin: '0 auto',
+        padding: '20px',
+        backgroundColor: '#f9f9f9',
+        borderRadius: '8px',
+        boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+    },
+    title: {
+        fontSize: '2em',
+        fontWeight: 'bold',
+        marginBottom: '20px',
+        textAlign: 'center',
+    },
+    subtitle: {
+        fontSize: '1.5em',
+        fontWeight: 'bold',
+        marginBottom: '10px',
+    },
+    card: {
+        backgroundColor: 'white',
+        padding: '20px',
+        borderRadius: '8px',
+        boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+        marginBottom: '20px',
+    },
+    cardText: {
+        fontSize: '1em',
+        color: '#333',
+        marginBottom: '10px',
+    },
+    ownerImage: {
+        width: '100px',
+        height: '100px',
+        borderRadius: '50%',
+        marginTop: '10px',
+    },
+    loading: {
+        fontSize: '1.5em',
+        textAlign: 'center',
+        marginTop: '20px',
+    }
 };
 
 export default BookingPage;

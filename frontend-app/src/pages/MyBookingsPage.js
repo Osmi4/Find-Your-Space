@@ -33,6 +33,10 @@ const MyBookingsPage = () => {
         setCurrentPage(newPage);
     };
 
+    const handleBookingClick = (bookingId) => {
+        navigate(`/booking/${bookingId}`);
+    };
+
     if (loading) return <div>Loading...</div>;
 
     return (
@@ -43,7 +47,7 @@ const MyBookingsPage = () => {
             ) : (
                 <div className="grid grid-cols-1 gap-4">
                     {bookings.map(booking => (
-                        <div key={booking.bookingId} className="bg-white p-4 rounded-lg shadow-md">
+                        <div key={booking.bookingId} className="bg-white p-4 rounded-lg shadow-md cursor-pointer" onClick={() => handleBookingClick(booking.bookingId)}>
                             <p className="text-lg font-semibold">Booking ID: {booking.bookingId}</p>
                             <p className="text-gray-600">Start Date: {new Date(booking.startDateTime).toLocaleString()}</p>
                             <p className="text-gray-600">End Date: {new Date(booking.endDateTime).toLocaleString()}</p>

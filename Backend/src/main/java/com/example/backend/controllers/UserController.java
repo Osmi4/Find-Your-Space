@@ -42,6 +42,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserByUserId(id));
     }
 
+    //admin
     @GetMapping("/")
     public ResponseEntity<Page<UserResponse>> getUsers(@RequestBody UserFilter userFilter, @RequestParam(defaultValue = "0") int page,
                                                        @RequestParam(defaultValue = "10") int size) {

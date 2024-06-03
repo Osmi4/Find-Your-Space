@@ -20,6 +20,7 @@ import ReportPage from "./pages/ReportPage";
 import MyReportsPage from "./pages/MyReportsPage";
 import BookingsForSpacePage from "./pages/BookingsForSpacePage";
 import MyBookingsPage from "./pages/MyBookingsPage";
+import BookingPage from "./pages/BookingPage";
 function App() {
   const navigate = useNavigate();
 
@@ -46,6 +47,7 @@ function App() {
             <Route path="/my-reports" element={<MyReportsPage/>}/>
             <Route path="/space/:spaceId/bookings" element={<BookingsForSpacePage />} />
             <Route path="/my-bookings" element={<MyBookingsPage />} />
+            <Route path="/booking/:bookingId" element={<BookingPage />} />
           </Routes>
         </div>
         <></> 
