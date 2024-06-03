@@ -66,27 +66,27 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
                     JSONObject claims =jwtDecoder(token);
 
                     String emailClaim = claims.getString("email");
-                    String givenName = claims.getString("given_name");
-                    String familyName = claims.getString("family_name");
+                    String givenName = claims.has("given_name") ? claims.getString("given_name") : claims.getString("name");
+                    String familyName = claims.has("family_name") ? claims.getString("family_name") : claims.getString("nickname");
                     String picture = claims.getString("picture");
-            try{
-                UserResponse user = userService.getUserByUserEmail(emailClaim);
-                System.out.println(user);
-            } catch (Exception e) {
+                    try{
+                        UserResponse user = userService.getUserByUserEmail(emailClaim);
+                        System.out.println(user);
+                    } catch (Exception e) {
 
-                RegisterDto registerDto = new RegisterDto(emailClaim, "","",givenName,familyName,picture);
-                userService.registerWithoutDuplicateCheck(registerDto);
-            }
-                UserDetails userDetails = User.builder()
-                        .username(emailClaim)
-                        .password("")
-                        .authorities(Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")))
-                        .build();
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, Collections.emptyList());
+                        RegisterDto registerDto = new RegisterDto(emailClaim, "","",givenName,familyName,picture);
+                        userService.registerWithoutDuplicateCheck(registerDto);
+                    }
+                    UserDetails userDetails = User.builder()
+                            .username(emailClaim)
+                            .password("")
+                            .authorities(Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")))
+                            .build();
+                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                                userDetails, null, Collections.emptyList());
 
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                    return authentication;
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                        return authentication;
                 }
 
         }catch (Exception e){
