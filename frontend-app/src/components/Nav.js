@@ -30,6 +30,10 @@ const Nav = () => {
                 localStorage.setItem('authToken', token);
 
                 try {
+                    const responseConfirm = await axios.get('http://localhost:8080/api/user/confirm-login', {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+
                     const response = await axios.get('http://localhost:8080/api/user/my-details', {
                         headers: { Authorization: `Bearer ${token}` }
                     });

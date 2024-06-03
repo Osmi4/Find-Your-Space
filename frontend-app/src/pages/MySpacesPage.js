@@ -131,8 +131,13 @@ const MySpacesPage = () => {
             console.error('Error deleting space:', error);
         }
     };
+
     const openSpacePage = (id) => {
         navigate(`/space/${id}/edit`);
+    };
+
+    const viewBookings = (spaceId) => {
+        navigate(`/space/${spaceId}/bookings`);
     };
 
     return (
@@ -320,6 +325,7 @@ const MySpacesPage = () => {
                                 <p className="text-sm text-gray-600 mb-2">Price: ${item.spacePrice}</p>
                                 <Button onClick={() => openSpacePage(item.spaceId)} className="mt-2 bg-blue-500 text-white w-full">View Details</Button>
                                 <Button onClick={() => handleDelete(item.spaceId)} className="mt-2 bg-red-500 text-white w-full">Delete</Button>
+                                <Button onClick={() => viewBookings(item.spaceId)} className="mt-2 bg-green-500 text-white w-full">View Bookings</Button>
                             </div>
                         </div>
                     ))

@@ -67,9 +67,9 @@ public class BookingServiceImpl implements BookingService {
         User client = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
                 () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName()));
         User Owner = space.getOwner();
-        if (Owner.getUserId().equals(client.getUserId())) {
-            throw new IllegalArgumentException("Owner can't book their own space");
-        }
+//        if (Owner.getUserId().equals(client.getUserId())) {
+//            throw new IllegalArgumentException("Owner can't book their own space");
+//        }
         Booking addedBooking = bookingRepository.save(BookingMapper.INSTANCE.addBookingRequestToBooking(addBookingRequest, price, client, space));
         // add permissions
 
@@ -246,6 +246,16 @@ public class BookingServiceImpl implements BookingService {
         else{
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Invalid status change");
         }
+    }
+
+    @Override
+    public Page<BookingResponse> getBookingsForSpace(String spaceId, Pageable pageable) {
+        Space space = spaceRepository.findBySpaceId(spaceId).orElse(null);
+        if(space == null) {
+            throw new ResourceNotFoundException("Space not found", "space", spaceId);
+        }
+        Page<Booking> bookings = bookingRepository.findBySpace_SpaceId(spaceId, pageable);
+        return bookings.map(BookingMapper.INSTANCE::bookingToBookingResponse);
     }
 
     Page<Booking> doFilter(BookingFilter bookingFilter, Optional<User> userOpt, Optional<Space> spaceOpt , Pageable pageable) {

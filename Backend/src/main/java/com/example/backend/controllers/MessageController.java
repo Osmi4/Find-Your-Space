@@ -42,7 +42,7 @@ public class MessageController {
     public ResponseEntity<MessageResponse> addMessage(@RequestBody AddMessage message) {
         return ResponseEntity.ok(messageService.addMessage(message));
     }
-    @GetMapping("/{userId}")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<Page<MessageResponse>> getMessagesByUserId(@PathVariable String userId, @RequestParam(defaultValue = "0") int page,
                                                                      @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);

@@ -44,4 +44,10 @@ public class ReportController {
     public ResponseEntity<ReportResponse> updateReport(@RequestBody UpdateReportRequest updateReportRequest){
         return ResponseEntity.ok(reportService.updateReport(updateReportRequest));
     }
+    @GetMapping("/my-reports")
+    public ResponseEntity<Page<ReportResponse>> getMyReports(@RequestParam(defaultValue = "0") int page,
+                                                            @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(reportService.getMyReports(pageable));
+    }
 }

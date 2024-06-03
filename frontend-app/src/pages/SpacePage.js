@@ -65,6 +65,14 @@ const SpacePage = () => {
         return <div>Loading...</div>;
     }
 
+    const handleOwnerClick = () => {
+        navigate(`/message/${item.owner.userId}`);
+    };
+
+    const handleReportClick = () => {
+        navigate(`/report/${id}`);
+    };
+
     return (
         <div className="2xl:flex 2xl:mt-[10vh] mt-[20px] gap-[100px]">
             <div key={item.id} className="2xl:ml-[13vw] ml-[25vw]">
@@ -88,6 +96,27 @@ const SpacePage = () => {
                             className="w-[200px] text-[16px] py-[21px] font-semibold bg-black"
                             onClick={() => navigate('reviews')}>
                         Reviews
+                    </Button>
+                </div>
+                <div className="mt-[20px]">
+                    <h2 className="text-xl font-semibold mb-[10px]">Owner Information</h2>
+                    <div className="flex items-center gap-[10px] cursor-pointer" onClick={handleOwnerClick}>
+                        {item.owner.pictureUrl ? (
+                            <img src={item.owner.pictureUrl} alt="Owner" className="w-[50px] h-[50px] rounded-full"/>
+                        ) : (
+                            <div className="w-[50px] h-[50px] bg-gray-300 rounded-full flex items-center justify-center text-xl font-semibold">
+                                {item.owner.firstName.charAt(0)}{item.owner.lastName.charAt(0)}
+                            </div>
+                        )}
+                        <div>
+                            <p className="text-lg font-medium">{item.owner.firstName} {item.owner.lastName}</p>
+                            <p className="text-sm text-gray-500">{item.owner.email}</p>
+                        </div>
+                    </div>
+                    <Button color="error" type="submit"
+                            className="mt-[10px] w-[200px] text-[16px] py-[21px] font-semibold"
+                            onClick={handleReportClick}>
+                        Report
                     </Button>
                 </div>
             </div>

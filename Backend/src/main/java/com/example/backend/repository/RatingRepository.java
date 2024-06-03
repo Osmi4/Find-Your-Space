@@ -28,4 +28,7 @@ public interface RatingRepository extends JpaRepository<Rating, String> {
             @Param("userId") @Nullable String userId,
             Pageable pageable);
 
+//    Double getAverageRatingBySpace(String spaceId);
+    @Query("SELECT AVG(r.score) FROM Rating r WHERE r.space.spaceId = :spaceId")
+    Double getAverageRatingBySpace(@Param("spaceId") String spaceId);
 }
