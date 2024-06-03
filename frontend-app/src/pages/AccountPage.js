@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Input, Button } from "@nextui-org/react"
 
 const AccountPage = () => {
     const [userInfo, setUserInfo] = useState({});
@@ -105,73 +106,121 @@ const AccountPage = () => {
                         {isEditing ? (
                             <>
                                 <div className="mb-4">
-                                    <label className="block text-gray-700 text-sm font-bold mb-2">First Name</label>
-                                    <input
+                                    <Input
+                                        label="First Name"
                                         type="text"
                                         name="firstName"
                                         value={updatedDetails.firstName}
                                         onChange={handleInputChange}
-                                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                        className="w-full text-gray-700"
+                                        variant = "bordered"
                                     />
                                 </div>
                                 <div className="mb-4">
-                                    <label className="block text-gray-700 text-sm font-bold mb-2">Last Name</label>
-                                    <input
+                                    <Input
+                                        label="Last Name"
                                         type="text"
                                         name="lastName"
                                         value={updatedDetails.lastName}
                                         onChange={handleInputChange}
-                                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                        className=" w-full text-gray-700"
+                                        variant = "bordered"
                                     />
                                 </div>
                                 <div className="mb-4">
-                                    <label className="block text-gray-700 text-sm font-bold mb-2">Contact Info</label>
-                                    <input
+                                    <Input
+                                        label = "Contact Info"
                                         type="text"
                                         name="contactInfo"
                                         value={updatedDetails.contactInfo}
                                         onChange={handleInputChange}
-                                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                        className="w-full text-gray-700"
+                                        variant = "bordered"
                                     />
                                 </div>
                                 <div className="mb-4">
-                                    <label className="block text-gray-700 text-sm font-bold mb-2">Bank Account Number</label>
-                                    <input
+                                    <Input
+                                        label="Bank Account Number"
                                         type="text"
                                         name="bankAccountNumber"
                                         value={updatedDetails.bankAccountNumber}
                                         onChange={handleInputChange}
-                                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                        className="w-full text-gray-700"
+                                        variant = "bordered"
                                     />
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <button
+                                    <Button
                                         onClick={handleSubmit}
-                                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                        className="font-bold"
+                                        color="primary"
                                     >
                                         Save
-                                    </button>
-                                    <button
+                                    </Button>
+                                    <Button
                                         onClick={handleCancel}
-                                        className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                        className="font-bold"
+                                        color="danger"
                                     >
                                         Cancel
-                                    </button>
+                                    </Button>
                                 </div>
                             </>
                         ) : (
                             <>
-                                <p className="mb-2"><span className="font-semibold">First Name:</span> {userInfo.firstName}</p>
-                                <p className="mb-2"><span className="font-semibold">Last Name:</span> {userInfo.lastName}</p>
-                                <p className="mb-2"><span className="font-semibold">Email:</span> {userInfo.email}</p>
-                                <p className="mb-2"><span className="font-semibold">Contact Info:</span> {userInfo.contactInfo}</p>
-                                <p className="mb-2"><span className="font-semibold">Bank Account Number:</span> {updatedDetails.bankAccountNumber}</p>
-                                <button
+                                <Input
+                                    isReadOnly
+                                    label="First Name"
+                                    type="text"
+                                    name="firstName"
+                                    value={userInfo.firstName}
+                                    className="w-full text-gray-700 mb-2"
+                                    variant = "bordered"
+                                />
+                                <Input
+                                    isReadOnly
+                                    label="Last Name"
+                                    type="text"
+                                    name="lastName"
+                                    value={userInfo.lastName}
+                                    className=" w-full text-gray-700 mb-2"
+                                    variant = "bordered"
+                                />
+                                <Input
+                                    isReadOnly
+                                    label = "Email"
+                                    type="text"
+                                    name="email"
+                                    value={userInfo.email}
+                                    className="w-full text-gray-700 mb-2"
+                                    variant = "bordered"
+                                />
+                                <Input
+                                    isReadOnly
+                                    label = "Contact Info"
+                                    type="text"
+                                    name="contactInfo"
+                                    value={userInfo.contactInfo}
+                                    className="w-full text-gray-700 mb-2"
+                                    variant = "bordered"
+                                />
+                                <Input
+                                    isReadOnly
+                                    label="Bank Account Number"
+                                    type="text"
+                                    name="bankAccountNumber"
+                                    value={updatedDetails.bankAccountNumber}
+                                    className="w-full text-gray-700 mb-2"
+                                    variant = "bordered"
+                                />  
+                                <Button
                                     onClick={handleEdit}
-                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                    className="font-bold bg-black text-white"
+                                    color="primary"
+                                    variant="bordered"
                                 >
                                     Edit
-                                </button>
+                                </Button>
                             </>
                         )}
                     </>

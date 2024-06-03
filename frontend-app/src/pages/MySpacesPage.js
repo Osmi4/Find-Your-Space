@@ -34,9 +34,9 @@ const MySpacesPage = () => {
         spaceName: '',
         spaceLocation: '',
         spaceSizeLowerBound: 0,
-        spaceSizeUpperBound: Number.MAX_SAFE_INTEGER,
+        spaceSizeUpperBound: 100000,
         spacePriceLowerBound: 0,
-        spacePriceUpperBound: Number.MAX_SAFE_INTEGER,
+        spacePriceUpperBound: 100000,
         availability: [],
         type: 'ASC', // Default sorting type
         variable: 'PRICE', // Default sorting variable
@@ -44,19 +44,62 @@ const MySpacesPage = () => {
         size: 10
     });
 
+    // response = await axios.get("http://localhost:8080/api/space/my-spaces", {
+    //                     spaceType: [
+    //                         "OFFICE",
+    //                         "MEETING_ROOM",
+    //                         "EVENT_SPACE",
+    //                         "COWORKING_SPACE",
+    //                         "RETAIL_SPACE",
+    //                         "STORAGE_SPACE",
+    //                         "PARKING_SPACE",
+    //                         "WAREHOUSE",
+    //                         "INDUSTRIAL_SPACE",
+    //                         "OTHER"
+    //                     ],
+    //                     spaceName: '',
+    //                     spaceLocation: '',
+    //                     spaceSizeLowerBound: 0,
+    //                     spaceSizeUpperBound: 100000,
+    //                     spacePriceLowerBound: 0,
+    //                     spacePriceUpperBound: 100000,
+    //                     availability: [
+    //                         "NOT_RELEASED",
+    //                         "AVAILABLE",
+    //                         "BLOCKED"
+    //                     ],
+    //                     type: 'ASC',
+    //                     variable: 'PRICE',
+    //                     page: 0,
+    //                     size: 10},
+    //                  {
+    //                         headers: { Authorization: `Bearer ${token}` },
+    //                         params: { page: selectedFilters.page, size: selectedFilters.size }
+    //                     });
+
     useEffect(() => {
         const fetchSpaces = async () => {
             try {
                 const token = localStorage.getItem('authToken');
                 if (!token) throw new Error("No auth token found");
 
-                const response = await axios.post('http://localhost:8080/api/space/my-spaces', selectedFilters, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    params: { page: selectedFilters.page, size: selectedFilters.size }
-                });
+                let response;
+
+                    if(selectedFilters.spaceType.length === 0 && selectedFilters.availability.length === 0) {
+                        response = await axios.get("http://localhost:8080/api/space/all", {
+                            headers: { Authorization: `Bearer ${token}` },
+                            params: { page: selectedFilters.page, size: selectedFilters.size }
+                        });
+                    } else {
+                        response = await axios.post('http://localhost:8080/api/space/my-spaces', selectedFilters, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        params: { page: selectedFilters.page, size: selectedFilters.size }
+                    });
+                    }
+
 
                 const spacesWithImages = await Promise.all(response.data.content.map(async space => {
                     if (space.spaceId) {
@@ -142,7 +185,7 @@ const MySpacesPage = () => {
 
     return (
         <div className="flex mt-10 gap-24 ml-24">
-            <div className="flex-col w-64 ml-10 mr-5 mt-10">
+            <div className="flex-col w-[20vw] ml-10 mr-5 mt-10">
                 <div className="flex gap-5">
                     <h1 className="text-xl font-semibold">Filters</h1>
                     <button onClick={() => setSelectedFilters({
@@ -160,7 +203,7 @@ const MySpacesPage = () => {
                         size: 10
                     })} className="text-xs text-gray-400 underline hover:text-gray-700">Clear Filters</button>
                 </div>
-                <p className="text-sm font-semibold my-2.5">Space Types</p>
+                <p className="text-sm font-semibold mt-2.5 mb-1.5">Space Types</p>
                 <div className="flex flex-col">
                     {filter.spaceTypes.map(spaceType => (
                         <div key={spaceType} className="mt-1">
@@ -173,7 +216,7 @@ const MySpacesPage = () => {
                                 onChange={handleCheckboxChange}
                                 className="mr-2"
                             />
-                            <label htmlFor={spaceType} className="text-small">{spaceType}</label>
+                            <label htmlFor={spaceType} className="text-small font-default text-gray-600">{spaceType[0].toUpperCase() + spaceType.slice(1).replace("_"," ").toLowerCase()}</label>
                         </div>
                     ))}
                 </div>
@@ -198,7 +241,7 @@ const MySpacesPage = () => {
                     className="mb-2"
                 />
 
-                <p className="text-sm font-semibold my-2.5">Space Size Range (sq ft)</p>
+                <p className="text-sm font-semibold my-2.5">Space Size Range (sq m)</p>
                 <Input
                     type="number"
                     name="spaceSizeLowerBound"
@@ -247,7 +290,7 @@ const MySpacesPage = () => {
                                 onChange={handleCheckboxChange}
                                 className="mr-2"
                             />
-                            <label htmlFor={avail} className="text-small">{avail}</label>
+                            <label htmlFor={avail} className="text-small text-gray-600">{avail[0].toUpperCase() + avail.slice(1).replace("_"," ").toLowerCase()}</label>
                         </div>
                     ))}
                 </div>
@@ -264,7 +307,7 @@ const MySpacesPage = () => {
                             onChange={handleInputChange}
                             className="mr-2"
                         />
-                        <label htmlFor="PRICE" className="text-small">Price</label>
+                        <label htmlFor="PRICE" className="text-small text-gray-600">Price</label>
                     </div>
                     <div>
                         <input
@@ -276,7 +319,7 @@ const MySpacesPage = () => {
                             onChange={handleInputChange}
                             className="mr-2"
                         />
-                        <label htmlFor="SIZE" className="text-small">Size</label>
+                        <label htmlFor="SIZE" className="text-small text-gray-600">Size</label>
                     </div>
                 </div>
 
@@ -308,10 +351,11 @@ const MySpacesPage = () => {
                     </div>
                 </div>
 
-                <Button onClick={handleFilterSubmit} className="mt-4">Apply Filters</Button>
+                {/* <Button onClick={handleFilterSubmit} className="mt-4">Apply Filters</Button> */}
             </div>
-
-            <div className="flex w-full mt-12 gap-y-5 gap-x-3.5 flex-wrap">
+            
+            <div>
+            <div className="flex w-[75vw] mt-12 gap-y-5 gap-x-3.5 flex-wrap">
                 {loading ? (
                     <p>Loading...</p>
                 ) : (
@@ -332,21 +376,26 @@ const MySpacesPage = () => {
                 )}
             </div>
 
-            <div className="flex justify-center w-full mt-6">
+            <div className="flex justify-start w-full mt-6">
                 <Button
                     onClick={() => handlePageChange(Math.max(0, selectedFilters.page - 1))}
                     disabled={selectedFilters.page === 0}
-                    className="mx-1"
+                    className="mx-1 bg-black text-white"
+                    variant="bordered"
+                    color = "danger"
                 >
                     Previous
                 </Button>
                 <Button
                     onClick={() => handlePageChange(Math.min(totalPages - 1, selectedFilters.page + 1))}
                     disabled={selectedFilters.page === totalPages - 1}
-                    className="mx-1"
+                    className="mx-1 bg-black text-white"
+                    color="primary"
+                    variant="bordered"
                 >
                     Next
                 </Button>
+            </div>
             </div>
         </div>
     );
