@@ -20,18 +20,25 @@ const FindSpacePage = () => {
             "WAREHOUSE",
             "INDUSTRIAL_SPACE",
             "OTHER"
+        ],
+        availabilities: [
+            "NOT_RELEASED",
+            "AVAILABLE",
+            "BLOCKED"
         ]
     });
 
     const [selectedFilters, setSelectedFilters] = useState({
-        spaceType: 'OFFICE',
+        spaceType: [],
         spaceName: '',
         spaceLocation: '',
         spaceSizeLowerBound: 0,
         spaceSizeUpperBound: Number.MAX_SAFE_INTEGER,
         spacePriceLowerBound: 0,
         spacePriceUpperBound: Number.MAX_SAFE_INTEGER,
-        availability: 'AVAILABLE',
+        availability: [],
+        type: 'ASC', // Default sorting type
+        variable: 'PRICE', // Default sorting variable
         page: 0,
         size: 10
     });
@@ -82,6 +89,16 @@ const FindSpacePage = () => {
         setSelectedFilters({ ...selectedFilters, [name]: value });
     };
 
+    const handleCheckboxChange = (e) => {
+        const { name, value, checked } = e.target;
+        setSelectedFilters(prevFilters => {
+            const newValues = checked
+                ? [...prevFilters[name], value]
+                : prevFilters[name].filter(item => item !== value);
+            return { ...prevFilters, [name]: newValues };
+        });
+    };
+
     const handleFilterSubmit = async () => {
         setSelectedFilters({ ...selectedFilters, page: 0 });
     };
@@ -100,14 +117,16 @@ const FindSpacePage = () => {
                 <div className="flex gap-5">
                     <h1 className="text-xl font-semibold">Filters</h1>
                     <button onClick={() => setSelectedFilters({
-                        spaceType: 'OFFICE',
+                        spaceType: [],
                         spaceName: '',
                         spaceLocation: '',
                         spaceSizeLowerBound: 0,
                         spaceSizeUpperBound: Number.MAX_SAFE_INTEGER,
                         spacePriceLowerBound: 0,
                         spacePriceUpperBound: Number.MAX_SAFE_INTEGER,
-                        availability: 'AVAILABLE',
+                        availability: [],
+                        type: 'ASC',
+                        variable: 'PRICE',
                         page: 0,
                         size: 10
                     })} className="text-xs text-gray-400 underline hover:text-gray-700">Clear Filters</button>
@@ -117,12 +136,12 @@ const FindSpacePage = () => {
                     {filter.spaceTypes.map(spaceType => (
                         <div key={spaceType} className="mt-1">
                             <input
-                                type="radio"
+                                type="checkbox"
                                 id={spaceType}
                                 name="spaceType"
                                 value={spaceType}
-                                checked={selectedFilters.spaceType === spaceType}
-                                onChange={handleInputChange}
+                                checked={selectedFilters.spaceType.includes(spaceType)}
+                                onChange={handleCheckboxChange}
                                 className="mr-2"
                             />
                             <label htmlFor={spaceType} className="text-small">{spaceType}</label>
@@ -187,17 +206,77 @@ const FindSpacePage = () => {
                 />
 
                 <p className="text-sm font-semibold my-2.5">Availability</p>
-                <div className="mb-2">
-                    <select
-                        name="availability"
-                        value={selectedFilters.availability}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                    >
-                        <option value="NOT_RELEASED">Not Released</option>
-                        <option value="AVAILABLE">Available</option>
-                        <option value="BLOCKED">Blocked</option>
-                    </select>
+                <div className="flex flex-col mb-2">
+                    {filter.availabilities.map(avail => (
+                        <div key={avail} className="mt-1">
+                            <input
+                                type="checkbox"
+                                id={avail}
+                                name="availability"
+                                value={avail}
+                                checked={selectedFilters.availability.includes(avail)}
+                                onChange={handleCheckboxChange}
+                                className="mr-2"
+                            />
+                            <label htmlFor={avail} className="text-small">{avail}</label>
+                        </div>
+                    ))}
+                </div>
+
+                <p className="text-sm font-semibold my-2.5">Sort By</p>
+                <div className="flex flex-col mb-2">
+                    <div>
+                        <input
+                            type="radio"
+                            id="PRICE"
+                            name="variable"
+                            value="PRICE"
+                            checked={selectedFilters.variable === "PRICE"}
+                            onChange={handleInputChange}
+                            className="mr-2"
+                        />
+                        <label htmlFor="PRICE" className="text-small">Price</label>
+                    </div>
+                    <div>
+                        <input
+                            type="radio"
+                            id="SIZE"
+                            name="variable"
+                            value="SIZE"
+                            checked={selectedFilters.variable === "SIZE"}
+                            onChange={handleInputChange}
+                            className="mr-2"
+                        />
+                        <label htmlFor="SIZE" className="text-small">Size</label>
+                    </div>
+                </div>
+
+                <p className="text-sm font-semibold my-2.5">Sort Direction</p>
+                <div className="flex flex-col mb-2">
+                    <div>
+                        <input
+                            type="radio"
+                            id="ASC"
+                            name="type"
+                            value="ASC"
+                            checked={selectedFilters.type === "ASC"}
+                            onChange={handleInputChange}
+                            className="mr-2"
+                        />
+                        <label htmlFor="ASC" className="text-small">Ascending</label>
+                    </div>
+                    <div>
+                        <input
+                            type="radio"
+                            id="DESC"
+                            name="type"
+                            value="DESC"
+                            checked={selectedFilters.type === "DESC"}
+                            onChange={handleInputChange}
+                            className="mr-2"
+                        />
+                        <label htmlFor="DESC" className="text-small">Descending</label>
+                    </div>
                 </div>
 
                 <Button onClick={handleFilterSubmit} className="mt-4">Apply Filters</Button>
