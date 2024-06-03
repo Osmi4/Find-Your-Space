@@ -26,7 +26,7 @@ public class BookingController {
     public BookingController(BookingService bookingService) {
         this.bookingService = bookingService;
     }
-    @GetMapping("/all")
+    @PostMapping("/all")
     public ResponseEntity<Page<BookingResponse>> searchAllBookings(@Valid @RequestBody Optional<BookingFilter> filter, @RequestParam(defaultValue = "0") int page,
                                                                    @RequestParam(defaultValue = "10") int size){
         Pageable pageable = PageRequest.of(page, size);

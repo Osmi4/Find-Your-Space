@@ -3,5 +3,4 @@ package com.example.backend.enums;
 public enum SortType {
     ASC,
     DESC,
-    NONE
 }

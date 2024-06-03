@@ -77,7 +77,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUserDetails(String userId, UpdateUserDetailsRequest updateUserRequestDetails) {
+    public void updateUserDetails(UpdateUserDetailsRequest updateUserRequestDetails) {
+        User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
+                () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName()));
+        String userId = user.getUserId();
         User userToUpdate = userRepository.findByUserId(userId).orElseThrow(() -> new ResourceNotFoundException("User not found!", "userId", userId));
 
         if(!userToUpdate.getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
@@ -85,9 +88,11 @@ public class UserServiceImpl implements UserService {
         }
         userToUpdate.setBankAccount(updateUserRequestDetails.getBankAccountNumber());
         userToUpdate.setContactInfo(updateUserRequestDetails.getContactInfo());
+        userToUpdate.setFirstName(updateUserRequestDetails.getFirstName());
+        userToUpdate.setLastName(updateUserRequestDetails.getLastName());
         userToUpdate.setDetailsConfigured(true);
 
-        int affectedRows = userRepository.patchUserDetails(userId, updateUserRequestDetails.getContactInfo(), updateUserRequestDetails.getBankAccountNumber(),true);
+        int affectedRows = userRepository.patchUserDetails(userId, updateUserRequestDetails.getContactInfo(), updateUserRequestDetails.getBankAccountNumber(), updateUserRequestDetails.getFirstName() , updateUserRequestDetails.getLastName() ,true);
         if(affectedRows==0){
             throw new ResourceNotFoundException("User not found!", "userId", userId);
         }
@@ -112,5 +117,13 @@ public class UserServiceImpl implements UserService {
         User userSaved= userRepository.save(user);
 
         return UserMapper.INSTANCE.userToUserResponse(userSaved);
+    }
+
+    @Override
+    public String getBankAccount() {
+        //User user = userRepository.findByUserId(id).orElseThrow(() -> new ResourceNotFoundException("User not found!", "userId", id));
+        User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
+                () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName()));
+        return user.getBankAccount();
     }
 }

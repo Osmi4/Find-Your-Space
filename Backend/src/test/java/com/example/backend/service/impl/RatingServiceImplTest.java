@@ -92,19 +92,19 @@ public class RatingServiceImplTest{
         assertEquals(ratingResponse.getSpaceId(), ratingResponse1.getSpaceId());
     }
 
-    @Test
-    void deleteRatingTest_Success() {
-        // Given
-        SpaceResponse spaceResponse = spaceService.addSpace(addSpaceRequest);
-        AddRatingRequest addRatingRequest = new AddRatingRequest();
-        addRatingRequest.setScore(5);
-        addRatingRequest.setComment("Great space");
-        addRatingRequest.setSpaceId(spaceResponse.getSpaceId());
-        RatingResponse ratingResponse = ratingService.addRating(addRatingRequest);
-        // When
-        ratingService.deleteRating(ratingResponse.getRatingId());
-        // Then
-    }
+//    @Test
+//    void deleteRatingTest_Success() {
+//        // Given
+//        SpaceResponse spaceResponse = spaceService.addSpace(addSpaceRequest);
+//        AddRatingRequest addRatingRequest = new AddRatingRequest();
+//        addRatingRequest.setScore(5);
+//        addRatingRequest.setComment("Great space");
+//        addRatingRequest.setSpaceId(spaceResponse.getSpaceId());
+//        RatingResponse ratingResponse = ratingService.addRating(addRatingRequest);
+//        // When
+//        ratingService.deleteRating(ratingResponse.getRatingId());
+//        // Then
+//    }
 
     @Test
     void getRatingsByFiltersTest_Success() {

@@ -1,26 +1,61 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@nextui-org/react';
-import { useAuth0 } from "@auth0/auth0-react";
+import { Input, Button } from '@nextui-org/react';
 
 const MySpacesPage = () => {
-    const { getAccessTokenSilently } = useAuth0();
     const [spaces, setSpaces] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [totalPages, setTotalPages] = useState(0);
     const navigate = useNavigate();
+
+    const [filter, setFilter] = useState({
+        spaceTypes: [
+            "OFFICE",
+            "MEETING_ROOM",
+            "EVENT_SPACE",
+            "COWORKING_SPACE",
+            "RETAIL_SPACE",
+            "STORAGE_SPACE",
+            "PARKING_SPACE",
+            "WAREHOUSE",
+            "INDUSTRIAL_SPACE",
+            "OTHER"
+        ],
+        availabilities: [
+            "NOT_RELEASED",
+            "AVAILABLE",
+            "BLOCKED"
+        ]
+    });
+
+    const [selectedFilters, setSelectedFilters] = useState({
+        spaceType: [],
+        spaceName: '',
+        spaceLocation: '',
+        spaceSizeLowerBound: 0,
+        spaceSizeUpperBound: Number.MAX_SAFE_INTEGER,
+        spacePriceLowerBound: 0,
+        spacePriceUpperBound: Number.MAX_SAFE_INTEGER,
+        availability: [],
+        type: 'ASC', // Default sorting type
+        variable: 'PRICE', // Default sorting variable
+        page: 0,
+        size: 10
+    });
 
     useEffect(() => {
         const fetchSpaces = async () => {
             try {
-                const token = await getAccessTokenSilently();
-                const spaceFilter = {};
+                const token = localStorage.getItem('authToken');
+                if (!token) throw new Error("No auth token found");
 
-                const response = await axios.post('http://localhost:8080/api/space/my-spaces', spaceFilter, {
+                const response = await axios.post('http://localhost:8080/api/space/my-spaces', selectedFilters, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    params: { page: selectedFilters.page, size: selectedFilters.size }
                 });
 
                 const spacesWithImages = await Promise.all(response.data.content.map(async space => {
@@ -32,6 +67,7 @@ const MySpacesPage = () => {
                 }));
 
                 setSpaces(spacesWithImages);
+                setTotalPages(response.data.totalPages);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching spaces:', error);
@@ -40,7 +76,7 @@ const MySpacesPage = () => {
         };
 
         fetchSpaces();
-    }, [getAccessTokenSilently]);
+    }, [selectedFilters]);
 
     const fetchImage = async (spaceId, token) => {
         try {
@@ -57,11 +93,36 @@ const MySpacesPage = () => {
         }
     };
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setSelectedFilters({ ...selectedFilters, [name]: value });
+    };
+
+    const handleCheckboxChange = (e) => {
+        const { name, value, checked } = e.target;
+        setSelectedFilters(prevFilters => {
+            const newValues = checked
+                ? [...prevFilters[name], value]
+                : prevFilters[name].filter(item => item !== value);
+            return { ...prevFilters, [name]: newValues };
+        });
+    };
+
+    const handleFilterSubmit = async () => {
+        setSelectedFilters({ ...selectedFilters, page: 0 });
+    };
+
+    const handlePageChange = (newPage) => {
+        setSelectedFilters((prevFilters) => ({ ...prevFilters, page: newPage }));
+    };
+
     const handleDelete = async (spaceId) => {
         if (!window.confirm('Are you sure you want to delete this space?')) return;
 
         try {
-            const token = await getAccessTokenSilently();
+            const token = localStorage.getItem('authToken');
+            if (!token) throw new Error("No auth token found");
+
             await axios.delete(`http://localhost:8080/api/space/${spaceId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -70,47 +131,217 @@ const MySpacesPage = () => {
             console.error('Error deleting space:', error);
         }
     };
+    const openSpacePage = (id) => {
+        navigate(`/space/${id}/edit`);
+    };
 
     return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">My Spaces for Rent</h1>
-            {loading ? (
-                <p>Loading...</p>
-            ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {spaces.map(space => (
-                        <div key={space.spaceId} className="bg-white p-4 rounded-lg shadow-md">
-                            {space.imageUrl ? (
-                                <img
-                                    src={space.imageUrl}
-                                    alt={space.spaceName}
-                                    className="w-full h-48 object-cover mb-4 rounded"
-                                />
-                            ) : (
-                                <div className="w-full h-48 flex items-center justify-center bg-gray-200 mb-4 rounded">
-                                    <p>No Image Available</p>
-                                </div>
-                            )}
-                            <h2 className="text-xl font-semibold">{space.spaceName}</h2>
-                            <p className="text-gray-700">Location: {space.spaceLocation}</p>
-                            <p className="text-gray-700">Size: {space.spaceSize} sq.m.</p>
-                            <p className="text-gray-700">Price: ${space.spacePrice}</p>
-                            <p className="text-gray-700">Description: {space.spaceDescription}</p>
-                            <p className="text-gray-700">Availability: {space.availability}</p>
-                            <p className="text-gray-700">Added: {new Date(space.dateAdded).toLocaleDateString()}</p>
-                            <p className="text-gray-700">Updated: {new Date(space.dateUpdated).toLocaleDateString()}</p>
-                            <div className="flex gap-2 mt-2">
-                                <Button onClick={() => navigate(`/space/${space.spaceId}/edit`)} className="bg-blue-500 text-white">
-                                    View Details
-                                </Button>
-                                <Button onClick={() => handleDelete(space.spaceId)} className="bg-red-500 text-white">
-                                    Delete
-                                </Button>
-                            </div>
+        <div className="flex mt-10 gap-24 ml-24">
+            <div className="flex-col w-64 ml-10 mr-5 mt-10">
+                <div className="flex gap-5">
+                    <h1 className="text-xl font-semibold">Filters</h1>
+                    <button onClick={() => setSelectedFilters({
+                        spaceType: [],
+                        spaceName: '',
+                        spaceLocation: '',
+                        spaceSizeLowerBound: 0,
+                        spaceSizeUpperBound: Number.MAX_SAFE_INTEGER,
+                        spacePriceLowerBound: 0,
+                        spacePriceUpperBound: Number.MAX_SAFE_INTEGER,
+                        availability: [],
+                        type: 'ASC',
+                        variable: 'PRICE',
+                        page: 0,
+                        size: 10
+                    })} className="text-xs text-gray-400 underline hover:text-gray-700">Clear Filters</button>
+                </div>
+                <p className="text-sm font-semibold my-2.5">Space Types</p>
+                <div className="flex flex-col">
+                    {filter.spaceTypes.map(spaceType => (
+                        <div key={spaceType} className="mt-1">
+                            <input
+                                type="checkbox"
+                                id={spaceType}
+                                name="spaceType"
+                                value={spaceType}
+                                checked={selectedFilters.spaceType.includes(spaceType)}
+                                onChange={handleCheckboxChange}
+                                className="mr-2"
+                            />
+                            <label htmlFor={spaceType} className="text-small">{spaceType}</label>
                         </div>
                     ))}
                 </div>
-            )}
+
+                <p className="text-sm font-semibold my-2.5">Space Name</p>
+                <Input
+                    type="text"
+                    name="spaceName"
+                    value={selectedFilters.spaceName}
+                    onChange={handleInputChange}
+                    placeholder="Enter space name"
+                    className="mb-2"
+                />
+
+                <p className="text-sm font-semibold my-2.5">Space Location</p>
+                <Input
+                    type="text"
+                    name="spaceLocation"
+                    value={selectedFilters.spaceLocation}
+                    onChange={handleInputChange}
+                    placeholder="Enter space location"
+                    className="mb-2"
+                />
+
+                <p className="text-sm font-semibold my-2.5">Space Size Range (sq ft)</p>
+                <Input
+                    type="number"
+                    name="spaceSizeLowerBound"
+                    value={selectedFilters.spaceSizeLowerBound}
+                    onChange={handleInputChange}
+                    placeholder="Min size"
+                    className="mb-2"
+                />
+                <Input
+                    type="number"
+                    name="spaceSizeUpperBound"
+                    value={selectedFilters.spaceSizeUpperBound}
+                    onChange={handleInputChange}
+                    placeholder="Max size"
+                    className="mb-2"
+                />
+
+                <p className="text-sm font-semibold my-2.5">Space Price Range ($)</p>
+                <Input
+                    type="number"
+                    name="spacePriceLowerBound"
+                    value={selectedFilters.spacePriceLowerBound}
+                    onChange={handleInputChange}
+                    placeholder="Min price"
+                    className="mb-2"
+                />
+                <Input
+                    type="number"
+                    name="spacePriceUpperBound"
+                    value={selectedFilters.spacePriceUpperBound}
+                    onChange={handleInputChange}
+                    placeholder="Max price"
+                    className="mb-2"
+                />
+
+                <p className="text-sm font-semibold my-2.5">Availability</p>
+                <div className="flex flex-col mb-2">
+                    {filter.availabilities.map(avail => (
+                        <div key={avail} className="mt-1">
+                            <input
+                                type="checkbox"
+                                id={avail}
+                                name="availability"
+                                value={avail}
+                                checked={selectedFilters.availability.includes(avail)}
+                                onChange={handleCheckboxChange}
+                                className="mr-2"
+                            />
+                            <label htmlFor={avail} className="text-small">{avail}</label>
+                        </div>
+                    ))}
+                </div>
+
+                <p className="text-sm font-semibold my-2.5">Sort By</p>
+                <div className="flex flex-col mb-2">
+                    <div>
+                        <input
+                            type="radio"
+                            id="PRICE"
+                            name="variable"
+                            value="PRICE"
+                            checked={selectedFilters.variable === "PRICE"}
+                            onChange={handleInputChange}
+                            className="mr-2"
+                        />
+                        <label htmlFor="PRICE" className="text-small">Price</label>
+                    </div>
+                    <div>
+                        <input
+                            type="radio"
+                            id="SIZE"
+                            name="variable"
+                            value="SIZE"
+                            checked={selectedFilters.variable === "SIZE"}
+                            onChange={handleInputChange}
+                            className="mr-2"
+                        />
+                        <label htmlFor="SIZE" className="text-small">Size</label>
+                    </div>
+                </div>
+
+                <p className="text-sm font-semibold my-2.5">Sort Direction</p>
+                <div className="flex flex-col mb-2">
+                    <div>
+                        <input
+                            type="radio"
+                            id="ASC"
+                            name="type"
+                            value="ASC"
+                            checked={selectedFilters.type === "ASC"}
+                            onChange={handleInputChange}
+                            className="mr-2"
+                        />
+                        <label htmlFor="ASC" className="text-small">Ascending</label>
+                    </div>
+                    <div>
+                        <input
+                            type="radio"
+                            id="DESC"
+                            name="type"
+                            value="DESC"
+                            checked={selectedFilters.type === "DESC"}
+                            onChange={handleInputChange}
+                            className="mr-2"
+                        />
+                        <label htmlFor="DESC" className="text-small">Descending</label>
+                    </div>
+                </div>
+
+                <Button onClick={handleFilterSubmit} className="mt-4">Apply Filters</Button>
+            </div>
+
+            <div className="flex w-full mt-12 gap-y-5 gap-x-3.5 flex-wrap">
+                {loading ? (
+                    <p>Loading...</p>
+                ) : (
+                    spaces.map(item => (
+                        <div key={item.spaceId} className="w-72 bg-white rounded-lg shadow-md overflow-hidden">
+                            <img src={item.imageUrl} alt={item.spaceName} className="w-full h-48 object-cover" />
+                            <div className="p-4">
+                                <h1 className="font-bold text-lg mb-2 hover:underline cursor-pointer" onClick={() => openSpacePage(item.spaceId)}>{item.spaceName}</h1>
+                                <p className="text-sm text-gray-600 mb-2">{item.spaceLocation}</p>
+                                <p className="text-sm text-gray-600 mb-2">Size: {item.spaceSize} sq ft</p>
+                                <p className="text-sm text-gray-600 mb-2">Price: ${item.spacePrice}</p>
+                                <Button onClick={() => openSpacePage(item.spaceId)} className="mt-2 bg-blue-500 text-white w-full">View Details</Button>
+                                <Button onClick={() => handleDelete(item.spaceId)} className="mt-2 bg-red-500 text-white w-full">Delete</Button>
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
+
+            <div className="flex justify-center w-full mt-6">
+                <Button
+                    onClick={() => handlePageChange(Math.max(0, selectedFilters.page - 1))}
+                    disabled={selectedFilters.page === 0}
+                    className="mx-1"
+                >
+                    Previous
+                </Button>
+                <Button
+                    onClick={() => handlePageChange(Math.min(totalPages - 1, selectedFilters.page + 1))}
+                    disabled={selectedFilters.page === totalPages - 1}
+                    className="mx-1"
+                >
+                    Next
+                </Button>
+            </div>
         </div>
     );
 };

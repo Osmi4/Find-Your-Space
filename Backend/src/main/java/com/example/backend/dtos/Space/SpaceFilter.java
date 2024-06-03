@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
@@ -35,8 +36,8 @@ public class SpaceFilter {
 
     private SortType type;
     private SortVar variable;
-    private SpaceType spaceType;
+    private List<SpaceType> spaceType;
     private Date startDate;
     private Date endDate;
-    private Availibility availability;
+    private List<Availibility> availability;
 }

@@ -22,23 +22,25 @@ public interface SpaceRepository extends JpaRepository<Space, String> {
     Optional<Space> findBySpaceId(String spaceId);
 
     @Query("""
-    SELECT s FROM Space s
-    WHERE s.spacePrice BETWEEN ?2 AND ?1
-    AND s.spaceSize BETWEEN ?4 AND ?3
-    AND (?5 IS NULL OR s.owner.userId = ?5)
-    AND (?6 IS NULL OR s.spaceName LIKE %?6%)
-    AND (?7 IS NULL OR s.spaceLocation LIKE %?7%)
-    AND (?8 IS NULL OR s.spaceType = ?8)
-    AND (?9 IS NULL OR s.availability = ?9)
-    """)
+        SELECT s FROM Space s
+        WHERE s.spacePrice BETWEEN :spacePriceLow AND :spacePriceUp
+        AND s.spaceSize BETWEEN :spaceSizeLow AND :spaceSizeUp
+        AND (:userId IS NULL OR s.owner.userId = :userId)
+        AND (:spaceName IS NULL OR s.spaceName LIKE %:spaceName%)
+        AND (:spaceLocation IS NULL OR s.spaceLocation LIKE %:spaceLocation%)
+        AND (:spaceType IS NULL OR s.spaceType IN :spaceType)
+        AND (:availability IS NULL OR s.availability IN :availability)
+        """)
     Page<Space> findSpacesByFilters(
-            double spacePriceUp, double spacePriceLow,
-            double spaceSizeUp, double spaceSizeLow,
-            @Nullable String userId,
-            @Nullable String spaceName,
-            @Nullable String spaceLocation,
-            @Nullable SpaceType spaceType,
-            @Nullable Availibility availability,
+            @Param("spacePriceUp") double spacePriceUp,
+            @Param("spacePriceLow") double spacePriceLow,
+            @Param("spaceSizeUp") double spaceSizeUp,
+            @Param("spaceSizeLow") double spaceSizeLow,
+            @Nullable @Param("userId") String userId,
+            @Nullable @Param("spaceName") String spaceName,
+            @Nullable @Param("spaceLocation") String spaceLocation,
+            @Nullable @Param("spaceType") List<SpaceType> spaceType,
+            @Nullable @Param("availability") List<Availibility> availability,
             Pageable pageable);
 
     @Transactional

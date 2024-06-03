@@ -18,7 +18,7 @@ const RentPage = () => {
         "OTHER"
     ];
 
-    const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
+    const { isAuthenticated, user, loginWithRedirect } = useAuth0();
 
     const [spaceInfo, setSpaceInfo] = useState({
         spaceName: '',
@@ -34,9 +34,9 @@ const RentPage = () => {
     const [imagePreviews, setImagePreviews] = useState([]);
     const [spaceId, setSpaceId] = useState(null);
 
-    const mapSpaceType = (type) => {  
+    const mapSpaceType = (type) => {
         return type.replace(' ', '_');
-    }
+    };
 
     const handleSpaceChange = (e) => {
         const { name, value } = e.target;
@@ -79,59 +79,54 @@ const RentPage = () => {
             spaceType: spaceInfo.spaceType
         };
 
-        
         if (isAuthenticated) {
-            const token = await getAccessTokenSilently();
-            localStorage.setItem('authToken', token);
-        try {  
-            const response = await axios.post('http://localhost:8080/api/space', spaceData, {
-                headers: {
-                    Authorization: `Bearer ${token}` // Include the token in the headers
-                }
-            });
-
-            if (response.status === 200) {
-                setSpaceId(response.data.spaceId); // Assuming the response contains the space ID
-                alert("Space information submitted successfully!");
-                await uploadImages(response.data.spaceId);
-            } else {
-                alert("Failed to submit space information.");
-            }
-        } catch (error) {
-            console.error("Error submitting space information:", error);
-            alert("An error occurred while submitting the space information.");
-        }
-    }
-    };
-
-    const uploadImages = async (spaceId) => {
-        if (isAuthenticated) {
-            const token = await getAccessTokenSilently();
-            localStorage.setItem('authToken', token);
-            const formData = new FormData();
-            spaceInfo.images.forEach((image) => {
-                formData.append('image', image);
-            });
-
-            //const token = localStorage.getItem('token'); // Retrieve the token from local storage
-
+            const token = localStorage.getItem('authToken');
             try {
-                const response = await axios.post(`http://localhost:8080/api/space/${spaceId}/images`, formData, {
+                const response = await axios.post('http://localhost:8080/api/space', spaceData, {
                     headers: {
-                        'Content-Type': 'multipart/form-data',
                         Authorization: `Bearer ${token}` // Include the token in the headers
                     }
                 });
 
                 if (response.status === 200) {
-                    alert("Images uploaded successfully!");
+                    setSpaceId(response.data.spaceId); // Assuming the response contains the space ID
+                    alert("Space information submitted successfully!");
+                    await uploadImages(response.data.spaceId);
                 } else {
-                    alert("Failed to upload images.");
+                    alert("Failed to submit space information.");
                 }
             } catch (error) {
-                console.error("Error uploading images:", error);
-                alert("An error occurred while uploading the images.");
+                console.error("Error submitting space information:", error);
+                alert("An error occurred while submitting the space information.");
             }
+        } else {
+            loginWithRedirect(); // Redirect to login if not authenticated
+        }
+    };
+
+    const uploadImages = async (spaceId) => {
+        const token = localStorage.getItem('authToken');
+        const formData = new FormData();
+        spaceInfo.images.forEach((image) => {
+            formData.append('image', image);
+        });
+
+        try {
+            const response = await axios.post(`http://localhost:8080/api/space/${spaceId}/images`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${token}` // Include the token in the headers
+                }
+            });
+
+            if (response.status === 200) {
+                alert("Images uploaded successfully!");
+            } else {
+                alert("Failed to upload images.");
+            }
+        } catch (error) {
+            console.error("Error uploading images:", error);
+            alert("An error occurred while uploading the images.");
         }
     };
 

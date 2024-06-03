@@ -55,9 +55,13 @@ public class UserController {
         return new ResponseEntity("User updated successfully!", HttpStatus.OK);
     }
     //change user details
-    @PatchMapping("/{id}/details")
-    public ResponseEntity<String> updateUserDetails(@PathVariable String id, @Valid @RequestBody UpdateUserDetailsRequest userDetails) {
-        userService.updateUserDetails(id, userDetails);
+    @PatchMapping("/my-details")
+    public ResponseEntity<String> updateUserDetails(@Valid @RequestBody UpdateUserDetailsRequest userDetails) {
+        userService.updateUserDetails(userDetails);
         return new ResponseEntity("User updated successfully!", HttpStatus.OK);
+    }
+    @GetMapping("/getMyBankAccount")
+    public ResponseEntity<String> getBankAccount(){
+        return ResponseEntity.ok(userService.getBankAccount());
     }
 }

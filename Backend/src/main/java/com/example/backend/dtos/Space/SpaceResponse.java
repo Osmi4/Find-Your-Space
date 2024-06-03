@@ -2,6 +2,7 @@ package com.example.backend.dtos.Space;
 
 import com.example.backend.dtos.User.UserResponse;
 import com.example.backend.enums.Availibility;
+import com.example.backend.enums.SpaceType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class SpaceResponse {
     private String spaceDescription;
     private double spaceSize;
     private double spacePrice;
+    private SpaceType spaceType;
     private UserResponse owner;
     private Availibility availability;
     private Date dateAdded;
