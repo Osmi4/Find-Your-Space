@@ -45,6 +45,16 @@ const UserIcon = ({user}) => {
                         My spaces for rent
                     </DropdownItem>
                 )}
+                {isLoggedIn && (
+                    <DropdownItem key="My bookings" onClick={() => navigate('/message')}>
+                        Messages
+                    </DropdownItem>
+                )}
+                {isLoggedIn && (
+                    <DropdownItem key="My reports" onClick={() => navigate('/my-reports')}>
+                        My reports
+                    </DropdownItem>
+                )}
             </DropdownMenu>
         </Dropdown>
     );

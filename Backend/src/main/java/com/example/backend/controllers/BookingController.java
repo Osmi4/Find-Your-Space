@@ -45,6 +45,14 @@ public class BookingController {
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(bookingService.getBookingForSpace(SpaceId , filter, pageable));
     }
+
+    @GetMapping("/{spaceId}/bookings")
+    public ResponseEntity<Page<BookingResponse>> getBookings(@PathVariable String spaceId , @RequestParam(defaultValue = "0") int page,
+                                                             @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(bookingService.getBookingsForSpace(spaceId, pageable));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<BookingResponse> getBooking(@PathVariable String id){
         return ResponseEntity.ok(bookingService.getBooking(id));
@@ -65,8 +73,5 @@ public class BookingController {
     public ResponseEntity<BookingResponse> deleteBooking(@PathVariable String id) throws AccessDeniedException {
         return ResponseEntity.ok(bookingService.deleteBooking(id));
     }
-
-
-
 
 }

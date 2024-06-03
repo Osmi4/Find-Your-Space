@@ -70,6 +70,13 @@ public class ReportServiceImpl implements ReportService {
         return mapReportToReportResponse(report);
     }
 
+    @Override
+    public Page<ReportResponse> getMyReports(Pageable pageable) {
+        User user = (User)userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
+                () -> new NoSuchElementException("User not found"));
+        return reportRepository.findReportsByReporter(user, pageable).map(this::mapReportToReportResponse);
+    }
+
     public Report mapReportRequestToReport(AddReportRequest addReportRequest) {
         Report report = new Report();
         report.setReportType(addReportRequest.getReportType());
@@ -87,7 +94,7 @@ public class ReportServiceImpl implements ReportService {
                 }
                 break;
             case SPACE:
-                Optional<Space> spaceOptional = spaceRepository.findById("e60e46c1-9be3-418c-a6f4-bc726b2dece2");
+                Optional<Space> spaceOptional = spaceRepository.findById(addReportRequest.getReportedId());
                 if (spaceOptional.isPresent()) {
                     report.setReportedSpace(spaceOptional.get());
                 } else {

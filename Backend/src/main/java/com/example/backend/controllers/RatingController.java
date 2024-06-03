@@ -49,6 +49,10 @@ public class RatingController {
         ratingService.deleteRating(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
-    //dodac zebny do space Response byl dodany serdni rating
+
+    @GetMapping("/space/{spaceId}")
+    public ResponseEntity<Double> getAverageRatingBySpace(@PathVariable String spaceId) {
+        return ResponseEntity.ok(ratingService.getAverageRatingBySpace(spaceId));
+    }
 
 }

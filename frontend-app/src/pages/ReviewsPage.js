@@ -10,6 +10,23 @@ const ReviewsPage = () => {
     const [reviews, setReviews] = useState([]);
     const [averageRating, setAverageRating] = useState(0);
     const [ratingsCount, setRatingsCount] = useState({ 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 });
+    const [spaceDetails, setSpaceDetails] = useState(null);
+
+    useEffect(() => {
+        const fetchSpaceDetails = async () => {
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await axios.get(`http://localhost:8080/api/space/${spaceId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setSpaceDetails(response.data);
+            } catch (error) {
+                console.error("Error fetching space details:", error);
+            }
+        };
+
+        fetchSpaceDetails();
+    }, [spaceId]);
 
     useEffect(() => {
         const fetchReviews = async () => {
@@ -28,6 +45,7 @@ const ReviewsPage = () => {
                 });
 
                 const fetchedReviews = response.data.content;
+                await fetchUsernames(fetchedReviews);
                 setReviews(fetchedReviews);
                 calculateAverageRating(fetchedReviews);
                 calculateRatingsCount(fetchedReviews);
@@ -38,6 +56,21 @@ const ReviewsPage = () => {
 
         fetchReviews();
     }, [spaceId]);
+
+    const fetchUsernames = async (reviews) => {
+        const token = localStorage.getItem('authToken');
+        for (const review of reviews) {
+            try {
+                const response = await axios.get(`http://localhost:8080/api/user/${review.userId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                review.username = `${response.data.firstName} ${response.data.lastName}`;
+            } catch (error) {
+                console.error(`Error fetching user details for userId ${review.userId}:`, error);
+                review.username = 'Unknown User';
+            }
+        }
+    };
 
     const calculateAverageRating = (reviews) => {
         if (reviews.length === 0) {
@@ -58,6 +91,12 @@ const ReviewsPage = () => {
 
     return (
         <div className="flex flex-col lg:flex-row font-semibold items-center text-center lg:items-start lg:text-left">
+            {spaceDetails && (
+                <div className="lg:ml-[200px] lg:mt-[70px] lg:mr-[150px] mt-[4vh]">
+                    <h1 className="text-2xl lg:text-4xl mb-[2vh]">{spaceDetails.spaceName}</h1>
+                    <p>{spaceDetails.spaceDescription}</p>
+                </div>
+            )}
             <div className="lg:ml-[200px] lg:mt-[70px] lg:mr-[150px] mt-[4vh]">
                 <h1 className="text-2xl lg:text-4xl mb-[2vh]">Reviews</h1>
                 <div className="flex gap-[5px] justify-center lg:justify-normal">
@@ -90,16 +129,11 @@ const ReviewsPage = () => {
                             </div>
                             <div className="xl:mr-[24vw] mr-[3vw]">
                                 <p className="font-normal">{new Date(review.dateAdded).toLocaleDateString()}</p>
-                                <p className="text-right">{review.userId}</p>
+                                <p className="text-right">{review.username || 'Loading...'}</p>
                             </div>
                         </div>
                         <h1 className="text-xl mb-[20px] mx-[0.1vw]">"{review.comment.split(': ')[0]}"</h1>
                         <p className="lg:mr-[26vw] font-medium mx-[3vw]">{review.comment.split(': ')[1]}</p>
-                        <div className="mt-[20px] font-medium text-sm flex">
-                            <p className="mr-[2px]">Was this review helpful?</p>
-                            <button className="mr-[2px]">Yes (1)</button>
-                            <button>No (0)</button>
-                        </div>
                     </div>
                 ))}
                 {!isAuthenticated && <p className="mt-[20px] text-red-600">Please log in to write a review</p>}

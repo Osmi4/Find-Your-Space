@@ -83,5 +83,10 @@ public class RatingServiceImpl implements RatingService {
                 .map(RatingMapper.INSTANCE::RatingToRatingResponse);
     }
 
+    @Override
+    public Double getAverageRatingBySpace(String spaceId) {
+        return ratingRepository.getAverageRatingBySpace(spaceId);
+    }
+
 
 }

@@ -17,4 +17,6 @@ public interface RatingService {
     void deleteRating(String id) throws AccessDeniedException;
 
     Page<RatingResponse> getRatingsByFilters(RatingFilter ratingFilter, Pageable pageable);
+
+    Double getAverageRatingBySpace(String spaceId);
 }

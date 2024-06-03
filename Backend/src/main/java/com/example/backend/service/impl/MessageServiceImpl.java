@@ -82,8 +82,12 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public Page<MessageResponse> getMessagesByUserId(String userId, Pageable pageable) {
-        Page<Message> messages = messageRepository.findByReceiver_UserIdOrderByMessageDateTimeAsc(userId , pageable);
-        return messageRepository.findByReceiver_UserIdOrderByMessageDateTimeAsc(userId, pageable).map(MessageMapper.INSTANCE::mapMessageToMessageResponse);
+        User me = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
+                () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName()));
+
+        Page<Message> messages = messageRepository.findByReceiver_UserIdOrderByMessageDateTimeAsc(userId , me.getUserId() , pageable);
+//        return messageRepository.findByReceiver_UserIdOrderByMessageDateTimeAsc(userId, pageable).map(MessageMapper.INSTANCE::mapMessageToMessageResponse);
+        return messages.map(MessageMapper.INSTANCE::mapMessageToMessageResponse);
     }
 
     @Override

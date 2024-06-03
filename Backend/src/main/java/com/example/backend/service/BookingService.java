@@ -9,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.nio.file.AccessDeniedException;
-import java.util.List;
 import java.util.Optional;
 
 public interface BookingService {
@@ -30,4 +29,6 @@ public interface BookingService {
     Page<BookingResponse> getSearchAllBookings(Optional<BookingFilter> filter, Pageable pageable);
 
     BookingResponse updateBookingStatus(Status status, String id) throws AccessDeniedException;
+
+    Page<BookingResponse> getBookingsForSpace(String spaceId, Pageable pageable);
 }

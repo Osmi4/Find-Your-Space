@@ -24,7 +24,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public String addPayment(PaymentRequest paymentRequest,String currency) throws StripeException {
         Booking booking = bookingRepository.findById(paymentRequest.getBookingId()).orElseThrow(() -> new RuntimeException("Booking not found"));
-        if(!booking.getStatus().equals(Status.PENDING)){
+        if(!booking.getStatus().equals(Status.ACCEPTED)){
             throw new RuntimeException("Booking is not pending");
         }
         if(booking.getCost() != paymentRequest.getAmount()){

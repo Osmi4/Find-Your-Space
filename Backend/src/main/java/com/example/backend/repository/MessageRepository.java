@@ -32,8 +32,8 @@ public interface MessageRepository extends JpaRepository<Message, String> {
     @Query("select m from Message m where m.receiver.userId = ?1")
     Page<Message> findByReceiver_UserId(String userId, Pageable pageable);
 
-    @Query("select m from Message m where m.receiver.userId = ?1 order by m.messageDateTime")
-    Page<Message> findByReceiver_UserIdOrderByMessageDateTimeAsc(String userId, Pageable pageable);
+    @Query("select m from Message m where( m.receiver.userId = ?1 OR m.receiver.userId=?2) order by m.messageDateTime desc")
+    Page<Message> findByReceiver_UserIdOrderByMessageDateTimeAsc(String userId, String me ,  Pageable pageable);
 
     @Transactional
     @Modifying

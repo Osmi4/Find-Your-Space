@@ -14,6 +14,11 @@ import AccountPage from "./pages/AccountPage";
 import MySpacesPage from "./pages/MySpacesPage";
 import CompleteProfile from "./pages/CompleteProfile";
 import SpaceEditPage from "./pages/SpaceEditPage";
+import MessagePersonPage from "./pages/MessagePersonPage";
+import MessagePage from "./pages/MessagePage";
+import ReportPage from "./pages/ReportPage";
+import MyReportsPage from "./pages/MyReportsPage";
+import BookingsForSpacePage from "./pages/BookingsForSpacePage";
 function App() {
   const navigate = useNavigate();
 
@@ -34,6 +39,11 @@ function App() {
             <Route path="/account" element={<AccountPage />}/>
             <Route path="/my_spaces" element={<MySpacesPage />}/>
             <Route path="/complete-profile" element={<CompleteProfile />} />
+            <Route path="/message" element={<MessagePage/>}/>
+            <Route path="/message/:id" element={<MessagePersonPage/>}/>
+            <Route path="report/:id"  element={<ReportPage/>}/>
+            <Route path="/my-reports" element={<MyReportsPage/>}/>
+            <Route path="/space/:spaceId/bookings" element={<BookingsForSpacePage />} />
           </Routes>
         </div>
         <></> 
