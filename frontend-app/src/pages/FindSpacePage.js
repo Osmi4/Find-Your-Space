@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Input, Button } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, Input, Button } from "@nextui-org/react";
 import axios from "axios";
 
 const FindSpacePage = () => {
@@ -177,6 +177,7 @@ const FindSpacePage = () => {
                     placeholder="Enter space location"
                     className="mb-2"
                 />
+                {/* <Button onClick={handleFilterSubmit} className="mt-4">Apply Filter</Button> */}
 
                 <p className="text-sm font-semibold my-2.5">Space Size Range (sq m)</p>
                 <Input
@@ -288,23 +289,34 @@ const FindSpacePage = () => {
                     </div>
                 </div>
 
-                {/* <Button onClick={handleFilterSubmit} className="mt-4">Apply Filters</Button> */}
             </div>
 
             <div>
-            <div className="flex w-[75vw] mt-12 gap-y-5 gap-x-3.5 flex-wrap">
+            {/* <div key={item.spaceId} className="w-72 bg-white rounded-lg shadow-md overflow-hidden">
+            </div> */}
+            <div className="flex w-[75vw] mt-12 gap-y-5 gap-x-4 flex-wrap">
                 {spaces.map(item => (
-                    <div key={item.spaceId} className="w-72 bg-white rounded-lg shadow-md overflow-hidden">
-                        <img src={item.imageUrl} alt={item.spaceName} className="w-full h-48 object-cover" />
+                        <Card key={item.spaceId} className="w-[15.75vw] bg-black" isPressable onPress={() => openSpacePage(item.spaceId)} >
+                            <CardHeader className="pb-0 pt-2 flex-col items-start">
+                            <p className="text-md text-white font-bold mb-0.25">{item.spaceLocation}</p>
+                            <div className="flex mb-0.5">
+                                <p className="text-sm text-white">{item.spaceSize} m<sup>2</sup></p>
+                                <p className="text-sm text-white ml-[160px]">${item.spacePrice}/mo</p>
+                            </div>     
+                            </CardHeader>
+                            <CardBody className="overflow-visible p-0">
+                            <img src={item.imageUrl} alt={item.spaceName} className="object-cover w-full" />
+                            </CardBody>
+                        </Card>
+                        /* <img src={item.imageUrl} alt={item.spaceName} className="w-full h-48 object-cover" />
                         <div className="p-4">
                             <h1 className="font-bold text-lg mb-2 hover:underline cursor-pointer" onClick={() => openSpacePage(item.spaceId)}>{item.spaceName}</h1>
                             <p className="text-sm text-gray-600 mb-2">{item.spaceLocation}</p>
                             <p className="text-sm text-gray-600 mb-2">Size: {item.spaceSize} sq ft</p>
                             <p className="text-sm text-gray-600 mb-2">Price: ${item.spacePrice}</p>
                             <Button onClick={() => openSpacePage(item.spaceId)} className="mt-2 bg-blue-500 text-white w-full">View Details</Button>
-                        </div>
-                    </div>
-                ))}
+                        </div> */
+                    ))}
             </div>
 
             <div className="flex justify-start w-full mt-6">
