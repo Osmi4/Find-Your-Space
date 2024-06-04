@@ -127,4 +127,11 @@ public class UserServiceImpl implements UserService {
                 () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName()));
         return user.getBankAccount();
     }
+
+    @Override
+    public String getRole() {
+        User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
+                () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName()));
+        return user.getRole().toString();
+    }
 }

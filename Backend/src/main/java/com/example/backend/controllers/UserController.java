@@ -65,4 +65,8 @@ public class UserController {
     public ResponseEntity<String> getBankAccount(){
         return ResponseEntity.ok(userService.getBankAccount());
     }
+    @GetMapping("/my-role")
+    public ResponseEntity<String> getRole(){
+        return ResponseEntity.ok(userService.getRole());
+    }
 }
