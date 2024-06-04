@@ -208,6 +208,8 @@ public class SpaceServiceImpl implements SpaceService {
         return spaceRepository.findByOwner_UserId(user.getUserId(), pageable).map(SpaceMapper.INSTANCE::spaceToSpaceResponse);
     }
 
+
+
     @Override
     public Boolean canDeleteSpace(String spaceId) {
         Optional<Space> spaceOpt = spaceRepository.findBySpaceId(spaceId);

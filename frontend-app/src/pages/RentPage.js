@@ -3,6 +3,10 @@ import { Input, Textarea, Button } from "@nextui-org/react";
 import { Select } from 'antd';
 import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
+import { ClipLoader } from 'react-spinners';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
 
 const RentPage = () => {
     const spaceTypes = [
@@ -18,7 +22,8 @@ const RentPage = () => {
         "OTHER"
     ];
 
-    const { isAuthenticated, user, loginWithRedirect } = useAuth0();
+    const { isAuthenticated, loginWithRedirect } = useAuth0();
+    const navigate = useNavigate();
 
     const [spaceInfo, setSpaceInfo] = useState({
         spaceName: '',
@@ -32,7 +37,7 @@ const RentPage = () => {
         images: []
     });
     const [imagePreviews, setImagePreviews] = useState([]);
-    const [spaceId, setSpaceId] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const mapSpaceType = (type) => {
         return type.replace(' ', '_');
@@ -69,6 +74,7 @@ const RentPage = () => {
 
     const handleSpaceSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
 
         const spaceData = {
             spaceName: spaceInfo.spaceName,
@@ -84,24 +90,28 @@ const RentPage = () => {
             try {
                 const response = await axios.post('http://localhost:8080/api/space', spaceData, {
                     headers: {
-                        Authorization: `Bearer ${token}` // Include the token in the headers
+                        Authorization: `Bearer ${token}`
                     }
                 });
 
                 if (response.status === 200) {
-                    setSpaceId(response.data.spaceId); // Assuming the response contains the space ID
-                    alert("Space information submitted successfully!");
-                    await uploadImages(response.data.spaceId);
+                    const spaceId = response.data.spaceId;
+                    toast.success("Space information submitted successfully!");
+                    await uploadImages(spaceId);
+                    setTimeout(() => {
+                        navigate('/my_spaces');
+                    }, 2000);
                 } else {
-                    alert("Failed to submit space information.");
+                    toast.error("Failed to submit space information.");
                 }
             } catch (error) {
                 console.error("Error submitting space information:", error);
-                alert("An error occurred while submitting the space information.");
+                toast.error("An error occurred while submitting the space information.");
             }
         } else {
-            loginWithRedirect(); // Redirect to login if not authenticated
+            loginWithRedirect();
         }
+        setLoading(false);
     };
 
     const uploadImages = async (spaceId) => {
@@ -115,23 +125,24 @@ const RentPage = () => {
             const response = await axios.post(`http://localhost:8080/api/space/${spaceId}/images`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${token}` // Include the token in the headers
+                    Authorization: `Bearer ${token}`
                 }
             });
 
             if (response.status === 200) {
-                alert("Images uploaded successfully!");
+                toast.success("Images uploaded successfully!");
             } else {
-                alert("Failed to upload images.");
+                toast.error("Failed to upload images.");
             }
         } catch (error) {
             console.error("Error uploading images:", error);
-            alert("An error occurred while uploading the images.");
+            toast.error("An error occurred while uploading the images.");
         }
     };
 
     return (
         <div className="flex justify-center items-center h-screen">
+            <ToastContainer />
             <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-3xl">
                 <h1 className="text-2xl sm:text-4xl font-semibold mb-[10px] text-center sm:mt-0 sm:mb-8">Rent your space</h1>
                 <p className='text-gray-700 font-bold text-sm text-center mb-[10px] sm:text-lg sm:text-left ml-[0.5vw]'>Please enter the details about your space below :</p>
@@ -252,10 +263,16 @@ const RentPage = () => {
                             </div>
                         ))}
                     </div>
-                    <Button color="primary" variant="bordered" type="submit"
-                            className="w-full h-12 text-lg font-semibold bg-black text-white">
-                        Submit Space Information
-                    </Button>
+                    {loading ? (
+                        <div className="flex justify-center items-center">
+                            <ClipLoader size={35} color={"#123abc"} loading={loading} />
+                        </div>
+                    ) : (
+                        <Button color="primary" variant="bordered" type="submit"
+                                className="w-full h-12 text-lg font-semibold bg-black text-white">
+                            Submit Space Information
+                        </Button>
+                    )}
                 </form>
             </div>
         </div>

@@ -64,6 +64,15 @@ public class ImageManagementServiceImpl implements ImageManagementService {
         return image.getImageUrl();
     }
 
+    @Override
+    public String getImageById(String spaceId) {
+        Image image = imageRepository.findBySpaceId(spaceId);
+        if(image == null) {
+            throw new ResourceNotFoundException("Image not found" , "spaceId", spaceId);
+        }
+        return image.getImageId();
+    }
+
     private File convertMultiPartToFile(MultipartFile multipartFile) throws IOException {
         Path tempDir = Files.createTempDirectory("temp_files");
         File tempFile = tempDir.resolve(Objects.requireNonNull(multipartFile.getOriginalFilename())).toFile();

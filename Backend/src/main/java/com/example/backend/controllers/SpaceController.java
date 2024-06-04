@@ -83,5 +83,9 @@ public class SpaceController {
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(spaceService.getAllMySpaces(pageable));
     }
+    @GetMapping("/{spaceId}/can-delete")
+    public ResponseEntity<Boolean> canDeleteSpace(@PathVariable String spaceId) {
+        return ResponseEntity.ok(spaceService.canDeleteSpace(spaceId));
+    }
 
 }

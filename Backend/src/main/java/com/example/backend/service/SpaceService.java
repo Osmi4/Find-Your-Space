@@ -38,4 +38,6 @@ SpaceResponse getSpace(String id) throws AccessDeniedException;
     SpaceBookedDates getBookedDates(String spaceId);
 
     Page<SpaceResponse> getAllMySpaces(Pageable pageable);
+
+    Boolean canDeleteSpace(String spaceId);
 }

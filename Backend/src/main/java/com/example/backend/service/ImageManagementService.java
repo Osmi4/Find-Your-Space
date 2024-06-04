@@ -11,4 +11,6 @@ public interface ImageManagementService {
     void deleteImage(String imageId) throws Exception;
 
     String getImage(String spaceId);
+
+    String getImageById(String spaceId);
 }

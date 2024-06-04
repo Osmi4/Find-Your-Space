@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button, Input, Textarea, Select, SelectItem } from '@nextui-org/react';
+import { Button, Input, Textarea } from '@nextui-org/react';
+import { ClipLoader } from 'react-spinners';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const SpaceEditPage = () => {
     const { spaceId } = useParams();
@@ -15,22 +18,33 @@ const SpaceEditPage = () => {
     });
     const [availability, setAvailability] = useState('NOT_RELEASED');
     const [loading, setLoading] = useState(true);
+    const [image, setImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState('');
+    const [currentImageId, setCurrentImageId] = useState(null);
 
     useEffect(() => {
         const fetchSpaceData = async () => {
             const token = localStorage.getItem('authToken');
             try {
-                const response = await axios.get(`http://localhost:8080/api/space/${spaceId}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const [spaceResponse, imageResponse] = await Promise.all([
+                    axios.get(`http://localhost:8080/api/space/${spaceId}`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    }),
+                    axios.get(`http://localhost:8080/api/space/${spaceId}/images`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    })
+                ]);
+
                 setSpaceData({
-                    spaceName: response.data.spaceName,
-                    spaceLocation: response.data.spaceLocation,
-                    spaceSize: response.data.spaceSize,
-                    spacePrice: response.data.spacePrice,
-                    spaceDescription: response.data.spaceDescription
+                    spaceName: spaceResponse.data.spaceName,
+                    spaceLocation: spaceResponse.data.spaceLocation,
+                    spaceSize: spaceResponse.data.spaceSize,
+                    spacePrice: spaceResponse.data.spacePrice,
+                    spaceDescription: spaceResponse.data.spaceDescription
                 });
-                setAvailability(response.data.availability);
+                setAvailability(spaceResponse.data.availability || 'NOT_RELEASED');
+                setImagePreview(imageResponse.data.url);  // Use url property for image preview
+                setCurrentImageId(imageResponse.data.id);  // Use id property for image ID
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching space data', error);
@@ -49,13 +63,14 @@ const SpaceEditPage = () => {
     const handleAvailabilityChange = async () => {
         const token = localStorage.getItem('authToken');
         try {
-            const response = await axios.put(`http://localhost:8080/api/space/${spaceId}/change_availability`, availability, {
+            const response = await axios.put(`http://localhost:8080/api/space/${spaceId}/change_availability`, availability , {
                 headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
             });
             setAvailability(response.data.availability);
-            alert('Availability changed successfully');
+            toast.success('Availability changed successfully');
         } catch (error) {
             console.error('Error changing availability', error);
+            toast.error('Error changing availability');
         }
     };
 
@@ -66,18 +81,61 @@ const SpaceEditPage = () => {
             await axios.put(`http://localhost:8080/api/space/${spaceId}`, spaceData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
+            toast.success('Space updated successfully');
+            if (image) {
+                await handleImageUpload(); // Call image upload function if there's an image to upload
+            }
             navigate('/my_spaces');
         } catch (error) {
             console.error('Error updating space', error);
+            toast.error('Error updating space');
+        }
+    };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        setImage(file);
+        setImagePreview(URL.createObjectURL(file));
+    };
+
+    const handleImageUpload = async () => {
+        const token = localStorage.getItem('authToken');
+        const formData = new FormData();
+        formData.append('image', image);
+
+        try {
+            const idToDelete = await axios.get(`http://localhost:8080/api/space/${spaceId}/images/getId`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (idToDelete.data) {
+                await axios.delete(`http://localhost:8080/api/space/${spaceId}/images/${idToDelete.data}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+            }
+
+            const response = await axios.post(`http://localhost:8080/api/space/${spaceId}/images`, formData, {
+                headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
+            });
+
+            setCurrentImageId(response.data.id);
+            toast.success('Image uploaded successfully');
+        } catch (error) {
+            console.error('Error uploading image', error);
+            toast.error('Error uploading image');
         }
     };
 
     if (loading) {
-        return <div>Loading...</div>;
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <ClipLoader size={35} color={"#123abc"} loading={loading} />
+            </div>
+        );
     }
 
     return (
         <div className="container mx-auto p-4">
+            <ToastContainer />
             <h1 className="text-2xl font-bold mb-4">Edit Space</h1>
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
@@ -136,28 +194,40 @@ const SpaceEditPage = () => {
                 </div>
                 <Button type="submit" className="text-white font-semibold" color="success">Save Changes</Button>
             </form>
-            <div className="mt-4 flex gap-[1vw]">
-                <Select
-                value={availability}
-                placeholder={availability[0].toUpperCase() + availability.slice(1).replace('_', ' ').toLowerCase()}
-                onChange={(e) => setAvailability(e.target.value)}
-                label="Change Availability"
-                className="max-w-xs"
+            <div className="mt-4 flex gap-4 items-center">
+                <label htmlFor="availability" className="block text-sm font-medium text-gray-700">Change
+                    Availability</label>
+                <select
+                    id="availability"
+                    name="availability"
+                    value={availability}
+                    onChange={(e) => setAvailability(e.target.value)}
+                    className="max-w-xs block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                 >
-                    <SelectItem value="NOT_RELEASED">
-                        Not released
-                    </SelectItem>
-                    <SelectItem value="AVAILABLE">
-                        Available
-                    </SelectItem>
-                    <SelectItem value="BLOCKED">
-                        Blocked
-                    </SelectItem>
-
-                </Select>
-                <Button onClick={handleAvailabilityChange} className="mt-2 font-semibold" color="primary">
+                    <option value="NOT_RELEASED">Not released</option>
+                    <option value="AVAILABLE">Available</option>
+                    <option value="BLOCKED">Blocked</option>
+                </select>
+                <Button onClick={handleAvailabilityChange} className="font-semibold" color="primary">
                     Change Availability
                 </Button>
+            </div>
+            <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700">Upload Image</label>
+                <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 mt-1"
+                />
+                {imagePreview && (
+                    <div className="mt-4 flex flex-col items-center">
+                        <img src={imagePreview} alt="Preview" className="w-1/2 h-auto rounded-md" />
+                        <Button onClick={handleImageUpload} className="mt-2 font-semibold" color="primary">
+                            Upload Image
+                        </Button>
+                    </div>
+                )}
             </div>
         </div>
     );

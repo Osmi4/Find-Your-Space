@@ -26,6 +26,10 @@ public class ImageController {
     public ResponseEntity<String> getImage(@PathVariable String spaceId) throws Exception {
         return ResponseEntity.ok(imageManagementService.getImage(spaceId));
     }
+    @GetMapping("/getId")
+    public ResponseEntity<String> getImageById(@PathVariable String spaceId) throws Exception {
+        return ResponseEntity.ok(imageManagementService.getImageById(spaceId));
+    }
 
     @DeleteMapping("/{imageId}")
     public ResponseEntity<Void> deleteImage(@PathVariable String imageId) throws Exception {

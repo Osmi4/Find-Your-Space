@@ -3,11 +3,14 @@ import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Button } from '@nextui-org/react';
 import { useNavigate } from 'react-router-dom';
+import { ClipLoader } from 'react-spinners';
+import {ToastContainer} from "react-toastify";
 
 const MessagesPage = () => {
     const { isAuthenticated } = useAuth0();
     const [messages, setMessages] = useState([]);
     const [uniqueSenders, setUniqueSenders] = useState([]);
+    const [loading, setLoading] = useState(true);  // State to manage loading spinner
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -32,8 +35,10 @@ const MessagesPage = () => {
 
                 const uniqueSenders = await Promise.all(uniqueSendersPromises);
                 setUniqueSenders(uniqueSenders);
+                setLoading(false);  // Set loading to false once data is fetched
             } catch (error) {
                 console.error("Error fetching messages:", error);
+                setLoading(false);  // Set loading to false even if there's an error
             }
         };
 
@@ -46,8 +51,17 @@ const MessagesPage = () => {
         navigate(`/message/${senderId}`);
     };
 
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <ClipLoader size={35} color={"#123abc"} loading={loading} />
+            </div>
+        );
+    }
+
     return (
         <div className="container mx-auto p-4">
+            <ToastContainer />
             <h1 className="text-2xl font-bold mb-4">My Messages</h1>
             {uniqueSenders.length === 0 ? (
                 <p>No messages</p>
