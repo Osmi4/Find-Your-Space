@@ -48,9 +48,9 @@ const MessagesPage = () => {
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">My Messages</h1>
+            <h1 className="text-2xl font-bold mb-4">Messages</h1>
             {uniqueSenders.length === 0 ? (
-                <p>No messages</p>
+                <h2>No messages yet.</h2>
             ) : (
                 <div className="grid grid-cols-1 gap-4">
                     {uniqueSenders.map(sender => (

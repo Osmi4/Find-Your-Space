@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button, Select } from '@nextui-org/react';
+import { Button, Select, Spinner } from '@nextui-org/react';
 
 const BookingPage = () => {
     const { bookingId } = useParams();
@@ -68,11 +68,14 @@ const BookingPage = () => {
     };
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div className='flex items-center justify-center h-[100vh]'><Spinner label="Loading..." color="primary" labelColor="primary" /></div>;
     }
 
     if (error) {
-        return <div>Error: {error}</div>;
+        return <div className='flex flex-col w-full h-[100vh] items-center'>
+        <h1 className='text-9xl font-bold'>404</h1>
+        <p className='text-gray-700'>Unfortunately page you are searching for was not found.This might happen due to your internet connection or this page does not exist.</p>
+    </div>;
     }
 
     if (!booking) {
