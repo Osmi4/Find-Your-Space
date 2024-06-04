@@ -3,6 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import { Input, Button, RadioGroup, Radio } from '@nextui-org/react';
+import { ClipLoader } from 'react-spinners';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ReportPage = () => {
     const { id } = useParams(); // ID is always space ID
@@ -15,6 +18,7 @@ const ReportPage = () => {
     });
     const [reportedEntity, setReportedEntity] = useState(null);
     const [ownerInfo, setOwnerInfo] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchEntityDetails = async () => {
@@ -35,8 +39,11 @@ const ReportPage = () => {
                         reportedId: spaceData.owner.userId
                     }));
                 }
+                setLoading(false);
             } catch (error) {
                 console.error("Error fetching entity details:", error);
+                toast.error("Error fetching entity details.");
+                setLoading(false);
             }
         };
 
@@ -81,22 +88,38 @@ const ReportPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
         const token = localStorage.getItem('authToken');
         try {
             const response = await axios.post('http://localhost:8080/api/report/', formData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             console.log('Report submitted:', response.data);
-            navigate('/');
+            toast.success('Report submitted successfully.');
+            setTimeout(() => {
+                navigate('/');
+            }, 2000);
         } catch (error) {
             console.error("Error submitting report:", error);
+            toast.error("Error submitting report. Please try again.");
+        } finally {
+            setLoading(false);
         }
     };
 
     if (!isAuthenticated) return <div>Please log in to submit a report.</div>;
 
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <ClipLoader size={35} color={"#123abc"} loading={loading} />
+            </div>
+        );
+    }
+
     return (
         <div className="container mx-auto p-4">
+            <ToastContainer />
             <h1 className="text-2xl font-bold mb-4">Report Page</h1>
             <div className="mb-4 p-4 bg-gray-100 rounded-lg">
                 <h2 className="text-xl font-semibold">Reported Entity Information</h2>
@@ -126,7 +149,9 @@ const ReportPage = () => {
                     onChange={handleChange}
                     fullWidth
                 />
-                <Button color="primary" type="submit" className="w-full text-lg py-2">Submit Report</Button>
+                <Button color="primary" type="submit" className="w-full text-lg py-2">
+                    Submit Report
+                </Button>
             </form>
         </div>
     );

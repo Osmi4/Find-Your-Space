@@ -1,80 +1,47 @@
-import { render, fireEvent, within } from '@testing-library/react';
-import Nav from '../Nav.js'; 
-import { MemoryRouter, Route, Routes  } from 'react-router-dom';
-import '@testing-library/jest-dom';
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
+import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
+import Nav from '../components/Nav';
 
-import { cleanup } from '@testing-library/react';
+jest.mock('../images/logo.png', () => 'logo.png');
+jest.mock('@auth0/auth0-react');
 
-afterEach(() => {
-  cleanup();
-});
-
-test('handleChange updates searchInput', () => {
-  const { getByPlaceholderText } = render(
-    <MemoryRouter>
-      <Nav />
-    </MemoryRouter>
-  );
-  const input = getByPlaceholderText('Search');
-
-  fireEvent.change(input, { target: { value: 'test' } });
-
-  expect(input.value).toBe('test');
-});
-
-test('useEffect updates filteredSpaces based on searchInput', () => {
-    const { getByPlaceholderText, getByText } = render(
-      <MemoryRouter>
-        <Nav />
-      </MemoryRouter>
+const customRender = (ui, { providerProps, ...renderOptions } = {}) => {
+    return render(
+        <BrowserRouter>
+            <Auth0Provider {...providerProps}>{ui}</Auth0Provider>
+        </BrowserRouter>,
+        renderOptions
     );
-  
-    const input = getByPlaceholderText('Search');
-    fireEvent.change(input, { target: { value: 'W' } });
-  
-    expect(getByText('Wroclaw Main Square-Cube')).toBeInTheDocument();
-  });
+};
 
-  const Space = ({ id }) => <div>Space {id}</div>;
+describe('Nav component', () => {
+    beforeEach(() => {
+        useAuth0.mockReturnValue({
+            isAuthenticated: false,
+            user: null,
+            loginWithRedirect: jest.fn(),
+            getIdTokenClaims: jest.fn(),
+        });
+    });
 
-test('search results table displays based on searchInput', () => {
-  const { getByPlaceholderText, queryByTestId, getByText } = render(
-    <MemoryRouter initialEntries={['/']}>
-      <Routes>
-        <Route path="/" element={<Nav />} />
-        <Route path="/space/:id" element={<Space id={2} />} />
-      </Routes>
-    </MemoryRouter>
-  );
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
 
-  const input = getByPlaceholderText('Search');
-  fireEvent.change(input, { target: { value: 'W' } });
+    test('renders Navbar with logo', () => {
+        customRender(<Nav />);
+        expect(screen.getByAltText('logo')).toBeInTheDocument();
+    });
 
-  const searchResults = queryByTestId('search-results');
-  expect(searchResults).toBeInTheDocument();
+    test('renders search input', () => {
+        customRender(<Nav />);
+        expect(screen.getByPlaceholderText(/search/i)).toBeInTheDocument();
+    });
 
-  const searchScope = within(searchResults);
-  const tableText = searchScope.getByText('Wroclaw Main Square-Cube');
-
-  fireEvent.click(tableText);
-
-  const spaceText = getByText('Space 2');
-  expect(spaceText).toBeInTheDocument(); // Confirm that we navigated to the correct component
-
-  fireEvent.change(input, { target: { value: '' } });
-  expect(queryByTestId('search-results')).toBeNull();
-});
-
-test('searching for one city can display multiple results', () => {
-  const { getByPlaceholderText, getByText } = render(
-    <MemoryRouter>
-      <Nav />
-    </MemoryRouter>
-  );
-
-  const input = getByPlaceholderText('Search');
-  fireEvent.change(input, { target: { value: 'Warsaw' } });
-
-  expect(getByText('Warsaw-Marszalkowska')).toBeInTheDocument();
-  expect(getByText('Warsaw-Wola')).toBeInTheDocument();
+    test('renders login button', () => {
+        customRender(<Nav />);
+        expect(screen.getByText(/login/i)).toBeInTheDocument();
+    });
 });

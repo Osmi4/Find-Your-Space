@@ -114,7 +114,7 @@ public class SpaceServiceImpl implements SpaceService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Space has bookings");
         }
         // delete all images
-        Page<Image> images = imageRepository.findBySpace_SpaceId(id);
+        List<Image> images = imageRepository.findBySpace_SpaceId(id);
         for (Image image : images) {
             imageRepository.deleteByImageId(image.getImageId());
         }

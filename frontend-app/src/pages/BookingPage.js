@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { ClipLoader } from 'react-spinners';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import PaymentForm from "../components/PaymentForm";
 
 const BookingPage = () => {
     const { bookingId } = useParams();
+    const navigate = useNavigate();
     const [booking, setBooking] = useState(null);
     const [space, setSpace] = useState(null);
     const [owner, setOwner] = useState(null);
@@ -33,16 +37,31 @@ const BookingPage = () => {
             } catch (error) {
                 console.error('Error fetching booking details:', error);
                 setLoading(false);
+                toast.error('Error fetching booking details');
             }
         };
 
         fetchBookingDetails();
     }, [bookingId]);
 
-    if (loading) return <div style={styles.loading}>Loading...</div>;
+    const handlePaymentSuccess = () => {
+        toast.success('Payment successful!');
+        setTimeout(() => {
+            navigate('/my-bookings');
+        }, 2000); // Adjust the delay as needed
+    };
+
+    if (loading) {
+        return (
+            <div style={styles.loading}>
+                <ClipLoader size={35} color={"#123abc"} loading={loading} />
+            </div>
+        );
+    }
 
     return (
         <div style={styles.container}>
+            <ToastContainer />
             <h1 style={styles.title}>Booking Details</h1>
             {booking && (
                 <div style={styles.card}>
@@ -76,7 +95,7 @@ const BookingPage = () => {
                 </div>
             )}
             {booking && booking.status === 'ACCEPTED' && (
-                <PaymentForm bookingId={booking.bookingId} amount={booking.cost} />
+                <PaymentForm bookingId={booking.bookingId} amount={booking.cost} onPaymentSuccess={handlePaymentSuccess} />
             )}
         </div>
     );

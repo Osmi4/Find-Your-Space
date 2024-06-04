@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { ClipLoader } from 'react-spinners';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const BookingsForSpacePage = () => {
     const { spaceId } = useParams();
@@ -29,6 +32,7 @@ const BookingsForSpacePage = () => {
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching data:', error);
+                toast.error('Error fetching data');
                 setLoading(false);
             }
         };
@@ -56,15 +60,22 @@ const BookingsForSpacePage = () => {
             setBookings(bookings.map(booking =>
                 booking.bookingId === bookingId ? { ...booking, status: response.data.status } : booking
             ));
+            toast.success('Status updated successfully');
         } catch (error) {
             console.error('Error updating status:', error);
+            toast.error('Error updating status');
         }
     };
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return (
+        <div className="flex justify-center items-center h-screen">
+            <ClipLoader size={35} color={"#123abc"} loading={loading} />
+        </div>
+    );
 
     return (
         <div className="container mx-auto p-4">
+            <ToastContainer />
             <h1 className="text-2xl font-bold mb-4">Bookings for Space</h1>
             {space && (
                 <div className="bg-gray-100 p-4 rounded-lg mb-4">
@@ -100,22 +111,6 @@ const BookingsForSpacePage = () => {
                                     </button>
                                 </div>
                             )}
-                            {/*{booking.status === 'ACCEPTED' && (*/}
-                            {/*    <div className="mt-2">*/}
-                            {/*        <button*/}
-                            {/*            onClick={() => handleStatusChange(booking.bookingId, 'COMPLETED')}*/}
-                            {/*            className="bg-blue-500 text-white px-4 py-2 rounded mr-2"*/}
-                            {/*        >*/}
-                            {/*            Complete*/}
-                            {/*        </button>*/}
-                            {/*        <button*/}
-                            {/*            onClick={() => handleStatusChange(booking.bookingId, 'CANCELLED')}*/}
-                            {/*            className="bg-red-500 text-white px-4 py-2 rounded"*/}
-                            {/*        >*/}
-                            {/*            Cancel*/}
-                            {/*        </button>*/}
-                            {/*    </div>*/}
-                            {/*)}*/}
                         </div>
                     ))}
                 </div>

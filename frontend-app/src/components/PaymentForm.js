@@ -2,12 +2,16 @@ import React, { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
 
 const stripePromise = loadStripe('pk_test_51P6JyDK9FeT1ROkk2JzoEa4G4qBbXmUtagpyHkfd66m1HOMzjIU1SG9SXK8x1vw5jYMjf28MNH1G6moOZWBH14kq00SZOdkcRL');
 
-const PaymentForm = ({ bookingId, amount }) => {
+const PaymentForm = ({ bookingId, amount, onPaymentSuccess }) => {
     const stripe = useStripe();
     const elements = useElements();
+    const navigate = useNavigate();
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -27,7 +31,6 @@ const PaymentForm = ({ bookingId, amount }) => {
                 setError(result.error.message);
                 setLoading(false);
             } else {
-                console.log(result);
                 const token = localStorage.getItem('authToken');
                 try {
                     const response = await axios.post('http://localhost:8080/api/payment/charge', {
@@ -42,7 +45,13 @@ const PaymentForm = ({ bookingId, amount }) => {
                     });
 
                     if (response.status === 200) {
-                        alert('Payment successful!');
+                        toast.success('Payment successful!');
+                        setTimeout(() => {
+                            navigate('/my-bookings');
+                        }, 2000); // Adjust the delay as needed
+                        if (onPaymentSuccess) {
+                            onPaymentSuccess();
+                        }
                     } else {
                         setError('Payment failed. Please try again.');
                     }
@@ -57,6 +66,7 @@ const PaymentForm = ({ bookingId, amount }) => {
 
     return (
         <form id="payment-form" style={styles.form} onSubmit={handleSubmit}>
+            <ToastContainer />
             <div style={styles.formGroup}>
                 <label htmlFor="card-element" style={styles.formLabel}>Credit or debit card</label>
                 <div id="card-element" style={styles.cardElement}>

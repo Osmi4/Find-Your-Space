@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalFooter, ModalBody, Button, useDisclosure, Textarea, Input } from "@nextui-org/react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
-const ReviewModal = ({reviews}) => {
+const ReviewModal = ({ spaceId, onReviewAdded }) => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
-    const { id } = useParams();
     const [rating, setRating] = useState("");
     const [title, setTitle] = useState("");
     const [comment, setComment] = useState("");
@@ -17,17 +17,18 @@ const ReviewModal = ({reviews}) => {
                 const response = await axios.post("http://localhost:8080/api/rating/", {
                     score: rating,
                     comment: `${title}: ${comment}`,
-                    spaceId: id
+                    spaceId: spaceId
                 }, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                reviews(prevReviews => [...prevReviews, response.data])
+                onReviewAdded(); // Call the callback to refetch reviews
                 if (response.status === 200) {
-                    // Handle successful submission
+                    toast.success('Review added successfully');
                     onOpenChange(false); // Close the modal
                 }
             } catch (error) {
                 console.error("Error submitting review:", error);
+                toast.error('Error adding review');
             }
         }
     };

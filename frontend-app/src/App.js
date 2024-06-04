@@ -34,7 +34,7 @@ function App() {
             <Route path="/find"  element={<FindSpacePage/>} />
             <Route path="space/:id"  element={<SpacePage/>} />
             <Route path="space/:id/reviews" element={<ReviewsPage/>} />
-            <Route path="space/:id/checkout/:days" element={<CheckoutPage/>} />
+            <Route path="/checkout/:id/:startDate/:endDate" element={<CheckoutPage />} />
             <Route path="/space/:spaceId/edit" element={<SpaceEditPage />} />
             <Route path="/rent" element={<RentPage/>} />
             <Route path="/about" element={<AboutPage/>} />

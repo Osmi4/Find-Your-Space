@@ -66,7 +66,8 @@ public class BookingServiceImpl implements BookingService {
         if(!space.getAvailability().equals(Availibility.AVAILABLE)){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Space not available");
         }
-        double price = space.getSpacePrice() * (addBookingRequest.getEndDateTime().getTime() - addBookingRequest.getStartDateTime().getTime()) / 1000 / 60 / 60;
+        double days = (addBookingRequest.getEndDateTime().getTime() - addBookingRequest.getStartDateTime().getTime()) / 1000 / 60 / 60 / 24;
+        double price = space.getSpacePrice() * days;
         //User client = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User client = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
                 () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName()));
