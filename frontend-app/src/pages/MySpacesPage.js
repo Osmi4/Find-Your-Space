@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Input, Button } from '@nextui-org/react';
+import { Input, Button, CardFooter, Card, CardHeader, CardBody } from '@nextui-org/react';
 
 const MySpacesPage = () => {
     const [spaces, setSpaces] = useState([]);
@@ -43,39 +43,6 @@ const MySpacesPage = () => {
         page: 0,
         size: 10
     });
-
-    // response = await axios.get("http://localhost:8080/api/space/my-spaces", {
-    //                     spaceType: [
-    //                         "OFFICE",
-    //                         "MEETING_ROOM",
-    //                         "EVENT_SPACE",
-    //                         "COWORKING_SPACE",
-    //                         "RETAIL_SPACE",
-    //                         "STORAGE_SPACE",
-    //                         "PARKING_SPACE",
-    //                         "WAREHOUSE",
-    //                         "INDUSTRIAL_SPACE",
-    //                         "OTHER"
-    //                     ],
-    //                     spaceName: '',
-    //                     spaceLocation: '',
-    //                     spaceSizeLowerBound: 0,
-    //                     spaceSizeUpperBound: 100000,
-    //                     spacePriceLowerBound: 0,
-    //                     spacePriceUpperBound: 100000,
-    //                     availability: [
-    //                         "NOT_RELEASED",
-    //                         "AVAILABLE",
-    //                         "BLOCKED"
-    //                     ],
-    //                     type: 'ASC',
-    //                     variable: 'PRICE',
-    //                     page: 0,
-    //                     size: 10},
-    //                  {
-    //                         headers: { Authorization: `Bearer ${token}` },
-    //                         params: { page: selectedFilters.page, size: selectedFilters.size }
-    //                     });
 
     useEffect(() => {
         const fetchSpaces = async () => {
@@ -230,7 +197,7 @@ const MySpacesPage = () => {
                     placeholder="Enter space name"
                     className="mb-2"
                 />
-
+                
                 <p className="text-sm font-semibold my-2.5">Space Location</p>
                 <Input
                     type="text"
@@ -350,28 +317,30 @@ const MySpacesPage = () => {
                         <label htmlFor="DESC" className="text-small">Descending</label>
                     </div>
                 </div>
-
-                {/* <Button onClick={handleFilterSubmit} className="mt-4">Apply Filters</Button> */}
             </div>
-            
             <div>
             <div className="flex w-[75vw] mt-12 gap-y-5 gap-x-3.5 flex-wrap">
                 {loading ? (
                     <p>Loading...</p>
                 ) : (
                     spaces.map(item => (
-                        <div key={item.spaceId} className="w-72 bg-white rounded-lg shadow-md overflow-hidden">
-                            <img src={item.imageUrl} alt={item.spaceName} className="w-full h-48 object-cover" />
-                            <div className="p-4">
-                                <h1 className="font-bold text-lg mb-2 hover:underline cursor-pointer" onClick={() => openSpacePage(item.spaceId)}>{item.spaceName}</h1>
-                                <p className="text-sm text-gray-600 mb-2">{item.spaceLocation}</p>
-                                <p className="text-sm text-gray-600 mb-2">Size: {item.spaceSize} sq ft</p>
-                                <p className="text-sm text-gray-600 mb-2">Price: ${item.spacePrice}</p>
-                                <Button onClick={() => openSpacePage(item.spaceId)} className="mt-2 bg-blue-500 text-white w-full">View Details</Button>
-                                <Button onClick={() => handleDelete(item.spaceId)} className="mt-2 bg-red-500 text-white w-full">Delete</Button>
-                                <Button onClick={() => viewBookings(item.spaceId)} className="mt-2 bg-green-500 text-white w-full">View Bookings</Button>
-                            </div>
-                        </div>
+                        <Card key={item.spaceId} className="w-[15.75vw] bg-black" isPressable onPress={() => openSpacePage(item.spaceId)} >
+                        <CardHeader className="pb-0 pt-2 flex-col items-start">
+                        <p className="text-md text-white font-bold mb-0.25">{item.spaceLocation}</p>
+                        <div className="flex mb-0.5">
+                            <p className="text-sm text-white">{item.spaceSize} m<sup>2</sup></p>
+                            <p className="text-sm text-white ml-[160px]">${item.spacePrice}/mo</p>
+                        </div>     
+                        </CardHeader>
+                        <CardBody className="overflow-visible p-0">
+                        <img src={item.imageUrl} alt={item.spaceName} className="object-cover w-full" />
+                        </CardBody>
+                        <CardFooter className="flex justify-between items-center p-2 gap-[5px]">
+                            <Button onClick={() => openSpacePage(item.spaceId)} className="mt-2 bg-blue-500 text-white w-full font-bold">View Details</Button>
+                            <Button onClick={() => handleDelete(item.spaceId)} className="mt-2 bg-red-500 text-white w-full font-bold">Delete</Button>
+                            <Button onClick={() => viewBookings(item.spaceId)} className="mt-2 bg-green-500 text-white w-full font-bold">Bookings</Button>
+                        </CardFooter>
+                        </Card>
                     ))
                 )}
             </div>
