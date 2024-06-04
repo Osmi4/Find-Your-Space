@@ -71,7 +71,7 @@ const CheckoutPage = () => {
     const totalPrice = Math.ceil(price * parseInt(days));
 
     return (
-        <div className="flex flex-col xl:flex-row xl:mt-[70px] xl:ml-[200px] mt-[4vh] p-4">
+        <div className="flex flex-col xl:flex-row xl:mt-[70px] xl:mx-[100px] mt-[4vh] p-4 gap-[5vw]">
             <Card className="mb-4 xl:mb-0 xl:w-1/2 p-4">
                 <h1 className="text-2xl xl:text-4xl font-semibold mb-4">Checkout</h1>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">

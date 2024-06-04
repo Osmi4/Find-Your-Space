@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button } from '@nextui-org/react';
+import { Button, Input, Textarea, Select, SelectItem } from '@nextui-org/react';
 
 const SpaceEditPage = () => {
     const { spaceId } = useParams();
@@ -53,6 +53,7 @@ const SpaceEditPage = () => {
                 headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
             });
             setAvailability(response.data.availability);
+            alert('Availability changed successfully');
         } catch (error) {
             console.error('Error changing availability', error);
         }
@@ -80,68 +81,81 @@ const SpaceEditPage = () => {
             <h1 className="text-2xl font-bold mb-4">Edit Space</h1>
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
-                    <label className="block text-gray-700">Space Name</label>
-                    <input
+                    <Input
+                        label="Space Name"
                         type="text"
                         name="spaceName"
                         value={spaceData.spaceName}
                         onChange={handleChange}
-                        className="w-full p-2 border border-gray-300 rounded mt-1"
+                        className="w-full rounded mt-1"
+                        variant='bordered'
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700">Space Location</label>
-                    <input
+                    <Input
+                        label="Space Location"
                         type="text"
                         name="spaceLocation"
                         value={spaceData.spaceLocation}
                         onChange={handleChange}
-                        className="w-full p-2 border border-gray-300 rounded mt-1"
+                        className="w-full rounded mt-1"
+                        variant='bordered'
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700">Space Size (sq m)</label>
-                    <input
+                    <Input
+                        label="Space Size in m²"
                         type="number"
                         name="spaceSize"
                         value={spaceData.spaceSize}
                         onChange={handleChange}
-                        className="w-full p-2 border border-gray-300 rounded mt-1"
+                        className="w-full rounded mt-1"
+                        variant='bordered'
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700">Space Price ($)</label>
-                    <input
+                    <Input
+                        label="Space Price in $"
                         type="number"
                         name="spacePrice"
                         value={spaceData.spacePrice}
                         onChange={handleChange}
-                        className="w-full p-2 border border-gray-300 rounded mt-1"
+                        className="w-full rounded mt-1"
+                        variant='bordered'
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700">Space Description</label>
-                    <textarea
+                    <Textarea
+                        label="Space Description"
                         name="spaceDescription"
                         value={spaceData.spaceDescription}
                         onChange={handleChange}
-                        className="w-full p-2 border border-gray-300 rounded mt-1"
+                        className="w-full rounded mt-1"
+                        variant='bordered'
                     />
                 </div>
-                <Button type="submit" className="bg-blue-500 text-white p-2 rounded">Save Changes</Button>
+                <Button type="submit" className="text-white font-semibold" color="success">Save Changes</Button>
             </form>
-            <div className="mt-4">
-                <h2 className="text-xl font-bold">Change Availability</h2>
-                <select
-                    value={availability}
-                    onChange={(e) => setAvailability(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded mt-1"
+            <div className="mt-4 flex gap-[1vw]">
+                <Select
+                value={availability}
+                placeholder={availability[0].toUpperCase() + availability.slice(1).replace('_', ' ').toLowerCase()}
+                onChange={(e) => setAvailability(e.target.value)}
+                label="Change Availability"
+                className="max-w-xs"
                 >
-                    <option value="NOT_RELEASED">Not Released</option>
-                    <option value="AVAILABLE">Available</option>
-                    <option value="BLOCKED">Blocked</option>
-                </select>
-                <Button onClick={handleAvailabilityChange} className="mt-2 bg-blue-500 text-white">
+                    <SelectItem value="NOT_RELEASED">
+                        Not released
+                    </SelectItem>
+                    <SelectItem value="AVAILABLE">
+                        Available
+                    </SelectItem>
+                    <SelectItem value="BLOCKED">
+                        Blocked
+                    </SelectItem>
+
+                </Select>
+                <Button onClick={handleAvailabilityChange} className="mt-2 font-semibold" color="primary">
                     Change Availability
                 </Button>
             </div>

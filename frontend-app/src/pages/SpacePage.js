@@ -75,32 +75,11 @@ const SpacePage = () => {
 
     return (
         <div className="2xl:flex 2xl:mt-[10vh] mt-[20px] gap-[100px]">
-            <div key={item.id} className="2xl:ml-[13vw] ml-[25vw]">
-                <img src={item.image} alt={item.spaceName} className="rounded-xl w-[50vw] 2xl:w-[34vw]"/>
-            </div>
-            <div className="mt-[20px]">
-                <h1 className="text-2xl 2xl:text-5xl font-semibold mb-[10px] text-center 2xl:w-[25vw]">{item.spaceName}</h1>
-                <p className="text-2xl 2xl:text-3xl mb-[20px] text-center">{item.spacePrice}$ / month</p>
-                <p className="2xl:w-[26vw] mx-[4vw] mb-[20px] 2xl:mx-0 text-left 2xl:text-center">{item.spaceDescription}</p>
-                <div className="mx-[6vw] flex justify-center">
-                    <RangeCalendar aria-label="Date (No Selection)" isDateUnavailable={isDateUnavailable}
-                                   onChange={calendarChangeHandler}/>
-                </div>
-                <div className="flex mt-[20px] gap-[20px] mx-[2vw] mb-[20px]">
-                    <Button color={numberOfDays === 0 ? "danger" : "primary"} type="submit"
-                            className="w-[200px] text-[16px] py-[21px] font-semibold"
-                            onClick={() => navigate(`checkout/${numberOfDays}`)} disabled={numberOfDays === 0}>
-                        Rent Now
-                    </Button>
-                    <Button color="primary" type="submit"
-                            className="w-[200px] text-[16px] py-[21px] font-semibold bg-black"
-                            onClick={() => navigate('reviews')}>
-                        Reviews
-                    </Button>
-                </div>
-                <div className="mt-[20px]">
+            <div key={item.id} className="2xl:ml-[13vw] flex flex-col items-center">
+                <img src={item.image} alt={item.spaceName} className="rounded-xl 2xl:w-[45vw] w-[80vw]"/>
+                <div className="mt-[2vh] flex flex-col text-center justify-center items-center gap-[1vh]">
                     <h2 className="text-xl font-semibold mb-[10px]">Owner Information</h2>
-                    <div className="flex items-center gap-[10px] cursor-pointer" onClick={handleOwnerClick}>
+                    <div className="flex items-center justify-center gap-[10px] cursor-pointer" onClick={handleOwnerClick}>
                         {item.owner.pictureUrl ? (
                             <img src={item.owner.pictureUrl} alt="Owner" className="w-[50px] h-[50px] rounded-full"/>
                         ) : (
@@ -112,13 +91,41 @@ const SpacePage = () => {
                             <p className="text-lg font-medium">{item.owner.firstName} {item.owner.lastName}</p>
                             <p className="text-sm text-gray-500">{item.owner.email}</p>
                         </div>
+                        
                     </div>
-                    <Button color="error" type="submit"
-                            className="mt-[10px] w-[200px] text-[16px] py-[21px] font-semibold"
-                            onClick={handleReportClick}>
-                        Report
+                    <div className='flex gap-[20px] mx-[2vw] my-[20px]'>
+                        <Button color="primary" type="submit" className='font-semibold mt-[10px] py-[21px] w-[190px] text-[16px]' onClick={handleOwnerClick}>Message</Button>
+                        <Button color="danger" type="submit"
+                                className="mt-[10px] w-[190px] text-[16px] py-[21px] font-semibold"
+                                onClick={handleReportClick}>
+                            Report
+                        </Button>
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <div className="mt-[20px]">
+                <h1 className="text-2xl 2xl:text-5xl font-semibold mb-[10px] text-center 2xl:w-[25vw]">{item.spaceName}</h1>
+                <p className="text-2xl 2xl:text-3xl mb-[20px] text-center">{item.spacePrice}$ / month</p>
+                <p className="2xl:w-[26vw] mx-[4vw] mb-[20px] 2xl:mx-0 text-left 2xl:text-center">{item.spaceDescription}</p>
+                <div className="mx-[6vw] flex justify-center">
+                    <RangeCalendar aria-label="Date (No Selection)" isDateUnavailable={isDateUnavailable}
+                                   onChange={calendarChangeHandler}/>
+                </div>
+                <div className="flex my-[20px] gap-[20px] mx-[2vw]">
+                    <Button color={numberOfDays === 0 ? "danger" : "primary"} type="submit"
+                            className="w-[200px] text-[16px] py-[21px] font-semibold"
+                            onClick={() => navigate(`checkout/${numberOfDays}`)} disabled={numberOfDays === 0}>
+                        Rent Now
+                    </Button>
+                    <Button color="primary" type="submit"
+                            className="w-[200px] text-[16px] py-[21px] font-semibold bg-black"
+                            onClick={() => navigate('reviews')}>
+                        Reviews
                     </Button>
                 </div>
+                
             </div>
         </div>
     );

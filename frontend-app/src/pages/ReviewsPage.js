@@ -55,7 +55,7 @@ const ReviewsPage = () => {
         };
 
         fetchReviews();
-    }, [spaceId]);
+    }, [spaceId,reviews]);
 
     const fetchUsernames = async (reviews) => {
         const token = localStorage.getItem('authToken');
@@ -119,7 +119,7 @@ const ReviewsPage = () => {
             <div className="lg:mt-[200px] mt-[4vh]">
                 {reviews.map(review => (
                     <div key={review.ratingId} className="mb-[50px]">
-                        <div className="flex gap-[5px] justify-between ml-[3vw] lg:ml-0">
+                        <div className="flex gap-[30px] justify-between ml-[3vw] lg:ml-0">
                             <div>
                                 {[...Array(5)].map((_, index) => (
                                     <span key={index} className="text-2xl">
@@ -128,7 +128,7 @@ const ReviewsPage = () => {
                                 ))}
                             </div>
                             <div className="xl:mr-[24vw] mr-[3vw]">
-                                <p className="font-normal">{new Date(review.dateAdded).toLocaleDateString()}</p>
+                                <p className="font-semibold">{new Date(review.dateAdded).toLocaleDateString()}</p>
                                 <p className="text-right">{review.username || 'Loading...'}</p>
                             </div>
                         </div>
@@ -137,7 +137,7 @@ const ReviewsPage = () => {
                     </div>
                 ))}
                 {!isAuthenticated && <p className="mt-[20px] text-red-600">Please log in to write a review</p>}
-                {isAuthenticated && <ReviewModal />}
+                {isAuthenticated && <ReviewModal reviews={setReviews}/>}
             </div>
         </div>
     );

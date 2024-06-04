@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Input, Button, CardFooter, Card, CardHeader, CardBody } from '@nextui-org/react';
+import { Input, Button, CardFooter, Card, CardHeader, CardBody, Divider } from '@nextui-org/react';
 
 const MySpacesPage = () => {
     const [spaces, setSpaces] = useState([]);
@@ -324,9 +324,10 @@ const MySpacesPage = () => {
                     <p>Loading...</p>
                 ) : (
                     spaces.map(item => (
-                        <Card key={item.spaceId} className="w-[15.75vw] bg-black" isPressable onPress={() => openSpacePage(item.spaceId)} >
-                        <CardHeader className="pb-0 pt-2 flex-col items-start">
-                        <p className="text-md text-white font-bold mb-0.25">{item.spaceLocation}</p>
+                        <Card key={item.spaceId} className="w-[15.75vw] bg-default-900" isPressable onPress={() => openSpacePage(item.spaceId)} >
+                        <CardHeader className="pb-0 pt-2 flex-col">
+                        <p className="text-sm text-white font-bold mb-0.25">{item.spaceLocation}</p>
+                        <hr className="text-default-700 w-[15.75vw] my-0.5"/>
                         <div className="flex mb-0.5">
                             <p className="text-sm text-white">{item.spaceSize} m<sup>2</sup></p>
                             <p className="text-sm text-white ml-[160px]">${item.spacePrice}/mo</p>
