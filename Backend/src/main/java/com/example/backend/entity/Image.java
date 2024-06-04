@@ -21,5 +21,6 @@ public class Image {
 
     @ManyToOne
     @JoinColumn(name = "space_id", nullable = false)
+    @ToString.Exclude
     private Space space;
 }

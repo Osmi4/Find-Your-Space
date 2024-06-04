@@ -50,6 +50,7 @@ public class Space {
     private Availibility availability;
 
     @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private List<Image> images;
 
     @ManyToOne
