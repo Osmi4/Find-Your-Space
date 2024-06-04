@@ -203,6 +203,16 @@ public class SpaceServiceImpl implements SpaceService {
         return spaceRepository.findByOwner_UserId(user.getUserId(), pageable).map(SpaceMapper.INSTANCE::spaceToSpaceResponse);
     }
 
+    @Override
+    public Boolean canDeleteSpace(String spaceId) {
+        Optional<Space> spaceOpt = spaceRepository.findBySpaceId(spaceId);
+        Space space = spaceOpt.orElse(null);
+        if (space == null) {
+            throw new ResourceNotFoundException("Space not found", "space", spaceId);
+        }
+        return space.getBookings().isEmpty();
+    }
+
     public Boolean checkAvailabilityForBooking(String spaceId, Date startDate, Date endDate) throws AccessDeniedException {
         Optional<Space> spaceOpt = spaceRepository.findBySpaceId(spaceId);
         Space space = spaceOpt.orElse(null);
