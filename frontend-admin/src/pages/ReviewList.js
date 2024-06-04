@@ -10,8 +10,6 @@ const ReviewList = () => {
     const [error, setError] = useState(null);
     const [spaceId, setSpaceId] = useState('');
     const [ownerId, setOwnerId] = useState('');
-    const [sortField, setSortField] = useState('dateAdded');
-    const [sortDirection, setSortDirection] = useState('DESC');
 
     const fetchReviews = useCallback(async () => {
         try {
@@ -21,7 +19,7 @@ const ReviewList = () => {
                 ownerId: ownerId || null
             }, {
                 headers: { Authorization: `Bearer ${token}` },
-                params: { page: 0, size: 10, sortField, sortDirection }
+                params: { page: 0, size: 10, sort: 'dateAdded,desc' }
             });
             setReviews(response.data.content); // Assuming the reviews are paginated and in the `content` field
             setLoading(false);
@@ -29,7 +27,7 @@ const ReviewList = () => {
             setError(error.message);
             setLoading(false);
         }
-    }, [spaceId, ownerId, sortField, sortDirection]);
+    }, [spaceId, ownerId]);
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -78,28 +76,6 @@ const ReviewList = () => {
                     value={ownerId}
                     onChange={e => setOwnerId(e.target.value)}
                 />
-            </div>
-            <div className="mb-4">
-                <label className="block text-gray-700">Sort By</label>
-                <select
-                    className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
-                    value={sortField}
-                    onChange={e => setSortField(e.target.value)}
-                >
-                    <option value="dateAdded">Date Added</option>
-                    <option value="score">Score</option>
-                </select>
-            </div>
-            <div className="mb-4">
-                <label className="block text-gray-700">Sort Direction</label>
-                <select
-                    className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
-                    value={sortDirection}
-                    onChange={e => setSortDirection(e.target.value)}
-                >
-                    <option value="ASC">Ascending</option>
-                    <option value="DESC">Descending</option>
-                </select>
             </div>
             <Button className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md" onClick={fetchReviews}>Apply Filters</Button>
             <div className="mt-6 overflow-x-auto">

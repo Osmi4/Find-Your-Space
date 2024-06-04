@@ -37,6 +37,7 @@ const Nav = () => {
             <NavbarContent className="lg:flex" justify="center">
                 <Link to="/">Home</Link>
                 <Link to="/reports">Reports</Link>
+                <Link to="/reviews">Reviews</Link>
                 {isAuthenticated ? (
                     <Button onClick={() => logout({ returnTo: window.location.origin })}>Logout</Button>
                 ) : (

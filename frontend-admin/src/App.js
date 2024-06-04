@@ -4,6 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 import Nav from "./components/Nav";
 import HomePage from "./pages/HomePage";
 import ReportList from "./pages/ReportList";
+import ReviewList from "./pages/ReviewList";
 
 function App() {
     return (
@@ -13,6 +14,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/reports" element={<ReportList />} />
+                    <Route path="/reviews" element={<ReviewList />} />
                 </Routes>
             </div>
         </NextUIProvider>
