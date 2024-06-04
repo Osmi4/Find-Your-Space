@@ -31,4 +31,6 @@ public interface BookingService {
     BookingResponse updateBookingStatus(Status status, String id) throws AccessDeniedException;
 
     Page<BookingResponse> getBookingsForSpace(String spaceId, Pageable pageable);
+
+    Page<BookingResponse> getAllBookings(Pageable pageable);
 }

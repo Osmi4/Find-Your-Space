@@ -42,7 +42,8 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserByUserId(id));
     }
 
-    @GetMapping("/")
+    //admin
+    @PostMapping("/search")
     public ResponseEntity<Page<UserResponse>> getUsers(@RequestBody UserFilter userFilter, @RequestParam(defaultValue = "0") int page,
                                                        @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -63,5 +64,9 @@ public class UserController {
     @GetMapping("/getMyBankAccount")
     public ResponseEntity<String> getBankAccount(){
         return ResponseEntity.ok(userService.getBankAccount());
+    }
+    @GetMapping("/my-role")
+    public ResponseEntity<String> getRole(){
+        return ResponseEntity.ok(userService.getRole());
     }
 }

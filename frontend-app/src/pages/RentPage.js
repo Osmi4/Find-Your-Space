@@ -228,12 +228,12 @@ const RentPage = () => {
                             name="images"
                             multiple
                             onChange={handleImageChange}
-                            className="hidden"
+                            className="hidden "
                             id="file-upload"
                         />
                         <label
                             htmlFor="file-upload"
-                            className="cursor-pointer px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                            className="cursor-pointer px-4 py-2 rounded-xl shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 active:bg-blue-500 active:scale-95"
                         >
                             Choose Images
                         </label>

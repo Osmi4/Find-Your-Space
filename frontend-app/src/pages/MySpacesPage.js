@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Input, Button } from '@nextui-org/react';
+import { Input, Button, CardFooter, Card, CardHeader, CardBody, Divider } from '@nextui-org/react';
 
 const MySpacesPage = () => {
     const [spaces, setSpaces] = useState([]);
@@ -34,9 +34,9 @@ const MySpacesPage = () => {
         spaceName: '',
         spaceLocation: '',
         spaceSizeLowerBound: 0,
-        spaceSizeUpperBound: Number.MAX_SAFE_INTEGER,
+        spaceSizeUpperBound: 100000,
         spacePriceLowerBound: 0,
-        spacePriceUpperBound: Number.MAX_SAFE_INTEGER,
+        spacePriceUpperBound: 100000,
         availability: [],
         type: 'ASC', // Default sorting type
         variable: 'PRICE', // Default sorting variable
@@ -50,13 +50,23 @@ const MySpacesPage = () => {
                 const token = localStorage.getItem('authToken');
                 if (!token) throw new Error("No auth token found");
 
-                const response = await axios.post('http://localhost:8080/api/space/my-spaces', selectedFilters, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    params: { page: selectedFilters.page, size: selectedFilters.size }
-                });
+                let response;
+
+                    if(selectedFilters.spaceType.length === 0 && selectedFilters.availability.length === 0) {
+                        response = await axios.get("http://localhost:8080/api/space/all-my-spaces", {
+                            headers: { Authorization: `Bearer ${token}` },
+                            params: { page: selectedFilters.page, size: selectedFilters.size }
+                        });
+                    } else {
+                        response = await axios.post('http://localhost:8080/api/space/my-spaces', selectedFilters, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        params: { page: selectedFilters.page, size: selectedFilters.size }
+                    });
+                    }
+
 
                 const spacesWithImages = await Promise.all(response.data.content.map(async space => {
                     if (space.spaceId) {
@@ -142,7 +152,7 @@ const MySpacesPage = () => {
 
     return (
         <div className="flex mt-10 gap-24 ml-24">
-            <div className="flex-col w-64 ml-10 mr-5 mt-10">
+            <div className="flex-col w-[20vw] ml-10 mr-5 mt-10">
                 <div className="flex gap-5">
                     <h1 className="text-xl font-semibold">Filters</h1>
                     <button onClick={() => setSelectedFilters({
@@ -160,7 +170,7 @@ const MySpacesPage = () => {
                         size: 10
                     })} className="text-xs text-gray-400 underline hover:text-gray-700">Clear Filters</button>
                 </div>
-                <p className="text-sm font-semibold my-2.5">Space Types</p>
+                <p className="text-sm font-semibold mt-2.5 mb-1.5">Space Types</p>
                 <div className="flex flex-col">
                     {filter.spaceTypes.map(spaceType => (
                         <div key={spaceType} className="mt-1">
@@ -173,7 +183,7 @@ const MySpacesPage = () => {
                                 onChange={handleCheckboxChange}
                                 className="mr-2"
                             />
-                            <label htmlFor={spaceType} className="text-small">{spaceType}</label>
+                            <label htmlFor={spaceType} className="text-small font-default text-gray-600">{spaceType[0].toUpperCase() + spaceType.slice(1).replace("_"," ").toLowerCase()}</label>
                         </div>
                     ))}
                 </div>
@@ -187,7 +197,7 @@ const MySpacesPage = () => {
                     placeholder="Enter space name"
                     className="mb-2"
                 />
-
+                
                 <p className="text-sm font-semibold my-2.5">Space Location</p>
                 <Input
                     type="text"
@@ -198,7 +208,7 @@ const MySpacesPage = () => {
                     className="mb-2"
                 />
 
-                <p className="text-sm font-semibold my-2.5">Space Size Range (sq ft)</p>
+                <p className="text-sm font-semibold my-2.5">Space Size Range (sq m)</p>
                 <Input
                     type="number"
                     name="spaceSizeLowerBound"
@@ -247,7 +257,7 @@ const MySpacesPage = () => {
                                 onChange={handleCheckboxChange}
                                 className="mr-2"
                             />
-                            <label htmlFor={avail} className="text-small">{avail}</label>
+                            <label htmlFor={avail} className="text-small text-gray-600">{avail[0].toUpperCase() + avail.slice(1).replace("_"," ").toLowerCase()}</label>
                         </div>
                     ))}
                 </div>
@@ -264,7 +274,7 @@ const MySpacesPage = () => {
                             onChange={handleInputChange}
                             className="mr-2"
                         />
-                        <label htmlFor="PRICE" className="text-small">Price</label>
+                        <label htmlFor="PRICE" className="text-small text-gray-600">Price</label>
                     </div>
                     <div>
                         <input
@@ -276,7 +286,7 @@ const MySpacesPage = () => {
                             onChange={handleInputChange}
                             className="mr-2"
                         />
-                        <label htmlFor="SIZE" className="text-small">Size</label>
+                        <label htmlFor="SIZE" className="text-small text-gray-600">Size</label>
                     </div>
                 </div>
 
@@ -307,46 +317,55 @@ const MySpacesPage = () => {
                         <label htmlFor="DESC" className="text-small">Descending</label>
                     </div>
                 </div>
-
-                <Button onClick={handleFilterSubmit} className="mt-4">Apply Filters</Button>
             </div>
-
-            <div className="flex w-full mt-12 gap-y-5 gap-x-3.5 flex-wrap">
+            <div>
+            <div className="flex w-[75vw] mt-12 gap-y-5 gap-x-3.5 flex-wrap">
                 {loading ? (
                     <p>Loading...</p>
                 ) : (
                     spaces.map(item => (
-                        <div key={item.spaceId} className="w-72 bg-white rounded-lg shadow-md overflow-hidden">
-                            <img src={item.imageUrl} alt={item.spaceName} className="w-full h-48 object-cover" />
-                            <div className="p-4">
-                                <h1 className="font-bold text-lg mb-2 hover:underline cursor-pointer" onClick={() => openSpacePage(item.spaceId)}>{item.spaceName}</h1>
-                                <p className="text-sm text-gray-600 mb-2">{item.spaceLocation}</p>
-                                <p className="text-sm text-gray-600 mb-2">Size: {item.spaceSize} sq ft</p>
-                                <p className="text-sm text-gray-600 mb-2">Price: ${item.spacePrice}</p>
-                                <Button onClick={() => openSpacePage(item.spaceId)} className="mt-2 bg-blue-500 text-white w-full">View Details</Button>
-                                <Button onClick={() => handleDelete(item.spaceId)} className="mt-2 bg-red-500 text-white w-full">Delete</Button>
-                                <Button onClick={() => viewBookings(item.spaceId)} className="mt-2 bg-green-500 text-white w-full">View Bookings</Button>
-                            </div>
-                        </div>
+                        <Card key={item.spaceId} className="w-[15.75vw] bg-default-900" isPressable onPress={() => openSpacePage(item.spaceId)} >
+                        <CardHeader className="pb-0 pt-2 flex-col">
+                        <p className="text-sm text-white font-bold mb-0.25">{item.spaceLocation}</p>
+                        <hr className="text-default-700 w-[15.75vw] my-0.5"/>
+                        <div className="flex mb-0.5">
+                            <p className="text-sm text-white">{item.spaceSize} m<sup>2</sup></p>
+                            <p className="text-sm text-white ml-[160px]">${item.spacePrice}/mo</p>
+                        </div>     
+                        </CardHeader>
+                        <CardBody className="overflow-visible p-0">
+                        <img src={item.imageUrl} alt={item.spaceName} className="object-cover w-full" />
+                        </CardBody>
+                        <CardFooter className="flex justify-between items-center p-2 gap-[5px]">
+                            <Button onClick={() => openSpacePage(item.spaceId)} className="mt-2 bg-blue-500 text-white w-full font-bold">View Details</Button>
+                            <Button onClick={() => handleDelete(item.spaceId)} className="mt-2 bg-red-500 text-white w-full font-bold">Delete</Button>
+                            <Button onClick={() => viewBookings(item.spaceId)} className="mt-2 bg-green-500 text-white w-full font-bold">Bookings</Button>
+                        </CardFooter>
+                        </Card>
                     ))
                 )}
             </div>
 
-            <div className="flex justify-center w-full mt-6">
+            <div className="flex justify-start w-full mt-6">
                 <Button
                     onClick={() => handlePageChange(Math.max(0, selectedFilters.page - 1))}
                     disabled={selectedFilters.page === 0}
-                    className="mx-1"
+                    className="mx-1 bg-black text-white"
+                    variant="bordered"
+                    color = "danger"
                 >
                     Previous
                 </Button>
                 <Button
                     onClick={() => handlePageChange(Math.min(totalPages - 1, selectedFilters.page + 1))}
                     disabled={selectedFilters.page === totalPages - 1}
-                    className="mx-1"
+                    className="mx-1 bg-black text-white"
+                    color="primary"
+                    variant="bordered"
                 >
                     Next
                 </Button>
+            </div>
             </div>
         </div>
     );

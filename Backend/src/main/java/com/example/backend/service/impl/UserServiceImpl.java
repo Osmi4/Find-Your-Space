@@ -109,6 +109,7 @@ public class UserServiceImpl implements UserService {
                 .firstName(registerDto.getFirstName())
                 .lastName(registerDto.getLastName())
                 .email(registerDto.getEmail())
+                .password(passwordEncoder.encode(registerDto.getPassword()))
                 .pictureUrl(registerDto.getPictureUrl())
                 .role(Role.USER)
                 .detailsConfigured(false)
@@ -125,5 +126,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
                 () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName()));
         return user.getBankAccount();
+    }
+
+    @Override
+    public String getRole() {
+        User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
+                () -> new ResourceNotFoundException("User not found!", "email", SecurityContextHolder.getContext().getAuthentication().getName()));
+        return user.getRole().toString();
     }
 }

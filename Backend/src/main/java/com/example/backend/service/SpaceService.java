@@ -36,4 +36,6 @@ SpaceResponse getSpace(String id) throws AccessDeniedException;
     Boolean checkAvailabilityForBooking(String spaceId , Date startDate , Date endDate) throws AccessDeniedException;
 
     SpaceBookedDates getBookedDates(String spaceId);
+
+    Page<SpaceResponse> getAllMySpaces(Pageable pageable);
 }

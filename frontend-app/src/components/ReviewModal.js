@@ -3,7 +3,7 @@ import { Modal, ModalContent, ModalHeader, ModalFooter, ModalBody, Button, useDi
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
-const ReviewModal = () => {
+const ReviewModal = ({reviews}) => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const { id } = useParams();
     const [rating, setRating] = useState("");
@@ -21,7 +21,7 @@ const ReviewModal = () => {
                 }, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-
+                reviews(prevReviews => [...prevReviews, response.data])
                 if (response.status === 200) {
                     // Handle successful submission
                     onOpenChange(false); // Close the modal
@@ -34,7 +34,7 @@ const ReviewModal = () => {
 
     return (
         <>
-            <Button onClick={onOpen} className="mb-[2vh] lg:mb-0">Write a Review</Button>
+            <Button onClick={onOpen} className="mb-[2vh] lg:mb-0 bg-black font-semibold" color="primary">Write a Review</Button>
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}

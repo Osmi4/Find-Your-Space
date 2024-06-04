@@ -74,7 +74,7 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
                         System.out.println(user);
                     } catch (Exception e) {
 
-                        RegisterDto registerDto = new RegisterDto(emailClaim, "","",givenName,familyName,picture);
+                        RegisterDto registerDto = new RegisterDto(emailClaim, "xd","",givenName,familyName,picture);
                         userService.registerWithoutDuplicateCheck(registerDto);
                     }
                     UserDetails userDetails = User.builder()
