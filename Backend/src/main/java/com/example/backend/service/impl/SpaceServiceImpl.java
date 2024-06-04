@@ -109,21 +109,13 @@ public class SpaceServiceImpl implements SpaceService {
         if (space == null) {
             throw new ResourceNotFoundException("Space not found", "space", id);
         }
-        if (!space.getOwner().getUserId().equals(Objects.requireNonNull(userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElse(null)).getUserId())) {
-            throw new UnauthorizedException("You are not the owner of this space");
-        }
+
         if (!space.getBookings().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Space has bookings");
         }
-        //int deleted = spaceRepository.deleteBySpaceId(id);
-        //int deleted = spaceRepository.deleteBySpaceId(id);
-        //spaceRepository.delete(space);
-        for (Image image : space.getImages()) {
-            imageRepository.delete(image);
-        }
 
         // Now delete the space
-        spaceRepository.delete(space);
+        spaceRepository.deleteBySpaceId(id);
         if (spaceRepository.findBySpaceId(id).isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "space not deleted");
         }
