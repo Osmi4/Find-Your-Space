@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
-import { Button } from '@nextui-org/react';
+import { Button, Input, Spinner } from '@nextui-org/react';
 
 const SpacePage = () => {
     const { spaceId } = useParams();
@@ -54,61 +54,40 @@ const SpacePage = () => {
     };
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div className='flex items-center justify-center h-[100vh]'><Spinner label="Loading..." color="primary" labelColor="primary" /></div>;
     }
 
     if (error) {
-        return <div>Error: {error}</div>;
+        return <div className='flex flex-col w-full h-[100vh] items-center'>
+                    <h1 className='text-9xl font-bold'>404</h1>
+                    <p className='text-gray-700'>Unfortunately page you are searching for was not found.This might happen due to your internet connection or this page does not exist.</p>
+                </div>;
     }
-
+    // Error: {error}
     return (
-        <div className="p-4">
+        <div className="p-4 2xl:ml-[10vw] 2xl:mt-[2vh]">
             <h1 className="text-2xl font-semibold mb-4">Space Details</h1>
             {space && (
-                <div>
-                    <div className="mb-4">
-                        <label className="block text-gray-700">Space ID</label>
-                        <p className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm">{space.spaceId}</p>
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-700">Name</label>
-                        <p className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm">{space.spaceName}</p>
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-700">Location</label>
-                        <p className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm">{space.spaceLocation}</p>
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-700">Description</label>
-                        <p className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm">{space.spaceDescription}</p>
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-700">Size</label>
-                        <p className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm">{space.spaceSize} sq ft</p>
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-700">Price</label>
-                        <p className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm">${space.spacePrice}</p>
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-700">Type</label>
-                        <p className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm">{space.spaceType}</p>
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-700">Availability</label>
-                        <p className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm">{space.availability}</p>
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-700">Date Added</label>
-                        <p className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm">{new Date(space.dateAdded).toLocaleDateString()}</p>
+                <div className='flex justify-between flex-col 2xl:flex-row'>
+                    <div className='2xl:w-[300px] w-full'>
+                        <Input label="Space ID" value={space.spaceId} isReadOnly variant="bordered" className="mb-4"/>
+                        <Input label="Name" value={space.spaceName} isReadOnly variant="bordered" className="mb-4"/>
+                        <Input label="Location" value={space.spaceLocation} isReadOnly variant="bordered" className="mb-4"/>
+                        <Input label="Description" value={space.spaceDescription} isReadOnly variant="bordered" className="mb-4"/>
+                        <Input label="Size" value={`${space.spaceSize} m2`} isReadOnly variant="bordered" className="mb-4"/>
+                        <Input label="Price" value={`$${space.spacePrice}`} isReadOnly variant="bordered" className="mb-4"/>
+                        <Input label="Type" value={space.spaceType} isReadOnly variant="bordered" className="mb-4"/>
+                        <Input label="Availability" value={space.availability} isReadOnly variant="bordered" className="mb-4"/>
+                        <Input label="Date Added" value={new Date(space.dateAdded).toLocaleDateString()} isReadOnly variant="bordered" className="mb-4"/>
+                        
                     </div>
                     {image && (
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Image</label>
-                            <img src={image} alt="Space" className="block w-full mt-1 border border-gray-300 rounded-md shadow-sm" />
+                        <div className="2xl:mr-[20vw] flex flex-col justify-center items-center">
+                            <img src={image} alt="Space" className="block 2xl:w-[40vw] w-[80vw] mx-[10vw] 2xl:mx-0 mt-1 border border-gray-300 rounded-md shadow-sm" />
+                            <Button className="bg-red-500 text-white px-4 py-2 rounded-md shadow-md mt-[2vh] 2xl:w-[10vw]" onClick={handleDelete}>Delete Space</Button>
                         </div>
                     )}
-                    <Button className="bg-red-500 text-white px-4 py-2 rounded-md shadow-md" onClick={handleDelete}>Delete Space</Button>
+                    
                 </div>
             )}
         </div>

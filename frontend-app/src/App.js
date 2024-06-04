@@ -50,7 +50,6 @@ function App() {
             <Route path="/booking/:bookingId" element={<BookingPage />} />
           </Routes>
         </div>
-        <></> 
     </NextUIProvider>
   );
 }
