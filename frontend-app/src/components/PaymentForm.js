@@ -22,47 +22,37 @@ const PaymentForm = ({ bookingId, amount }) => {
 
         const cardElement = elements.getElement(CardElement);
 
-        const { error, paymentMethod } = await stripe.createPaymentMethod({
-            type: 'card',
-            card: cardElement,
-        });
-
-        if (error) {
-            setError(error.message);
-            setLoading(false);
-            return;
-        }
-
-        const token = localStorage.getItem('authToken');
-        console.log('paymentMethod:', paymentMethod);
-        try {
-            const response = await axios.post('http://localhost:8080/api/payment/charge', {
-                token: paymentMethod.id,
-                amount: amount,
-                bookingId: bookingId,
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            const { clientSecret } = response.data;
-
-            const { error: confirmError, paymentIntent } = await stripe.confirmCardPayment(clientSecret);
-
-            if (confirmError) {
-                setError(confirmError.message);
-            } else if (paymentIntent.status === 'succeeded') {
-                alert('Payment successful!');
+        stripe.createToken(cardElement).then(async function (result) {
+            if (result.error) {
+                setError(result.error.message);
+                setLoading(false);
             } else {
-                setError('Payment failed. Please try again.');
-            }
-        } catch (error) {
-            setError('Payment failed. Please try again.');
-        }
+                console.log(result);
+                const token = localStorage.getItem('authToken');
+                try {
+                    const response = await axios.post('http://localhost:8080/api/payment/charge', {
+                        token: result.token.id,
+                        amount: amount,
+                        bookingId: bookingId,
+                    }, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
 
-        setLoading(false);
+                    if (response.status === 200) {
+                        alert('Payment successful!');
+                    } else {
+                        setError('Payment failed. Please try again.');
+                    }
+                } catch (error) {
+                    setError('Payment failed. Please try again.');
+                }
+
+                setLoading(false);
+            }
+        });
     };
 
     return (

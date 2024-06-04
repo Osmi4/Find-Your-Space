@@ -185,6 +185,7 @@ public class SpaceServiceImpl implements SpaceService {
 
     @Override
     public Page<SpaceResponse> getAllSpaces(Pageable pageable) {
+
         return spaceRepository.findAll(pageable).map(SpaceMapper.INSTANCE::spaceToSpaceResponse);
     }
 
@@ -199,6 +200,15 @@ public class SpaceServiceImpl implements SpaceService {
         SpaceBookedDates spaceBookedDates = new SpaceBookedDates();
         spaceBookedDates.setBookedDates(ObjectMapper.mapBookingsToBookedDates(bookings));
         return spaceBookedDates;
+    }
+
+    @Override
+    public Page<SpaceResponse> getAllMySpaces(Pageable pageable) {
+        User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElse(null);
+        if (user == null) {
+            throw new UnauthorizedException("You are not logged in");
+        }
+        return spaceRepository.findByOwner_UserId(user.getUserId(), pageable).map(SpaceMapper.INSTANCE::spaceToSpaceResponse);
     }
 
     public Boolean checkAvailabilityForBooking(String spaceId, Date startDate, Date endDate) throws AccessDeniedException {

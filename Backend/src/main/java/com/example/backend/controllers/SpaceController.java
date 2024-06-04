@@ -77,5 +77,11 @@ public class SpaceController {
     public ResponseEntity<SpaceBookedDates> getBookedDates(@PathVariable String spaceId){
         return ResponseEntity.ok(spaceService.getBookedDates(spaceId));
     }
+    @GetMapping("/all-my-spaces")
+    public ResponseEntity<Page<SpaceResponse>> getAllMySpaces(@RequestParam(defaultValue = "0") int page,
+                                                             @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(spaceService.getAllMySpaces(pageable));
+    }
 
 }

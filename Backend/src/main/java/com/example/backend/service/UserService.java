@@ -23,4 +23,6 @@ public interface UserService {
     UserResponse registerWithoutDuplicateCheck(RegisterDto registerDto);
 
     String getBankAccount();
+
+    String getRole();
 }

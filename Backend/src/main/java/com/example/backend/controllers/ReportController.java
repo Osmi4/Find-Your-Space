@@ -29,7 +29,7 @@ public class ReportController {
     public ResponseEntity<ReportResponse> addReport(@Valid @RequestBody AddReportRequest addReportRequest){
         return new ResponseEntity(reportService.addReport(addReportRequest), HttpStatus.CREATED);
     }
-    @GetMapping("/")
+    @PostMapping("/search")
     public ResponseEntity<Page<ReportResponse>> getReports(@RequestBody ReportFilter reportFilter, @RequestParam(defaultValue = "0") int page,
                                                            @RequestParam(defaultValue = "10") int size){
         Pageable pageable = PageRequest.of(page, size);
