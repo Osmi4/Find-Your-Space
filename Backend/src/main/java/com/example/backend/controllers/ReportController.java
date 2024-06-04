@@ -50,4 +50,10 @@ public class ReportController {
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(reportService.getMyReports(pageable));
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteReport(@PathVariable String id){
+        reportService.deleteReport(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

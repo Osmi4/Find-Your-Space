@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
-import {Button} from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
+import { Link } from 'react-router-dom';
 
 const ReviewList = () => {
     const { getIdTokenClaims, isAuthenticated, loginWithRedirect } = useAuth0();
@@ -99,7 +100,9 @@ const ReviewList = () => {
                             <td className="py-2 px-4 border-b border-gray-200">{review.comment}</td>
                             <td className="py-2 px-4 border-b border-gray-200">{new Date(review.dateAdded).toLocaleDateString()}</td>
                             <td className="py-2 px-4 border-b border-gray-200">{review.spaceId}</td>
-                            <td className="py-2 px-4 border-b border-gray-200">{review.userId}</td>
+                            <td className="py-2 px-4 border-b border-gray-200">
+                                <Link to={`/user/${review.userId}`}>{review.userId}</Link>
+                            </td>
                             <td className="py-2 px-4 border-b border-gray-200">
                                 <Button className="bg-red-500 text-white px-4 py-2 rounded-md shadow-md" onClick={() => handleDeleteReview(review.ratingId)}>Delete</Button>
                             </td>

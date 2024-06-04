@@ -77,6 +77,12 @@ public class ReportServiceImpl implements ReportService {
         return reportRepository.findReportsByReporter(user, pageable).map(this::mapReportToReportResponse);
     }
 
+    @Override
+    public void deleteReport(String id) {
+        Report report = reportRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Report not found"));
+        reportRepository.delete(report);
+    }
+
     public Report mapReportRequestToReport(AddReportRequest addReportRequest) {
         Report report = new Report();
         report.setReportType(addReportRequest.getReportType());

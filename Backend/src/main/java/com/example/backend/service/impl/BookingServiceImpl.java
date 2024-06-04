@@ -262,6 +262,12 @@ public class BookingServiceImpl implements BookingService {
         return bookings.map(BookingMapper.INSTANCE::bookingToBookingResponse);
     }
 
+    @Override
+    public Page<BookingResponse> getAllBookings(Pageable pageable) {
+        Page<Booking> bookings = bookingRepository.findAll(pageable);
+        return bookings.map(BookingMapper.INSTANCE::bookingToBookingResponse);
+    }
+
     Page<Booking> doFilter(BookingFilter bookingFilter, Optional<User> userOpt, Optional<Space> spaceOpt , Pageable pageable) {
         String clientId;
         if(userOpt.isPresent()){

@@ -1,51 +1,65 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
-import {Button} from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
+import { Link } from 'react-router-dom';
 
-const ReviewList = () => {
+const ReportList = () => {
     const { getIdTokenClaims, isAuthenticated, loginWithRedirect } = useAuth0();
-    const [reviews, setReviews] = useState([]);
+    const [reports, setReports] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [spaceId, setSpaceId] = useState('');
-    const [ownerId, setOwnerId] = useState('');
-    const [sortField, setSortField] = useState('dateAdded');
-    const [sortDirection, setSortDirection] = useState('DESC');
+    const [reportType, setReportType] = useState('');
+    const [reportStatus, setReportStatus] = useState('');
 
-    const fetchReviews = useCallback(async () => {
+    const fetchReports = useCallback(async () => {
         try {
             const token = localStorage.getItem('authToken');
-            const response = await axios.post('http://localhost:8080/api/rating/filter', {
-                spaceId: spaceId || null,
-                ownerId: ownerId || null
+            const response = await axios.post('http://localhost:8080/api/report/search', {
+                reportType: reportType || null,
+                reportStatus: reportStatus || null
             }, {
                 headers: { Authorization: `Bearer ${token}` },
-                params: { page: 0, size: 10, sortField, sortDirection }
+                params: { page: 0, size: 10 }
             });
-            setReviews(response.data.content); // Assuming the reviews are paginated and in the `content` field
+            setReports(response.data.content); // Assuming the reports are paginated and in the `content` field
             setLoading(false);
         } catch (error) {
             setError(error.message);
             setLoading(false);
         }
-    }, [spaceId, ownerId, sortField, sortDirection]);
+    }, [reportType, reportStatus]);
 
     useEffect(() => {
         if (!isAuthenticated) {
             loginWithRedirect();
         } else {
-            fetchReviews();
+            fetchReports();
         }
-    }, [isAuthenticated, getIdTokenClaims, loginWithRedirect, fetchReviews]);
+    }, [isAuthenticated, getIdTokenClaims, loginWithRedirect, fetchReports]);
 
-    const handleDeleteReview = async (reviewId) => {
+    const handleEditReport = async (reportId, newStatus) => {
         try {
             const token = localStorage.getItem('authToken');
-            await axios.delete(`http://localhost:8080/api/rating/${reviewId}`, {
+            const response = await axios.put('http://localhost:8080/api/report/', {
+                reportId: reportId,
+                reportStatus: newStatus
+            }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setReviews(reviews.filter(review => review.ratingId !== reviewId));
+            setReports(reports.map(report => report.reportId === reportId ? response.data : report));
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
+    const handleDeleteReport = async (reportId) => {
+        try {
+            const token = localStorage.getItem('authToken');
+            await axios.delete(`http://localhost:8080/api/report/${reportId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setReports(reports.filter(report => report.reportId !== reportId));
         } catch (error) {
             setError(error.message);
         }
@@ -62,70 +76,64 @@ const ReviewList = () => {
     return (
         <div className="p-4">
             <div className="mb-4">
-                <label className="block text-gray-700">Space ID</label>
-                <input
-                    type="text"
-                    className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
-                    value={spaceId}
-                    onChange={e => setSpaceId(e.target.value)}
-                />
-            </div>
-            <div className="mb-4">
-                <label className="block text-gray-700">Owner ID</label>
-                <input
-                    type="text"
-                    className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
-                    value={ownerId}
-                    onChange={e => setOwnerId(e.target.value)}
-                />
-            </div>
-            <div className="mb-4">
-                <label className="block text-gray-700">Sort By</label>
+                <label className="block text-gray-700">Report Type</label>
                 <select
                     className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
-                    value={sortField}
-                    onChange={e => setSortField(e.target.value)}
+                    value={reportType}
+                    onChange={e => setReportType(e.target.value)}
                 >
-                    <option value="dateAdded">Date Added</option>
-                    <option value="score">Score</option>
+                    <option value="">All</option>
+                    <option value="USER">User</option>
+                    <option value="SPACE">Space</option>
                 </select>
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Sort Direction</label>
+                <label className="block text-gray-700">Report Status</label>
                 <select
                     className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
-                    value={sortDirection}
-                    onChange={e => setSortDirection(e.target.value)}
+                    value={reportStatus}
+                    onChange={e => setReportStatus(e.target.value)}
                 >
-                    <option value="ASC">Ascending</option>
-                    <option value="DESC">Descending</option>
+                    <option value="">All</option>
+                    <option value="PENDING">Pending</option>
+                    <option value="SOLVED">Solved</option>
+                    <option value="REJECTED">Rejected</option>
                 </select>
             </div>
-            <Button className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md" onClick={fetchReviews}>Apply Filters</Button>
+            <Button className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md" onClick={fetchReports}>Apply Filters</Button>
             <div className="mt-6 overflow-x-auto">
                 <table className="min-w-full bg-white">
                     <thead>
                     <tr>
-                        <th className="py-2 px-4 border-b border-gray-200">Rating ID</th>
-                        <th className="py-2 px-4 border-b border-gray-200">Score</th>
-                        <th className="py-2 px-4 border-b border-gray-200">Comment</th>
-                        <th className="py-2 px-4 border-b border-gray-200">Date Added</th>
-                        <th className="py-2 px-4 border-b border-gray-200">Space ID</th>
-                        <th className="py-2 px-4 border-b border-gray-200">User ID</th>
+                        <th className="py-2 px-4 border-b border-gray-200">Report ID</th>
+                        <th className="py-2 px-4 border-b border-gray-200">Type</th>
+                        <th className="py-2 px-4 border-b border-gray-200">Status</th>
+                        <th className="py-2 px-4 border-b border-gray-200">Content</th>
+                        <th className="py-2 px-4 border-b border-gray-200">Reporter</th>
+                        <th className="py-2 px-4 border-b border-gray-200">Reported Entity</th>
                         <th className="py-2 px-4 border-b border-gray-200">Action</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {reviews.map(review => (
-                        <tr key={review.ratingId}>
-                            <td className="py-2 px-4 border-b border-gray-200">{review.ratingId}</td>
-                            <td className="py-2 px-4 border-b border-gray-200">{review.score}</td>
-                            <td className="py-2 px-4 border-b border-gray-200">{review.comment}</td>
-                            <td className="py-2 px-4 border-b border-gray-200">{new Date(review.dateAdded).toLocaleDateString()}</td>
-                            <td className="py-2 px-4 border-b border-gray-200">{review.spaceId}</td>
-                            <td className="py-2 px-4 border-b border-gray-200">{review.userId}</td>
+                    {reports.map(report => (
+                        <tr key={report.reportId}>
+                            <td className="py-2 px-4 border-b border-gray-200">{report.reportId}</td>
+                            <td className="py-2 px-4 border-b border-gray-200">{report.reportType}</td>
+                            <td className="py-2 px-4 border-b border-gray-200">{report.reportStatus}</td>
+                            <td className="py-2 px-4 border-b border-gray-200">{report.reportContent}</td>
                             <td className="py-2 px-4 border-b border-gray-200">
-                                <Button className="bg-red-500 text-white px-4 py-2 rounded-md shadow-md" onClick={() => handleDeleteReview(review.ratingId)}>Delete</Button>
+                                <Link to={`/user/${report.reporter.userId}`}>{report.reporter.userId}</Link>
+                            </td>
+                            <td className="py-2 px-4 border-b border-gray-200">
+                                {report.reportedUser ? (
+                                    <Link to={`/user/${report.reportedUser.userId}`}>{report.reportedUser.userId}</Link>
+                                ) : (
+                                    <Link to={`/user/${report.reportedSpace.owner.userId}`}>{report.reportedSpace.owner.userId}</Link>
+                                )}
+                            </td>
+                            <td className="py-2 px-4 border-b border-gray-200">
+                                <Button className="bg-green-500 text-white px-4 py-2 rounded-md shadow-md" onClick={() => handleEditReport(report.reportId, 'SOLVED')}>Mark as Solved</Button>
+                                <Button className="bg-red-500 text-white px-4 py-2 rounded-md shadow-md ml-2" onClick={() => handleDeleteReport(report.reportId)}>Delete</Button>
                             </td>
                         </tr>
                     ))}
@@ -136,4 +144,4 @@ const ReviewList = () => {
     );
 };
 
-export default ReviewList;
+export default ReportList;

@@ -38,6 +38,10 @@ const Nav = () => {
                 <Link to="/">Home</Link>
                 <Link to="/reports">Reports</Link>
                 <Link to="/reviews">Reviews</Link>
+                <Link to="/users">Users</Link>
+                <Link to="/spaces">Spaces</Link>
+                <Link to="/bookings">Bookings</Link>
+                <Link to="/message">Messages</Link>
                 {isAuthenticated ? (
                     <Button onClick={() => logout({ returnTo: window.location.origin })}>Logout</Button>
                 ) : (

@@ -19,4 +19,6 @@ public interface ReportService {
     ReportResponse updateReport(UpdateReportRequest updateReportRequest);
 
     Page<ReportResponse> getMyReports(Pageable pageable);
+
+    void deleteReport(String id);
 }

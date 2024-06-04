@@ -43,7 +43,7 @@ public class UserController {
     }
 
     //admin
-    @GetMapping("/")
+    @PostMapping("/search")
     public ResponseEntity<Page<UserResponse>> getUsers(@RequestBody UserFilter userFilter, @RequestParam(defaultValue = "0") int page,
                                                        @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
