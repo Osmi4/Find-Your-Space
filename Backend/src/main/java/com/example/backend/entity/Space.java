@@ -51,7 +51,7 @@ public class Space {
 
     @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private List<Image> images;
+    private List<Image> images = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
