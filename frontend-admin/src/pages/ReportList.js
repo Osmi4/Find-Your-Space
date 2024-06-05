@@ -135,7 +135,7 @@ const ReportList = () => {
                                 )}
                             </td>
                             <td className="py-2 px-4 border-b border-gray-200">
-                                <Button className="bg-green-500 text-white px-4 py-2 rounded-md shadow-md" onClick={() => handleEditReport(report.reportId, 'SOLVED')}>Mark as Solved</Button>
+                                <Button className="bg-green-500 text-white px-4 py-2 rounded-md shadow-md mb-2" onClick={() => handleEditReport(report.reportId, 'SOLVED')}>Mark as Solved</Button>
                                 <Button className="bg-red-500 text-white px-4 py-2 rounded-md shadow-md ml-2" onClick={() => handleDeleteReport(report.reportId)}>Delete</Button>
                             </td>
                         </tr>
