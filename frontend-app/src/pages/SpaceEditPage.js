@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button, Input, Textarea } from '@nextui-org/react';
+import { Button, Input, Textarea, Select, SelectItem } from '@nextui-org/react';
 import { ClipLoader } from 'react-spinners';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -22,29 +22,46 @@ const SpaceEditPage = () => {
     const [imagePreview, setImagePreview] = useState('');
     const [currentImageId, setCurrentImageId] = useState(null);
 
+    const fetchImage = async (spaceId, token) => {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/space/${spaceId}/images`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching image:', error);
+            return null;
+        }
+    };
+
     useEffect(() => {
         const fetchSpaceData = async () => {
             const token = localStorage.getItem('authToken');
             try {
-                const [spaceResponse, imageResponse] = await Promise.all([
-                    axios.get(`http://localhost:8080/api/space/${spaceId}`, {
-                        headers: { Authorization: `Bearer ${token}` }
-                    }),
-                    axios.get(`http://localhost:8080/api/space/${spaceId}/images`, {
-                        headers: { Authorization: `Bearer ${token}` }
-                    })
-                ]);
+                const response = await axios.get(`http://localhost:8080/api/space/${spaceId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                let spaceData = response.data;
+                const imageUrl = await fetchImage(spaceData.spaceId, token);
+                spaceData.image = imageUrl.image;
+                spaceData.imageId = imageUrl.id;
 
                 setSpaceData({
-                    spaceName: spaceResponse.data.spaceName,
-                    spaceLocation: spaceResponse.data.spaceLocation,
-                    spaceSize: spaceResponse.data.spaceSize,
-                    spacePrice: spaceResponse.data.spacePrice,
-                    spaceDescription: spaceResponse.data.spaceDescription
+                    spaceName: spaceData.spaceName,
+                    spaceLocation: spaceData.spaceLocation,
+                    spaceSize: spaceData.spaceSize,
+                    spacePrice: spaceData.spacePrice,
+                    spaceDescription: spaceData.spaceDescription
                 });
-                setAvailability(spaceResponse.data.availability || 'NOT_RELEASED');
-                setImagePreview(imageResponse.data.url);  // Use url property for image preview
-                setCurrentImageId(imageResponse.data.id);  // Use id property for image ID
+                setAvailability(spaceData.availability || 'NOT_RELEASED');
+                setImagePreview(spaceData.image);  // Use url property for image preview
+                setCurrentImageId(spaceData.imageId);  // Use id property for image ID
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching space data', error);
@@ -195,19 +212,25 @@ const SpaceEditPage = () => {
                 <Button type="submit" className="text-white font-semibold" color="success">Save Changes</Button>
             </form>
             <div className="mt-4 flex gap-4 items-center">
-                <label htmlFor="availability" className="block text-sm font-medium text-gray-700">Change
-                    Availability</label>
-                <select
-                    id="availability"
-                    name="availability"
-                    value={availability}
-                    onChange={(e) => setAvailability(e.target.value)}
-                    className="max-w-xs block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                <Select
+                id="availability"
+                name="availability"
+                value={availability}
+                label="Availability"
+                placeholder={availability[0].toUpperCase() + availability.slice(1).replace('_', ' ').toLowerCase()}
+                onChange={(e) => setAvailability(e.target.value)}
+                className="max-w-xs"
                 >
-                    <option value="NOT_RELEASED">Not released</option>
-                    <option value="AVAILABLE">Available</option>
-                    <option value="BLOCKED">Blocked</option>
-                </select>
+                    <SelectItem key="NOT_RELEASED" value="NOT_RELEASED">
+                        Not released
+                    </SelectItem>
+                    <SelectItem key="AVAILABLE" value="AVAILABLE">
+                        Available
+                    </SelectItem>
+                    <SelectItem key="BLOCKED" value="BLOCKED">
+                        Blocked
+                    </SelectItem>
+                </Select>
                 <Button onClick={handleAvailabilityChange} className="font-semibold" color="primary">
                     Change Availability
                 </Button>

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Pagination, Button } from "@nextui-org/react";
 
 const BookingsForSpacePage = () => {
     const { spaceId } = useParams();
@@ -115,22 +116,26 @@ const BookingsForSpacePage = () => {
                     ))}
                 </div>
             )}
-            <div className="flex justify-center mt-6">
-                <button
+            {
+                totalPages >= 1 && (
+            <div className="flex justify-between mt-6">
+                <Button
                     onClick={() => handlePageChange(Math.max(0, currentPage - 1))}
-                    disabled={currentPage === 0}
-                    className="mx-1 px-4 py-2 bg-gray-300 rounded"
+                    disabled={currentPage === 0 || totalPages === 1}
+                    className="bg-black text-white"
                 >
                     Previous
-                </button>
-                <button
+                </Button>
+                <Pagination total={totalPages} page={currentPage + 1} onChange={(page) => handlePageChange(page - 1)} color="default" variant="bordered" />
+                <Button
                     onClick={() => handlePageChange(Math.min(totalPages - 1, currentPage + 1))}
-                    disabled={currentPage === totalPages - 1}
-                    className="mx-1 px-4 py-2 bg-gray-300 rounded"
+                    disabled={currentPage === totalPages - 1 || totalPages === 1}
+                    className="bg-black text-white"
                 >
                     Next
-                </button>
-            </div>
+                </Button>
+            </div>  )
+            }
         </div>
     );
 };

@@ -41,8 +41,9 @@ const MyReportsPage = () => {
         <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">My Reports</h1>
             {reports.length === 0 ? (
-                <p>No reports found</p>
+                <p className='text-lg'>No reports found.</p>
             ) : (
+                <>
                 <div className="grid grid-cols-1 gap-4">
                     {reports.map(report => (
                         <div key={report.reportId} className="bg-white p-4 rounded-lg shadow-md">
@@ -65,14 +66,16 @@ const MyReportsPage = () => {
                         </div>
                     ))}
                 </div>
-            )}
-            <div className="flex justify-center mt-4">
+                <div className="flex justify-center mt-4">
                 <Pagination
                     total={totalPages}
                     initialPage={currentPage + 1}
                     onChange={(page) => handlePageChange(page - 1)}
                 />
             </div>
+            </>
+            )}
+            
         </div>
     );
 };

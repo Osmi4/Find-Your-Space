@@ -35,7 +35,7 @@ const ReviewModal = ({ spaceId, onReviewAdded }) => {
 
     return (
         <>
-            <Button onClick={onOpen} className="mb-[2vh] lg:mb-0 bg-black font-semibold" color="primary">Write a Review</Button>
+            <Button onClick={onOpen} className="mb-[2vh] lg:mb-0 bg-black font-semibold lg:w-[150px]" color="primary">Write a Review</Button>
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}

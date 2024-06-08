@@ -6,7 +6,7 @@ import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { Card } from '@nextui-org/react';
+import { Card, Button, Pagination } from '@nextui-org/react';
 
 const ReviewsPage = () => {
     const { id } = useParams();
@@ -122,8 +122,10 @@ const ReviewsPage = () => {
     return (
         <div className="flex flex-col lg:flex-row font-semibold items-center text-center lg:items-start lg:text-left">
             <ToastContainer />
+            
+            <div className="lg:ml-[200px] lg:mt-[70px] lg:mr-[150px] mt-[4vh] flex flex-col items-center">
             {spaceDetails && (
-                <Card className="lg:ml-[200px] lg:mt-[70px] lg:mr-[150px] mt-[4vh] p-6 bg-gray-100 rounded-lg shadow-lg">
+                <Card className="mt-[4vh] lg:mt-0 p-6 bg-gray-100 rounded-lg shadow-lg mx-[1vw] lg:mx-0">
                     <h1 className="text-2xl lg:text-4xl mb-[2vh]">{spaceDetails.spaceName}</h1>
                     <p className="text-lg">{spaceDetails.spaceDescription}</p>
                     <p className="mt-4"><strong>Location:</strong> {spaceDetails.spaceLocation}</p>
@@ -133,9 +135,10 @@ const ReviewsPage = () => {
                     <p className="mt-2"><strong>Date Added:</strong> {new Date(spaceDetails.dateAdded).toLocaleDateString()}</p>
                     <p className="mt-2"><strong>Date Updated:</strong> {new Date(spaceDetails.dateUpdated).toLocaleDateString()}</p>
                 </Card>
-            )}
-            <div className="lg:ml-[200px] lg:mt-[70px] lg:mr-[150px] mt-[4vh]">
-                <h1 className="text-2xl lg:text-4xl mb-[2vh]">Reviews</h1>
+            )}          
+            </div>
+            <div className="lg:mt-[20px] mt-[4vh] flex flex-col items-center">
+            <h1 className="text-2xl lg:text-4xl mb-[2vh] mt-[2vh]">Reviews</h1>
                 <div className="flex gap-[5px] justify-center lg:justify-normal">
                     {[...Array(5)].map((_, index) => (
                         <span key={index} className="lg:text-4xl text-2xl">
@@ -145,15 +148,13 @@ const ReviewsPage = () => {
                 </div>
                 <p className="text-lg lg:text-2xl my-[2vh]">{reviews.length} reviews</p>
                 {[5, 4, 3, 2, 1].map(star => (
-                    <div key={star} className="flex items-center justify-center lg:justify-normal mb-[10px] w-[250px] text-sm lg:text-md">
+                    <div key={star} className="flex items-center justify-center mb-[10px] w-[250px] text-sm lg:text-md">
                         <p>{star} stars</p>
                         <hr className="border-black w-[100px] mx-[10px]" />
                         <p>({ratingsCount[star]})</p>
                     </div>
                 ))}
-            </div>
-            <hr className="border-black w-[90vw] text-center mt-[2vh] lg:hidden" />
-            <div className="lg:mt-[200px] mt-[4vh]">
+                <hr className="border-black w-[90vw] text-center mt-[2vh] lg:hidden" />
                 {reviews.map(review => (
                     <div key={review.ratingId} className="mb-[50px]">
                         <div className="flex gap-[30px] justify-between ml-[3vw] lg:ml-0">
@@ -164,7 +165,7 @@ const ReviewsPage = () => {
                                     </span>
                                 ))}
                             </div>
-                            <div className="xl:mr-[24vw] mr-[3vw]">
+                            <div className="xl:mr-0 mr-[3vw]">
                                 <p className="font-semibold">{new Date(review.dateAdded).toLocaleDateString()}</p>
                                 <p className="text-right">{review.username || 'Loading...'}</p>
                             </div>
@@ -174,24 +175,29 @@ const ReviewsPage = () => {
                     </div>
                 ))}
                 {!isAuthenticated && <p className="mt-[20px] text-red-600">Please log in to write a review</p>}
-                {isAuthenticated && <ReviewModal spaceId={id} onReviewAdded={handleReviewAdded} />}
+                {isAuthenticated && <ReviewModal spaceId={id} onReviewAdded={handleReviewAdded}/>}
+                {
+                totalPages >= 1 && (
+                <div className="flex justify-between mt-6 lg:w-[250px]">
+                    <Button
+                        onClick={() => handlePageChange(Math.max(0, currentPage - 1))}
+                        disabled={currentPage === 0 || totalPages === 1}
+                        className="bg-black text-white"
+                    >
+                        Previous
+                    </Button>
+                    <Pagination total={totalPages} page={currentPage + 1} onChange={(page) => handlePageChange(page - 1)} color="default" variant="bordered" />
+                    <Button
+                        onClick={() => handlePageChange(Math.min(totalPages - 1, currentPage + 1))}
+                        disabled={currentPage === totalPages - 1 || totalPages === 1}
+                        className="bg-black text-white"
+                    >
+                        Next
+                    </Button>
+                </div>  )
+                }
             </div>
-            <div className="flex justify-center mt-6">
-                <button
-                    onClick={() => handlePageChange(Math.max(0, currentPage - 1))}
-                    disabled={currentPage === 0}
-                    className="mx-1 px-4 py-2 bg-gray-300 rounded"
-                >
-                    Previous
-                </button>
-                <button
-                    onClick={() => handlePageChange(Math.min(totalPages - 1, currentPage + 1))}
-                    disabled={currentPage === totalPages - 1}
-                    className="mx-1 px-4 py-2 bg-gray-300 rounded"
-                >
-                    Next
-                </button>
-            </div>
+            
         </div>
     );
 };

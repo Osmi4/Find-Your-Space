@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, CardHeader, CardBody, Input, Button, Divider } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, Input, Button, Divider, Pagination } from "@nextui-org/react";
 import axios from "axios";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -115,10 +115,10 @@ const FindSpacePage = () => {
     };
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto p-4 lg:mt-[4vh]">
             <ToastContainer />
-            <div className="flex flex-col lg:flex-row gap-4">
-                <div className="w-full lg:w-1/4">
+            <div className="flex flex-col lg:flex-row gap-x-[60px]">
+                <div className="w-full lg:w-1/6">
                     <div className="flex justify-between items-center mb-4">
                         <h1 className="text-xl font-semibold">Filters</h1>
                         <button onClick={() => setSelectedFilters({
@@ -309,6 +309,7 @@ const FindSpacePage = () => {
                             {spaces.length === 0 ? (
                                 <p>No spaces match the current filters.</p>
                             ) : (
+                                <>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                     {spaces.map(item => (
                                         <Card key={item.spaceId} className="w-full bg-default-900" isPressable onPress={() => openSpacePage(item.spaceId)}>
@@ -327,26 +328,27 @@ const FindSpacePage = () => {
                                         </Card>
                                     ))}
                                 </div>
+                            <div className="flex justify-between mt-6">
+                                <Button
+                                    onClick={() => handlePageChange(Math.max(0, selectedFilters.page - 1))}
+                                    disabled={selectedFilters.page === 0 || totalPages === 1}
+                                    className="bg-black text-white"
+                                >
+                                    Previous
+                                </Button>
+                                <Pagination total={totalPages} page={selectedFilters.page + 1} onChange={(page) => handlePageChange(page - 1)} color="default" variant="bordered" />
+                                <Button
+                                    onClick={() => handlePageChange(Math.min(totalPages - 1, selectedFilters.page + 1))}
+                                    disabled={selectedFilters.page === totalPages - 1 || totalPages === 1}
+                                    className="bg-black text-white"
+                                >
+                                    Next
+                                </Button>
+                            </div>  
+                            </>
                             )}
                         </>
                     )}
-                    <div className="flex justify-between mt-6">
-                        <Button
-                            onClick={() => handlePageChange(Math.max(0, selectedFilters.page - 1))}
-                            disabled={selectedFilters.page === 0}
-                            className="bg-black text-white"
-                        >
-                            Previous
-                        </Button>
-                        <span className="text-sm text-gray-600">Page {selectedFilters.page + 1} of {totalPages}</span>
-                        <Button
-                            onClick={() => handlePageChange(Math.min(totalPages - 1, selectedFilters.page + 1))}
-                            disabled={selectedFilters.page === totalPages - 1}
-                            className="bg-black text-white"
-                        >
-                            Next
-                        </Button>
-                    </div>
                 </div>
             </div>
         </div>

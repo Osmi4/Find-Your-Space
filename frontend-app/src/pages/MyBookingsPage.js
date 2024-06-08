@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
-
+import { Pagination, Button } from "@nextui-org/react";
 const MyBookingsPage = () => {
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -83,24 +83,27 @@ const MyBookingsPage = () => {
                         </div>
                     ))}
                 </div>
-            )}
-            <div className="flex justify-center mt-6">
-                <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 0}
-                    className="mx-1 px-4 py-2 bg-gray-300 rounded"
+            )}{
+                totalPages >= 1 && (
+            <div className="flex justify-between mt-6">
+                <Button
+                    onClick={() => handlePageChange(Math.max(0, currentPage - 1))}
+                    disabled={currentPage === 0 || totalPages === 1}
+                    className="bg-black text-white"
                 >
                     Previous
-                </button>
-                <span className="mx-2 px-4 py-2">{`Page ${currentPage + 1} of ${totalPages}`}</span>
-                <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages - 1}
-                    className="mx-1 px-4 py-2 bg-gray-300 rounded"
+                </Button>
+                <Pagination total={totalPages} page={currentPage + 1} onChange={(page) => handlePageChange(page - 1)} color="default" variant="bordered" />
+                <Button
+                    onClick={() => handlePageChange(Math.min(totalPages - 1, currentPage + 1))}
+                    disabled={currentPage === totalPages - 1 || totalPages === 1}
+                    className="bg-black text-white"
                 >
                     Next
-                </button>
-            </div>
+                </Button>
+            </div>  )
+            }
+            
         </div>
     );
 };
