@@ -25,7 +25,7 @@ const BookingListPage = () => {
             setTotalPages(response.data.totalPages);
             setLoading(false);
         } catch (error) {
-            setError(error.message);
+            setError("Unfortunately, an error occurred while trying to load the list of bookings. Please try again later.");
             setLoading(false);
         }
     }, [page, size]);
@@ -53,7 +53,7 @@ const BookingListPage = () => {
     if (error) {
         return <div className='flex flex-col w-full h-[100vh] items-center'>
         <h1 className='text-9xl font-bold'>404</h1>
-        <p className='text-gray-700'>Unfortunately page you are searching for was not found.This might happen due to your internet connection or this page does not exist.</p>
+        <p className='text-gray-700'>{error}</p>
     </div>;
     }
 

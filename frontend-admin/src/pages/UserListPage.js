@@ -64,7 +64,7 @@ const UserListPage = () => {
     if (error) {
         return <div className='flex flex-col w-full h-[100vh] items-center'>
         <h1 className='text-9xl font-bold'>404</h1>
-        <p className='text-gray-700'>Unfortunately page you are searching for was not found.This might happen due to your internet connection or this page does not exist.</p>
+        <p className='text-gray-700'>Unfortunately, there was an error loading the user list. Please try again later.</p>
     </div>;
     }
 

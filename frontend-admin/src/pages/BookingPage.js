@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Select, Spinner } from '@nextui-org/react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const BookingPage = () => {
     const { bookingId } = useParams();
@@ -31,7 +33,7 @@ const BookingPage = () => {
                 setStatus(response.data.status);
                 setLoading(false);
             } catch (error) {
-                setError(error.message);
+                setError("Unfortunately there was an error when trying to load the booking information. Please try again later.");
                 setLoading(false);
             }
         };
@@ -51,7 +53,8 @@ const BookingPage = () => {
             });
             setBooking(response.data);
         } catch (error) {
-            setError(error.message);
+            // setError("Unfortunately there was an error when trying to update the booking status. Please try again later.");
+            toast.error("Unfortunately there was an error when trying to update the booking status. Please try again later.");
         }
     };
 
@@ -63,7 +66,8 @@ const BookingPage = () => {
             });
             navigate('/bookings');
         } catch (error) {
-            setError(error.message);
+            // setError("Unfortunately there was an error when trying to delete the booking. Please try again later.");
+            toast.error("Unfortunately there was an error when trying to delete the booking. Please try again later.");
         }
     };
 
@@ -74,7 +78,7 @@ const BookingPage = () => {
     if (error) {
         return <div className='flex flex-col w-full h-[100vh] items-center'>
         <h1 className='text-9xl font-bold'>404</h1>
-        <p className='text-gray-700'>Unfortunately page you are searching for was not found.This might happen due to your internet connection or this page does not exist.</p>
+        <p className='text-gray-700'>{error}</p>
     </div>;
     }
 
@@ -84,6 +88,7 @@ const BookingPage = () => {
 
     return (
         <div className="p-4">
+            <ToastContainer />
             <h1 className="text-2xl font-semibold mb-4">Booking Details</h1>
             <div className="mb-4">
                 <label className="block text-gray-700">Booking ID</label>

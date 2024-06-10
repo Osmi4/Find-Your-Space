@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Input, Button } from '@nextui-org/react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const MessagePersonPage = () => {
     const { id } = useParams();
@@ -35,7 +37,7 @@ const MessagePersonPage = () => {
                     messageDestinationEmail: recipientResponse.data.email,
                 }));
             } catch (error) {
-                console.error("Error fetching data:", error);
+                toast.error("An error occurred while trying to load messages. Please try again later.");
             }
         };
 
@@ -60,7 +62,7 @@ const MessagePersonPage = () => {
             setMessages((prevMessages) => [...prevMessages, response.data]);
             setFormData({ ...formData, messageContent: '' });
         } catch (error) {
-            console.error("Error sending message:", error);
+            toast.error("An error occurred while trying to send the message. Please try again later.");
         }
     };
 
@@ -68,6 +70,7 @@ const MessagePersonPage = () => {
 
     return (
         <div className="container mx-auto p-4">
+            <ToastContainer />
             <h1 className="text-2xl font-bold mb-4">Send a New Message</h1>
             {recipient && (
                 <div className="mb-4 p-4 bg-gray-100 rounded-lg">

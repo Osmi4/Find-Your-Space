@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Button, Spinner } from "@nextui-org/react";
 import { Link } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ReviewList = () => {
     const { getIdTokenClaims, isAuthenticated, loginWithRedirect } = useAuth0();
@@ -25,7 +27,7 @@ const ReviewList = () => {
             setReviews(response.data.content); // Assuming the reviews are paginated and in the `content` field
             setLoading(false);
         } catch (error) {
-            setError(error.message);
+            setError("Unfortunately, an error occurred while trying to load the list of reviews. Please try again later.");
             setLoading(false);
         }
     }, [spaceId, ownerId]);
@@ -46,7 +48,8 @@ const ReviewList = () => {
             });
             setReviews(reviews.filter(review => review.ratingId !== reviewId));
         } catch (error) {
-            setError(error.message);
+            //setError("Unfortunately, an error occurred while deleting the review. Please try again later.");
+            toast.error("Unfortunately, an error occurred while deleting the review. Please try again later.");
         }
     };
 
@@ -57,12 +60,13 @@ const ReviewList = () => {
     if (error) {
         return <div className='flex flex-col w-full h-[100vh] items-center'>
         <h1 className='text-9xl font-bold'>404</h1>
-        <p className='text-gray-700'>Unfortunately page you are searching for was not found.This might happen due to your internet connection or this page does not exist.</p>
+        <p className='text-gray-700'>{error}</p>
     </div>;
     }
 
     return (
         <div className="p-4">
+            <ToastContainer />
             <div className="mb-4">
                 <label className="block text-gray-700">Space ID</label>
                 <input

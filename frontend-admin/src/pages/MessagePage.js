@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Button } from '@nextui-org/react';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const MessagesPage = () => {
     const { isAuthenticated } = useAuth0();
@@ -33,7 +35,7 @@ const MessagesPage = () => {
                 const uniqueSenders = await Promise.all(uniqueSendersPromises);
                 setUniqueSenders(uniqueSenders);
             } catch (error) {
-                console.error("Error fetching messages:", error);
+                toast.error("An error occurred while trying to load messages. Please try again later.");
             }
         };
 
@@ -48,6 +50,7 @@ const MessagesPage = () => {
 
     return (
         <div className="container mx-auto p-4">
+            <ToastContainer />
             <h1 className="text-2xl font-bold mb-4">Messages</h1>
             {uniqueSenders.length === 0 ? (
                 <h2>No messages yet.</h2>

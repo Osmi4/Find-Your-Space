@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Button, Input, Spinner } from '@nextui-org/react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const SpacePage = () => {
     const { spaceId } = useParams();
@@ -29,7 +31,7 @@ const SpacePage = () => {
                 setImage(imageResponse.data);
                 setLoading(false);
             } catch (error) {
-                setError(error.message);
+                setError("Unfortunately there was an error when trying to load the space information. Please try again later.");
                 setLoading(false);
             }
         };
@@ -49,7 +51,8 @@ const SpacePage = () => {
             });
             navigate('/spaces');
         } catch (error) {
-            setError(error.message);
+            //setError("Unfortunately there was an error when trying to delete the space. Please try again later.");
+            toast.error("Unfortunately there was an error when trying to delete the space. Please try again later.");
         }
     };
 
@@ -59,13 +62,14 @@ const SpacePage = () => {
 
     if (error) {
         return <div className='flex flex-col w-full h-[100vh] items-center'>
-                    <h1 className='text-9xl font-bold'>404</h1>
-                    <p className='text-gray-700'>Unfortunately page you are searching for was not found.This might happen due to your internet connection or this page does not exist.</p>
-                </div>;
+            <h1 className='text-9xl font-bold'>404</h1>
+            <p className='text-gray-700'>{error}</p>
+        </div>;
     }
-    // Error: {error}
+
     return (
         <div className="p-4 2xl:ml-[10vw] 2xl:mt-[2vh]">
+            <ToastContainer />
             <h1 className="text-2xl font-semibold mb-4">Space Details</h1>
             {space && (
                 <div className='flex justify-between flex-col 2xl:flex-row'>
