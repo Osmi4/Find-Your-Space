@@ -127,8 +127,8 @@ const BookingPage = () => {
             </div>
             <Button className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md mb-4" onClick={handleUpdateStatus}>Update
                 Status</Button>
-            {/*<Button className="bg-red-500 text-white px-4 py-2 rounded-md shadow-md mb-4" onClick={handleDeleteBooking}>Delete*/}
-            {/*    Booking</Button>*/}
+            <Button className="bg-red-500 text-white px-4 py-2 rounded-md shadow-md mb-4" onClick={handleDeleteBooking}>Delete
+                Booking</Button>
         </div>
     );
 };
