@@ -112,20 +112,23 @@ const BookingPage = () => {
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Status</label>
-                <Select
+                <select
+                    id="status"
                     name="status"
-                    placeholder="Select status"
+                    className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                     value={status}
-                    onChange={(value) => setStatus(value)}
+                    onChange={(e) => setStatus(e.target.value)}
                     fullWidth
                 >
-                    {statusOptions.map((status) => (
-                        <Select.Option key={status} value={status}>{status}</Select.Option>
+                    {statusOptions.map((option) => (
+                        <option key={option} value={option}>{option}</option>
                     ))}
-                </Select>
+                </select>
             </div>
-            <Button className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md mb-4" onClick={handleUpdateStatus}>Update Status</Button>
-            <Button className="bg-red-500 text-white px-4 py-2 rounded-md shadow-md mb-4" onClick={handleDeleteBooking}>Delete Booking</Button>
+            <Button className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md mb-4" onClick={handleUpdateStatus}>Update
+                Status</Button>
+            {/*<Button className="bg-red-500 text-white px-4 py-2 rounded-md shadow-md mb-4" onClick={handleDeleteBooking}>Delete*/}
+            {/*    Booking</Button>*/}
         </div>
     );
 };

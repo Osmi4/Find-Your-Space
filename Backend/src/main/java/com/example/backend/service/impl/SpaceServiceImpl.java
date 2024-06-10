@@ -9,6 +9,7 @@ import com.example.backend.entity.User;
 import com.example.backend.enums.Availibility;
 import com.example.backend.enums.PermissionType;
 import com.example.backend.enums.SortType;
+import com.example.backend.enums.Status;
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.exception.UnauthorizedException;
 import com.example.backend.mapper.ObjectMapper;
@@ -135,8 +136,13 @@ public class SpaceServiceImpl implements SpaceService {
     private boolean checkSpaceAvailability(Space space, Date startDate, Date endDate) throws AccessDeniedException {
         List<Booking> bookings = bookingRepository.findBySpace_SpaceId(space.getSpaceId());
         for (Booking booking : bookings) {
-            if (booking.getStartDateTime().before(startDate) && booking.getEndDateTime().after(endDate)) {
-                return false;
+            if(booking.getStatus().equals(Status.COMPLETED)){
+                if(booking.getStartDateTime().before(startDate) && booking.getEndDateTime().after(startDate)){
+                    return false;
+                }
+                if(booking.getStartDateTime().before(endDate) && booking.getEndDateTime().after(endDate)){
+                    return false;
+                }
             }
         }
         return true;
@@ -226,7 +232,8 @@ public class SpaceServiceImpl implements SpaceService {
         if (space == null) {
             throw new ResourceNotFoundException("Space not found", "space", spaceId);
         }
-        return checkSpaceAvailability(space, startDate, endDate);
+        boolean response = checkSpaceAvailability(space, startDate, endDate);
+        return response;
     }
 
     private Page<Space> doFilter(SpaceFilter filter, Optional<String> userId, Pageable pageable) {

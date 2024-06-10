@@ -69,9 +69,9 @@ public class SpaceController {
     public ResponseEntity<SpaceResponse> changeAvailability(@PathVariable String spaceId, @RequestBody Availibility availability) throws AccessDeniedException {
         return ResponseEntity.ok(spaceService.changeAvailability(spaceId , availability));
     }
-    @GetMapping("{spaceId}/check-availability")
-    public ResponseEntity<Boolean> checkAvailability(@PathVariable String spaceId, @RequestParam(required = false) Date startDate, @RequestParam(required = false) Date endDate) throws AccessDeniedException {
-        return ResponseEntity.ok(spaceService.checkAvailabilityForBooking(spaceId , startDate , endDate));
+    @PostMapping("{spaceId}/check-availability")
+    public ResponseEntity<Boolean> checkAvailability(@PathVariable String spaceId, @RequestBody DateRequest dateRequest) throws AccessDeniedException {
+        return ResponseEntity.ok(spaceService.checkAvailabilityForBooking(spaceId , dateRequest.getStartDateTime() , dateRequest.getEndDateTime()));
     }
     @GetMapping("/{spaceId}/booked-dates")
     public ResponseEntity<SpaceBookedDates> getBookedDates(@PathVariable String spaceId){
@@ -87,5 +87,4 @@ public class SpaceController {
     public ResponseEntity<Boolean> canDeleteSpace(@PathVariable String spaceId) {
         return ResponseEntity.ok(spaceService.canDeleteSpace(spaceId));
     }
-
 }

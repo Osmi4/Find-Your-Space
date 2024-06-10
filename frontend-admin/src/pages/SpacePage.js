@@ -6,6 +6,7 @@ import { Button, Input, Spinner } from '@nextui-org/react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
 const SpacePage = () => {
     const { spaceId } = useParams();
     const navigate = useNavigate();
@@ -14,21 +15,27 @@ const SpacePage = () => {
     const [image, setImage] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [canDelete, setCanDelete] = useState(false);
+
 
     useEffect(() => {
         const fetchSpace = async () => {
             try {
                 const token = localStorage.getItem('authToken');
-                const [spaceResponse, imageResponse] = await Promise.all([
+                const [spaceResponse, imageResponse, canDeleteResponse] = await Promise.all([
                     axios.get(`http://localhost:8080/api/space/${spaceId}`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
                     axios.get(`http://localhost:8080/api/space/${spaceId}/images`, {
                         headers: { Authorization: `Bearer ${token}` }
+                    }),
+                    axios.get(`http://localhost:8080/api/space/${spaceId}/can-delete`, {
+                        headers: { Authorization: `Bearer ${token}` }
                     })
                 ]);
                 setSpace(spaceResponse.data);
                 setImage(imageResponse.data);
+                setCanDelete(canDeleteResponse.data);
                 setLoading(false);
             } catch (error) {
                 setError("Unfortunately there was an error when trying to load the space information. Please try again later.");
@@ -88,7 +95,7 @@ const SpacePage = () => {
                     {image && (
                         <div className="2xl:mr-[20vw] flex flex-col justify-center items-center">
                             <img src={image} alt="Space" className="block 2xl:w-[40vw] w-[80vw] mx-[10vw] 2xl:mx-0 mt-1 border border-gray-300 rounded-md shadow-sm" />
-                            <Button className="bg-red-500 text-white px-4 py-2 rounded-md shadow-md mt-[2vh] 2xl:w-[10vw]" onClick={handleDelete}>Delete Space</Button>
+                            <Button className="bg-red-500 text-white px-4 py-2 rounded-md shadow-md mt-[2vh] 2xl:w-[10vw]" onClick={handleDelete} disabled={!canDelete}>Delete Space</Button>
                         </div>
                     )}
                     
