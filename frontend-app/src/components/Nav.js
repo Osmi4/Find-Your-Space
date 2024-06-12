@@ -94,7 +94,7 @@ const Nav = () => {
                             <Link to="/about" className="hover:text-sky-600">
                                 About
                             </Link>
-                        </DropdownItem>
+                        </DropdownItem> 
                     </DropdownMenu>
                 </Dropdown>
 
