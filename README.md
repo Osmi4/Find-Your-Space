@@ -1,1 +1,1 @@
-Quick preview of the Frontend part of the website could be done, running npm run start script in frontend-app folder. NPM is needed for that purpose.
+Quick preview of the Frontend part of the website could be done, running npm run start script in frontend-app folder. NPM is needed for that purpose. Without running the backend, all the pages of the web-site are not visible.
